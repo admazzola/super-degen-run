@@ -229,8 +229,9 @@ export default class VoxelWorld {
 
 
   buildWorld(worldGenerator){
+    let worldseed = 0 
     
-    worldGenerator.generateWorld( this.cellSize, this.setVoxel.bind(this) );
+    worldGenerator.generateWorld( worldseed, this.cellSize, this.setVoxel.bind(this) );
 
 
       

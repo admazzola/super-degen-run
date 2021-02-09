@@ -139,12 +139,12 @@ export default {
       );
  
 
-      const tileSize = 16;
-      const tileTextureWidth = 256;
-      const tileTextureHeight = 64;
+      const tileSize = 128;
+      const tileTextureWidth = 1152;
+      const tileTextureHeight = 1280;
 
       const texLoader = new THREE.TextureLoader();
-      const texture = texLoader.load('../assets/textures/tiles_flourish.png', function(){
+      const texture = texLoader.load('../assets/textures/spritesheet_tiles.png', function(){
         'loaded tex'
       });
       texture.magFilter = THREE.NearestFilter;

@@ -1,0 +1,18 @@
+{
+  "grass": {
+    "meshtype": "block",
+    "top": 8,
+    "side": 43,
+    "bottom": 52 
+  },
+
+  "dirt": {
+    "meshtype": "block",
+    "top": 52 ,
+    "side":52 ,
+    "bottom": 52  
+  },
+
+   
+
+}
