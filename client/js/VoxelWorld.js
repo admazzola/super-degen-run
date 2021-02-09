@@ -228,26 +228,18 @@ export default class VoxelWorld {
 
 
 
-  buildRandomWorld(){
-   
+  buildWorld(worldGenerator){
+    
+    worldGenerator.generateWorld( this.cellSize, this.setVoxel.bind(this) );
 
 
-        for (let y = 0; y < this.cellSize; ++y) {
-          for (let z = 0; z < this.cellSize; ++z) {
-            for (let x = 0; x < this.cellSize; ++x) {
-              const height = (Math.sin(x / this.cellSize * Math.PI * 2) + Math.sin(z / this.cellSize * Math.PI * 3)) * (this.cellSize / 6) + (this.cellSize / 2);
-              if (y < height) {
-                this.setVoxel(x, y, z, this.randInt(1, 17));
-              }
-            }
-          }
-        }
-        
+      
 
-        this.updateVoxelGeometry(1, 1, 1); 
+     this.updateVoxelGeometry(1, 1, 1);   //needed, but i dont understand 
   }
 
 
+  
 
   getUpdatedCellMesh(x, y, z) {
     const cellX = Math.floor(x / this.cellSize);
@@ -294,10 +286,6 @@ export default class VoxelWorld {
     }
   }
  
-
-  randInt(min, max) {
-    return Math.floor(Math.random() * (max - min) + min);
-  }
 
  // updateVoxelGeometry(1, 1, 1);  // 0,0,0 will generate
 

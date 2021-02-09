@@ -30,6 +30,7 @@
 import * as THREE from 'three'
 
 import VoxelWorld from '../js/VoxelWorld'
+import VoxelWorldGenerator from '../js/VoxelWorldGenerator'
 //const VoxelWorld = require('../js/VoxelWorld')
 
  import * as MW from '../js/meshwalk';
@@ -159,6 +160,8 @@ export default {
         transparent: true,
       });
 
+
+
       this.voxelWorld = new VoxelWorld({
         material,
         cellSize,
@@ -169,9 +172,9 @@ export default {
 
 
       
-        
+      let voxelWorldGenerator = new VoxelWorldGenerator()
 
-      this.voxelWorld.buildRandomWorld()
+      this.voxelWorld.buildWorld(  voxelWorldGenerator )
 
        this.scene.add(this.voxelWorld.getWorldPivot())
 
