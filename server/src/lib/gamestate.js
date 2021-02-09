@@ -1,6 +1,6 @@
 const THREE = require('three')
 
-const  GalaxyHelper = require('../../../shared/lib/GalaxyHelper')
+const  dimensionHelper = require('../../../shared/lib/dimensionHelper')
 const entitytypes = require('../../../shared/worlddata/entitybasetypes.json')
 
 const UnitHelper = require('../../../shared/lib/UnitHelper')
@@ -45,21 +45,21 @@ module.exports = class GameState {
   {
     //planet 1 on xel
     return {
-      galaxy: 'toast prime',
-      griduuid: '361c0d2091b08f0c',
+      dimension: 'eden',
+      instanceUUID:  null, //'361c0d2091b08f0c',
       locationVector: new THREE.Vector3( 0, 0, 0 ),
-      velocityVector: new THREE.Vector3( 5, 0, 0 )
+      velocityVector: new THREE.Vector3( 0, 0, 0 )
     }
 
   }
 
 
 
-  //used for brand new players and used for undocking
-  async spawnPlayerShip( data, shiptype , location)
+  //used for brand new players  
+  async spawnPlayerUnit( data, unittype , location)
   {
-    console.log('spawning player ship', data)
-    //make sure the ship is not already spawned
+    console.log('spawning player unit', data)
+    //make sure the unit  is not already spawned
 
     let result;
       try{
@@ -74,7 +74,7 @@ module.exports = class GameState {
 
     if(result)
     {
-      console.log('error - player ship exists - cannot spawn')
+      console.log('error - player unit exists - cannot spawn')
 
       var unitId = result.possessedUnitId;
       var unit = await this.mongoInterface.findOne('units',  {_id:unitId} )
@@ -85,12 +85,11 @@ module.exports = class GameState {
       }
 
       //this is false ?
-      return {unitId: unitId, gridUUID: unit.grid }
-
-      //  return {error: 'error - player ship exists - cannot spawn' }
+      return {unitId: unitId, instanceUUID: unit.instanceUUID }
+ 
     }else{
 
-      var basetype = shiptype
+      var basetype = unittype
 
 
 
@@ -103,22 +102,19 @@ module.exports = class GameState {
 
 
       var newUnitData = {
-        galaxy: location.galaxy,
-        grid: location.griduuid,
+        dimension: location.dimension,
+        instanceUUID: location.instanceUUID,
         locationVector: location.locationVector,// new THREE.Vector3( 0, 1, 0 )  {x: location.x, y: location.y},
         velocityVector: location.velocityVector,
         basetype: basetype,
-        unittype: 'ship',
+        unittype: 'unit',
         stats: UnitHelper.getInitialStatsForEntityType( basetype ),
         active:  true,   //owner not logged out
         invisible: false,
         isStatic:false,
         owningPlayerId: player._id,
-
-        warpStartTick: 0,
-        warpDestinationGridUUID: null
-    //    warping: false  //for animations and leaving the camera behind
-         }
+ 
+       }
 
 
 
@@ -132,29 +128,125 @@ module.exports = class GameState {
       {publicAddress: data.publicAddress},
         {publicAddress: data.publicAddress,
           possessedUnitId: insertedId,
-          grid: newUnitData.grid,
+          instanceUUID: newUnitData.instanceUUID,
           active:true
         }
       )
 
-      return {possessedUnitId: insertedId, gridUUID: newUnitData.grid }
+      return {possessedUnitId: insertedId, instanceUUID: newUnitData.instanceUUID }
     }
 
 
   }
 
+
+
+  //figures out which gridphases have active players and manages grid updater ids
+  async updateGridPhaseActivityMetrics()
+  {
+
+
+
+    let activePlayerUnits = await this.mongoInterface.findAll('units',{aiFaction: null, active:true, isStatic:false , dead:false/*, unittype: {$ne:'shipwreck'}*/} )
+
+    let totalActivePlayerCount = 0
+ 
+
+    for(var activePlayerUnit of  activePlayerUnits)
+    {
+      var player = await this.mongoInterface.findOne('activePlayers', { possessedUnitId: activePlayerUnit._id })
+
+      if(activePlayerUnit && player)
+      {
+        var griduuid = activePlayerUnit.gridUUID
+        var instanceuuid = activePlayerUnit.instanceUUID
+ 
+     }
+    }
+ 
+
+    let allGridPhases = await this.mongoInterface.findAll('gridphases')
+
+
+    for( var phase of allGridPhases){
+
+
+
+
+        let activePlayerUnitsInGridPhase = activePlayerUnits.filter( x => (x.gridUUID == phase.gridUUID && x.instanceUUID == phase.instanceUUID ))
+ 
+    
+        let hasActivePlayerUnits = (activePlayerUnitsInGridPhase && activePlayerUnitsInGridPhase.length>0)
+
+     
+  
+        if(!isNaN(activePlayerUnitsInGridPhase.length)){
+         totalActivePlayerCount = totalActivePlayerCount + parseInt(activePlayerUnitsInGridPhase.length)
+       }
+
+       let newGridUpdaterOwnedBy = null;
+
+
+       let lastTimeWithActivePlayerUnits = phase.lastTimeWithActivePlayerUnits
+
+
+       if(hasActivePlayerUnits){  //reset the count
+         lastTimeWithActivePlayerUnits = Date.now()
+
+         await this.mongoInterface.updateOne('gridphases', {_id: phase._id},
+          {
+            lastTimeWithActivePlayerUnits:  lastTimeWithActivePlayerUnits
+           })
+       }
+
+
+       if( hasActivePlayerUnits || lastTimeWithActivePlayerUnits > Date.now() - 5000  ){
+         newGridUpdaterOwnedBy = 1
+       }
+
+       //only update if needed
+      if(phase.ownedByGridUpdaterId != newGridUpdaterOwnedBy || phase.hasActivePlayerUnits!= hasActivePlayerUnits){
+
+        if(!phase.hasActivePlayerUnits && hasActivePlayerUnits){
+          await GameState.handleGridPhaseReactivation( phase.gridUUID, phase.instanceUUID, this.mongoInterface )
+        }
+ 
+
+        if(!phase.hasActivePlayerUnits && !hasActivePlayerUnits && phase.lastMobResetTimestamp < Date.now() - 1000*60*10 ){ //ten minutes
+          await GameState.cleanupStaleGridPhase( phase.gridUUID, phase.instanceUUID, this.mongoInterface )
+        }
+ 
+        await this.mongoInterface.updateOne('gridphases', {_id: phase._id},
+         {
+           hasActivePlayerUnits: hasActivePlayerUnits,
+           ownedByGridUpdaterId: newGridUpdaterOwnedBy
+          })
+
+      }
+
+
+    }
+
+   //   let newAPIData = {collectionName: 'serverStats' , arg: {activePlayersCount: totalActivePlayerCount}}
+    //  await apiServerInterface.upsertNewApiData( newAPIData.collectionName, {}, newAPIData.arg )
+
+
+
+  }
+
+
   //returns uuid of grids
 
   //figures out which grids have active players and manages grid updater ids
-  async updateGridActivity()
+  /*async updateGridActivity()
   {
 
     var activeGrids = [];
 
-    await this.mongoInterface.updateMany('celestialgrid', {},{ hasActivePlayers:false })
+    await this.mongoInterface.updateMany('dimensionalgrid', {},{ hasActivePlayers:false })
 
     //stub code for now ..before multiple clusters
-    await this.mongoInterface.updateMany('celestialgrid',  {}, { ownedByGridUpdaterId:1 })
+    await this.mongoInterface.updateMany('dimensionalgrid',  {}, { ownedByGridUpdaterId:1 })
 
 
 
@@ -170,19 +262,29 @@ module.exports = class GameState {
        if( !activeGrids.includes(griduuid)  )
        {
 
-         await this.mongoInterface.updateOne('celestialgrid', {uuid: griduuid},{ hasActivePlayers:true })
+         await this.mongoInterface.updateOne('dimensionalgrid', {uuid: griduuid},{ hasActivePlayers:true })
 
          activeGrids.push(griduuid)
        }
       }
     }
+  }*/
+
+  static async handleGridPhaseReactivation(gridUUID, instanceUUID, mongoInterface)
+  {
+
   }
+  static async cleanupStaleGridPhase(gridUUID, instanceUUID, mongoInterface)
+  {
+
+  }
+
 
   async getListOfGridsWithPlayers()
   {
 
 
-      var activeGrids = await this.mongoInterface.findAll('celestialgrid', { hasActivePlayers:true })
+      var activeGrids = await this.mongoInterface.findAll('dimensionalgrid', { hasActivePlayers:true })
 
       return activeGrids ;
 
@@ -190,21 +292,14 @@ module.exports = class GameState {
 
   async getEntitiesOnGrid( gridUUID )
    {
-      // var statics = this.getStaticEntitiesOnGrid( gridUUID ) // use mongo
+      
+
+       var existingGrid = await this.mongoInterface.findOne('dimensionalgrid',{gridUUID: gridUUID  }  )
 
 
-       var existingGrid = await this.mongoInterface.findOne('celestialgrid',{uuid: gridUUID  }  )
-
-
-       var entities = await this.mongoInterface.findAll('units', {grid: gridUUID, active:true  })
-    //   var statics = await this.mongoInterface.findAll('units', {grid: gridUUID, active:true, isStatic:true })
-      // var gridentities = entities.concat(statics)
-
-
-    //   var unitStatuses = await this.mongoInterface.findAll('unitStatuses', {grid: gridUUID, active:true })
-    //   var entityStatuses = await redisInterface.findHashInRedis('entityStatus', )
-
-       var players = await this.mongoInterface.findAll('activePlayers', {grid: gridUUID })
+       var entities = await this.mongoInterface.findAll('units', {gridUUID: gridUUID, active:true  })
+    
+       var players = await this.mongoInterface.findAll('activePlayers', {gridUUID: gridUUID })
 
        return { grid:existingGrid, entities: entities,    players: players   }
 
@@ -215,11 +310,14 @@ module.exports = class GameState {
    async update()
    {
 
-     await this.updatePlayerActiveActions(  )
+       // await this.updatePlayerActiveActions(  )
 
 
    }
 
+
+   //move this to mongo 
+   /*
    async updatePlayerActiveActions()
    {
 
@@ -232,8 +330,7 @@ module.exports = class GameState {
         return
       }
 
-
-  //   var players = await this.mongoInterface.findAll('activePlayers', {grid: gridUUID })
+ 
 
      for(var i in playersWithActions)
      {
@@ -299,8 +396,9 @@ module.exports = class GameState {
      }
 
    }
+*/
 
-
+/*
    async setUnitVelocityToApproachLocation( unit, destination )
    {
       let direction = UnitHelper.getFacingVectorFromUnitToLocation(unit, destination)
@@ -344,7 +442,7 @@ module.exports = class GameState {
      await this.redisInterface.storeRedisHashData('activeAction',playerAddress, JSON.stringify(activeActionData) )
 
    }
-
+*/
 
 
 
@@ -369,7 +467,7 @@ module.exports = class GameState {
 
      await this.clearPlayerActiveAction( player )
 
-     if(data.cmdName === 'setShipDirectionVector')
+    /* if(data.cmdName === 'setShipDirectionVector')
      {
        var speedPercent = 1.0; //could accept this from client
 
@@ -377,144 +475,16 @@ module.exports = class GameState {
        var facingVec = new THREE.Vector3(cmdParams.vector.x,cmdParams.vector.y,cmdParams.vector.z).normalize()
 
        await this.setUnitVelocityTowardsDirection( unit, facingVec )
-       /*
-       var shipSpeedFactor = UnitHelper.getInitialStatsForEntityType(unit.basetype).speed
+       
+     }*/
 
-       var newVelocityVector = facingVec.multiplyScalar(shipSpeedFactor).multiplyScalar(speedPercent);
-
-
-       unit.velocityVector =  newVelocityVector;
-       console.log('updated ship velocity ', unit.velocityVector)
-
-       var unit = await this.mongoInterface.upsertOne('units', {_id: unit._id} , unit )*/
-
-     }
-
-     if(data.cmdName === 'initiateWarp')
-     {
-       //need to set ship warping stat = true
-       //need to exponentially affect velocity while ship is warping -- in its current direction
-
-
-       //need to keep track of the time at which the ship started warp and keep polling for when its done -- then we change the grid
-       //if the ship is warp jammed at the end of the time limit, the warp is cancelled
-       var gridTick = await this.getGridTickNumber(unit.grid)
-
-
-
-       console.log('meep', unit )
-
-
-       var unit = await this.mongoInterface.upsertOne('units', {_id: unit._id} , {warpStartTick: gridTick,warpDestinationGridUUID:cmdParams.griduuid } )
-
-     }
-
-
-     if(data.cmdName === 'approach')
-     {
-
-
-
-
-     }
-
-     if(data.cmdName === 'dock')
-     {
-          var targetUnitId = cmdParams.targetUnitId;
-
-          console.log('got docking cmd ', unit, targetUnitId)
-
-          var dockTarget = await this.mongoInterface.findById('units',   targetUnitId  )
-
-          var targetIsDockable = UnitHelper.unitHasService( dockTarget, 'docking'  )
-          var targetWithinServiceRange = UnitHelper.unitsWithinServiceRange(unit, dockTarget )
-
-          if(targetWithinServiceRange)
-          {
-
-            if(targetIsDockable)
-            {
-              await this.dockUnitInEntity(unit,dockTarget)
-            }
-
-          }else{
-            let activeActionData = {
-              actionName: 'dock',
-              targetUnitId: targetUnitId
-            }
-
-
-            //queue approachAndDock as the players current ActiveAction in redis
-            this.setPlayerActiveAction(publicAddress, activeActionData)
-          }
-
-
-
-
-     }
-
-
-     if(data.cmdName === 'undock')
-     {
-    //  set active to true
-        await this.undockUnitFromEntity( unit )
-     }
+     
 
 
    }
 
 
-
-  //YAY This works
-  async dockUnitInEntity( unit, dockTarget )
-  {
-      var player = await this.mongoInterface.findOne('activePlayers', {possessedUnitId: unit._id })
-      var unit = await this.mongoInterface.findOne('units', {_id:unit._id})
-
-
-      var targetIsDockable = UnitHelper.unitHasService( dockTarget, 'docking'  )
-
-      if(targetIsDockable )
-      {
-        this.clearPlayerActiveAction( player )
-
-
-        console.log('docking  ', unit, dockTarget)
-
-
-        await this.mongoInterface.updateOne('units', {_id:unit._id}, {dockedInStation: dockTarget._id } )
-        await this.mongoInterface.updateOne('activePlayers', {_id:player._id}, {dockedInStation: dockTarget._id } )
-
-
-
-
-      }else{
-        console.log('WARN: dockTarget not dockable ')
-      }
-
-
-  }
-
-  async undockUnitFromEntity( unit )
-  {
-
-    var player = await this.mongoInterface.findOne('activePlayers', {possessedUnitId: unit._id })
-    var unit = await this.mongoInterface.findOne('units', {_id:unit._id})
-
-
-
-    if( GalaxyHelper.playerIsDocked( player ) ){
-
-
-
-      await this.mongoInterface.updateOne('units', {_id:unit._id}, {dockedInStation:null} )
-      await this.mongoInterface.updateOne('activePlayers', {_id:player._id}, {dockedInStation:null} )
-
-    }
-
-
-
-  }
+ 
 
   async onPlayerDisconnect()
   {
@@ -537,7 +507,7 @@ module.exports = class GameState {
 
     async getGridTickNumber(gridUUID)
    {
-     var existingGrid = await this.mongoInterface.findOne('celestialgrid',{uuid: gridUUID  }  )
+     var existingGrid = await this.mongoInterface.findOne('dimensionalgrid',{gridUUID: gridUUID  }  )
      return existingGrid.gridTick
    }
 

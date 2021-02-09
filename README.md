@@ -34,11 +34,4 @@ Legends say that a single Satoasti can purchase entire countries on the planet o
 
 ## Credits
 
-ChewyCereal's Spaceship Pack
-zisongbr planets
-
-Westbeam skybox   (https://codinhood.com/post/create-skybox-with-threejs)
-
-
-Geckos Socket Server
-https://github.com/geckosio/geckos.io
+Kenney's Humanoid Models 

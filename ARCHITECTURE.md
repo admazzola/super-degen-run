@@ -20,3 +20,8 @@
 
 1. Server need to generate the tiledata for all chunks (on demand), store it in mongo   (Base terrain will be totally deterministic!! Server just tells client of chunk data if it has been modified from default.  )
 2. Server will give blocks tiledata 
+
+
+
+** THe world willl be split up into many different zones.  Each zone is like a grid and it will have 64x64 chunks.  You cannot see other players who are not in your chunk, and you cannot see cube changes that they make.   
+

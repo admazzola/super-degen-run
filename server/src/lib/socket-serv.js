@@ -3,8 +3,8 @@ var web3utils = require('web3-utils');
 
 const ethJsUtil = require('ethereumjs-util')
 
-let mongoInterface = require('./mongo-interface')
-let redisInterface = require('./redis-interface')
+//let mongoInterface = require('./mongo-interface')
+//let redisInterface = require('./redis-interface')
 
 
 const geckos = require('@geckos.io/server').default
@@ -22,14 +22,17 @@ const GRID_UPDATE_RATE = 500;
 
 module.exports = class SocketServ {
 
-  constructor(expressServer, gameState)
+  constructor(expressServer, mongoInterface, redisInterface )
   {
-    this.gameState = gameState;
+    this.mongoInterface=mongoInterface;
+    this.redisInterface=redisInterface
 
-    this.gameState.setClientChangedGridCallback( this.forceClientIntoGridCommsChannel )
+    //this.gameState = gameState;
+
+    //this.gameState.setClientChangedGridCallback( this.forceClientIntoGridCommsChannel )
 
 
-    redisInterface.init()
+    //redisInterface.init()
 
     var options = {
 
@@ -38,7 +41,14 @@ module.exports = class SocketServ {
 
       io = geckos(options)
 
-    broadcastGridsWorker =  setInterval( function(){ this.broadcastGridDataToRooms(gameState) }.bind(this)  , GRID_UPDATE_RATE)
+
+
+    broadcastGridsWorker =  setInterval( function(){ 
+
+      //update loop 
+      this.broadcastGridDataToRooms( ) 
+    
+    }.bind(this)  , GRID_UPDATE_RATE)
 
 
   io.onConnection(channel => {
@@ -132,22 +142,18 @@ module.exports = class SocketServ {
       if(authed)
       {
 
-        var shiptype = 'corvette' //starter ship
+        var unittype = 'humanMale' 
 
         var loc = this.gameState.getNewPlayerSpawnLocation()
 
-        var result = await this.gameState.spawnPlayerShip( data, shiptype, loc  )
+        var result = await this.gameState.spawnPlayerUnit( data, unittype, loc  )
 
         if(result.error)
         {
             io.emit('errormessage', {message: result.error})
         }else{
 
-
-
-
-          //  io.emit('setGrid', {gridUUID: result.gridUUID }, {reliable:true })
-
+ 
             clientSocketChannels.set(data.publicAddress , channel  );
 
             this.forceClientIntoGridCommsChannel(data.publicAddress  , result.gridUUID )
@@ -225,34 +231,17 @@ module.exports = class SocketServ {
         channel.join( newGridUUID  )//throw the client in the grids room
   }
 
-  async broadcastGridDataToRooms(gamestate){
-
+  async broadcastGridDataToRooms( ){
     //update player queued actions
-      await gamestate.update();
-
-
-    await gamestate.updateGridActivity();
-
-    var activeGrids = await gamestate.getListOfGridsWithPlayers();
-
-    //console.log('broadcasting active grids ', activeGrids )
-    for(var i in activeGrids)
+    var activeGridPhases = await this.mongoInterface.findAll('gridphases', { hasActivePlayerUnits:true })
+    for(var activePhase of  activeGridPhases)
     {
-
-
-      var gridUUID = activeGrids[i].uuid
-
-      //this is done using the gridupdaters now
-      //await gamestate.updateGrid( gridUUID, GRID_UPDATE_RATE);
-
-      var gridState = await gamestate.getEntitiesOnGrid(gridUUID);
-
-
-
-      io.room(gridUUID).emit('gridState', gridState)
+      var gridUUID = activePhase.gridUUID
+      var instanceUUID = activePhase.instanceUUID
+      var gridPhaseState = await GameState.getGridPhaseStateData(gridUUID,instanceUUID, this.mongoInterface, this.redisInterface);
+     let socketRoomName = GalaxyHelper.getSocketRoomNameForGridInstance( gridUUID , instanceUUID)
+      io.room( socketRoomName ).emit('gridPhaseState', gridPhaseState, {reliable: false })
     }
-
-  }
 
   //check the redis db
   async verifyAuthToken(credentials)

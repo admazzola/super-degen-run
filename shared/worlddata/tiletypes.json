@@ -1,17 +1,21 @@
 {
-  "grass": {
+  "0": {
+    "name":"grass",
     "meshtype": "block",
     "top": 8,
     "side": 43,
-    "bottom": 52 
+    "bottom": 52,
+    "collisiontype":"solid"
   },
 
-  "dirt": {
+  "1": {
+    "name":"dirt",
     "meshtype": "block",
-    "top": 52 ,
-    "side":52 ,
-    "bottom": 52  
-  },
+    "top": 52,
+    "side":52,
+    "bottom": 52,
+    "collisiontype":"solid"
+  }
 
    
 

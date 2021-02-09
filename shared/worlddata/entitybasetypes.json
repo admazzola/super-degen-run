@@ -1,50 +1,19 @@
 {
-  "corvette": {
-    "modelname":"corvette",
-    "name":"corvette",
-    "entitytype": "ship",
+  "humanMale": {
+    "modelname":"humanA",
+    "name":"human",
+    "entitytype": "unit",
     "scaleFactor": 1.0,
     "collisionRadius": 1,
     "stats": {
                 "energy": 400,
                 "armor": 200,
-                "shields": 300,
-                "mass": 40,
-                "speed": 5.0,
-                "warpstrength": 0
+                "life": 300,
+                "mass": 10,
+                "speed": 10.0
             }
     },
-
-
-    "planetA": {
-      "modelname":"planetA",
-      "name": "Large Water Planet",
-      "entitytype": "static",
-      "scaleFactor": 200.0,
-      "collisionRadius": 600,
-      "stats": { }
-    },
-
-    "warpgateA": {
-      "modelname":"warpgateA",
-      "name": "Ancient Warp Gate",
-      "entitytype": "static",
-      "scaleFactor": 1,
-      "collisionRadius": 50,
-      "interactRadius": 200,
-      "stats": { }
-    },
-
-    "stationC": {
-      "modelname":"stationC",
-      "name": "Republic Starbase",
-      "entitytype": "static",
-      "scaleFactor": 2,
-      "collisionRadius": 100,
-      "interactRadius": 150,
-      "services": ["docking", "market"],
-      "stats": { }
-    },
+ 
 
     "rocksA": {
       "modelname":"rocksA",
