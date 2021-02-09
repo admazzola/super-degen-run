@@ -1,0 +1,47 @@
+{
+  "solarsystems": [
+    {
+      "name": "antonopoulos",
+      "security": 9,
+      "systemLocationVector": {"x":0, "y": 0, "z": 0},
+      "celestials": [
+        {"uuid": "27f6a4e71f10a5dd", "type": "warpgate1", "celestialLocationVector": {"x":1456, "y": 205, "z": 111}, "destination": "llarval" },
+        {"uuid": "02900cd84abaa991", "type": "asteroids1", "celestialLocationVector": {"x":333, "y": 405, "z": 111}   },
+        {"uuid": "938036de73e571a3", "type": "warpgate1","celestialLocationVector": {"x":22, "y": 2205, "z": 111},   "destination": "xel" }
+      ]
+    },
+    {
+      "name": "llarval",
+      "security": 8,
+      "systemLocationVector": {"x":0, "y": 0, "z": 0},
+      "celestials": [
+        {"uuid": "9c758f57e7859dd4", "type": "warpgate1", "celestialLocationVector": {"x":657, "y": 425, "z": 111}, "destination": "antonopoulos" }
+      ]
+    },
+    {
+      "name": "rekkt",
+      "security": 4,
+      "systemLocationVector": {"x":0, "y": 0, "z": 0},
+      "celestials": [
+
+      ]
+    },
+    {
+      "name": "toast prime",
+      "security": 9,
+      "systemLocationVector": {"x":0, "y": 0, "z": 0},
+      "celestials": [
+        {"uuid": "86dbca36ab49ae87", "type": "station1", "name":"republic command", "celestialLocationVector": {"x":57, "y": 25, "z": 1111}  },
+        {"uuid": "361c0d2091b08f0c", "type": "planet1", "name":"alterhaven", "celestialLocationVector": {"x":657, "y": 425, "z": 111}  },
+        {"uuid": "1f286106b91250a1", "type": "warpgate1", "celestialLocationVector": {"x":257, "y": 189, "z": -111},  "destination": "antonopoulos" }
+      ]
+    }
+
+
+
+
+  ]
+
+
+
+}

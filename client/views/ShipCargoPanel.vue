@@ -1,0 +1,8 @@
+/*
+  Will have two halves.. one for your ship and one for the wreck you are looting .
+
+  will be for out in space
+
+  Will use the item actions menu 
+
+*/

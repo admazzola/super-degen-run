@@ -1,0 +1,13 @@
+{
+  "metalscrap": {
+    "internalName":"metalscrap",
+    "name":"Metal Scrap",
+    "mass": "ship",
+    "iconName": "metal1",
+    "volume": 1,
+    "maxStackSize": 500
+    }
+
+
+
+}

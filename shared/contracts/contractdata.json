@@ -1,0 +1,15 @@
+{
+
+  "contracts":{
+          "ethereum_network":{
+          },
+          "matic_network":{
+            "payspec":{"address":"0x7b5Bb27E919Aa4baee33e262fb6BC04FF88350c0"},
+            "_0xbitcoin":{"address":"0x71B821aa52a49F32EEd535fCA6Eb5aa130085978"}
+
+          }
+  }
+
+
+
+}

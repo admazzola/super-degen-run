@@ -1,0 +1,30 @@
+{
+  "warpgate1": {
+    "celestialtype": "warpgate",
+    "entities": [
+    {"basetype":"warpgateA", "locationVector": {"x":0, "y":0, "z":200 } }
+    ]
+  },
+
+  "asteroids1": {
+    "celestialtype": "anomaly",
+    "entities": [
+    {"basetype":"rocksA", "locationVector": { "x":0, "y":0, "z":300} }
+    ]},
+
+  "planet1": {
+    "celestialtype": "planet",
+    "entities": [
+    {"basetype":"planetA", "locationVector": { "x":0, "y":0, "z":800} }
+    ]},
+
+  "station1": {
+    "celestialtype": "structure",
+
+    "entities": [
+    {"basetype":"stationC", "locationVector": { "x":0, "y":0, "z":150} }
+    ]}
+
+
+
+}

@@ -1,0 +1,35 @@
+{
+  "name": "Etherpunk_Server",
+  "version": "1.0.0",
+  "description": "?",
+  "main": "index.js",
+  "scripts": {
+    "server": "node src/index.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/runtime": "^7.11.2",
+    "@geckos.io/server": "^1.7.0",
+    "body-parser": "^1.19.0",
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "ethereumjs-util": "^7.0.5",
+    "express": "^4.17.1",
+    "http": "0.0.1-security",
+    "mongodb": "^3.6.2",
+    "path": "^0.12.7",
+    "redis": "^3.0.2",
+    "three": "^0.121.1",
+    "web3": "^1.3.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.7.4",
+    "@babel/core": "^7.7.4",
+    "@babel/plugin-proposal-export-default-from": "^7.10.4",
+    "@babel/plugin-transform-runtime": "^7.11.5",
+    "@babel/preset-env": "^7.7.4",
+    "@babel/register": "^7.7.4",
+    "nodemon": "^2.0.4"
+  }
+}
