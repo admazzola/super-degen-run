@@ -19,12 +19,12 @@ export default class VoxelWorld {
   constructor(options) {
     this.worldPivot =  new THREE.Object3D()
     this.material = options.material;
-    this.cellSize = options.cellSize;
+    this.chunkSize = options.chunkSize;
     this.tileSize = options.tileSize;
     this.tileTextureWidth = options.tileTextureWidth;
     this.tileTextureHeight = options.tileTextureHeight;
-    const {cellSize} = this;
-    this.cellSliceSize = cellSize * cellSize;
+    const {chunkSize} = this;
+    this.cellSliceSize = chunkSize * chunkSize;
     this.cells = {};
 
 
@@ -38,27 +38,27 @@ export default class VoxelWorld {
     return this.worldPivot
   }
   computeVoxelOffset(x, y, z) {
-    const {cellSize, cellSliceSize} = this;
-    const voxelX = THREE.MathUtils.euclideanModulo(x, cellSize) | 0;
-    const voxelY = THREE.MathUtils.euclideanModulo(y, cellSize) | 0;
-    const voxelZ = THREE.MathUtils.euclideanModulo(z, cellSize) | 0;
+    const {chunkSize, cellSliceSize} = this;
+    const voxelX = THREE.MathUtils.euclideanModulo(x, chunkSize) | 0;
+    const voxelY = THREE.MathUtils.euclideanModulo(y, chunkSize) | 0;
+    const voxelZ = THREE.MathUtils.euclideanModulo(z, chunkSize) | 0;
     return voxelY * cellSliceSize +
-           voxelZ * cellSize +
+           voxelZ * chunkSize +
            voxelX;
   }
   computeCellId(x, y, z) {
-    const {cellSize} = this;
-    const cellX = Math.floor(x / cellSize);
-    const cellY = Math.floor(y / cellSize);
-    const cellZ = Math.floor(z / cellSize);
+    const {chunkSize} = this;
+    const cellX = Math.floor(x / chunkSize);
+    const cellY = Math.floor(y / chunkSize);
+    const cellZ = Math.floor(z / chunkSize);
     return `${cellX},${cellY},${cellZ}`;
   }
   addCellForVoxel(x, y, z) {
     const cellId = this.computeCellId(x, y, z);
     let cell = this.cells[cellId];
     if (!cell) {
-      const {cellSize} = this;
-      cell = new Uint8Array(cellSize * cellSize * cellSize);
+      const {chunkSize} = this;
+      cell = new Uint8Array(chunkSize * chunkSize * chunkSize);
       this.cells[cellId] = cell;
     }
     return cell;
@@ -86,20 +86,20 @@ export default class VoxelWorld {
     return cell[voxelOffset];
   }
   generateGeometryDataForCell(cellX, cellY, cellZ) {
-    const {cellSize, tileSize, tileTextureWidth, tileTextureHeight} = this;
+    const {chunkSize, tileSize, tileTextureWidth, tileTextureHeight} = this;
     const positions = [];
     const normals = [];
     const uvs = [];
     const indices = [];
-    const startX = cellX * cellSize;
-    const startY = cellY * cellSize;
-    const startZ = cellZ * cellSize;
+    const startX = cellX * chunkSize;
+    const startY = cellY * chunkSize;
+    const startZ = cellZ * chunkSize;
 
-    for (let y = 0; y < cellSize; ++y) {
+    for (let y = 0; y < chunkSize; ++y) {
       const voxelY = startY + y;
-      for (let z = 0; z < cellSize; ++z) {
+      for (let z = 0; z < chunkSize; ++z) {
         const voxelZ = startZ + z;
-        for (let x = 0; x < cellSize; ++x) {
+        for (let x = 0; x < chunkSize; ++x) {
           const voxelX = startX + x;
           const voxel = this.getVoxel(voxelX, voxelY, voxelZ);
           if (voxel) {
@@ -230,8 +230,8 @@ export default class VoxelWorld {
 
   buildWorld(worldGenerator){
     let worldseed = 0 
-    
-    worldGenerator.generateWorld( worldseed, this.cellSize, this.setVoxel.bind(this) );
+
+    worldGenerator.generateChunk( worldseed, 0,0, this.chunkSize, this.setVoxel.bind(this) );
 
 
       
@@ -243,9 +243,9 @@ export default class VoxelWorld {
   
 
   getUpdatedCellMesh(x, y, z) {
-    const cellX = Math.floor(x / this.cellSize);
-    const cellY = Math.floor(y / this.cellSize);
-    const cellZ = Math.floor(z / this.cellSize);
+    const cellX = Math.floor(x / this.chunkSize);
+    const cellY = Math.floor(y / this.chunkSize);
+    const cellZ = Math.floor(z / this.chunkSize);
     const cellId = this.computeCellId(x, y, z);
     let mesh = this.cellIdToMesh[cellId];
     const geometry = mesh ? mesh.geometry : new THREE.BufferGeometry();
@@ -265,7 +265,7 @@ export default class VoxelWorld {
       mesh.name = cellId;
       this.cellIdToMesh[cellId] = mesh;
       
-      mesh.position.set(cellX * this.cellSize, cellY * this.cellSize, cellZ * this.cellSize);
+      mesh.position.set(cellX * this.chunkSize, cellY * this.chunkSize, cellZ * this.chunkSize);
     }
 
     return mesh

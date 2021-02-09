@@ -12,3 +12,11 @@
 * If you have a special access token, you can log into the server as a player and see other players (max of 256) 
 
 * If you do not, you can view the state of the world but cannot see other players 
+
+
+
+
+
+
+1. Server need to generate the tiledata for all chunks (on demand), store it in mongo   (Base terrain will be totally deterministic!! Server just tells client of chunk data if it has been modified from default.  )
+2. Server will give blocks tiledata 

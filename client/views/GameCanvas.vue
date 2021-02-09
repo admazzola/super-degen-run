@@ -109,7 +109,7 @@ export default {
 
       const RENDER_DISTANCE = 20000;
 
-      const cellSize = 32;
+      const chunkSize = 32;
 
       this.scene = new THREE.Scene()
       this.scene.background = new THREE.Color('lightblue');
@@ -164,7 +164,7 @@ export default {
 
       this.voxelWorld = new VoxelWorld({
         material,
-        cellSize,
+        chunkSize,
         tileSize,
         tileTextureWidth,
         tileTextureHeight,
