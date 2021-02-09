@@ -6,7 +6,7 @@ var modelcache = {}
 var loader
 
 var modelsmap = require('../../shared/worlddata/modelsmap.json')
-const preloadedAssets = ['warpgateA','stationC']
+const preloadedAssets = [ ]
 
 
 export default class ModelLoader   {

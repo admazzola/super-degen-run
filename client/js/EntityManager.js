@@ -1,5 +1,7 @@
 import * as THREE from 'three'
 
+const VoxelWorld = require('./VoxelWorld')
+
 const EventEmitter = require('events');
 const entitiesEmitter = new EventEmitter();
 
@@ -165,6 +167,8 @@ getMyPlayerData()
        //make it
        var basetype= item.basetype;
        var modelname = entitytypes[basetype].modelname
+
+       console.log('loader', this.loader)
        var shipModel = await this.loader.loadModel( modelname )
 
 

@@ -4,35 +4,6 @@
     },
   "warpout": {
     "path":"warp/warpout.wav"
-    },
-    "hullbreach": {
-      "path":"voice/hullbreach.wav"
-    },
-    "lockingjammed": {
-      "path":"voice/lockingjammed.wav"
-    },
-    "neutralized": {
-      "path":"voice/neutralized.wav"
-    },
-    "outofrange": {
-      "path":"voice/outofrange.wav"
-    },
-    "permissiondenied": {
-      "path":"voice/permissiondenied.wav"
-    },
-    "requestaccepted": {
-      "path":"voice/requestaccepted.wav"
-    },
-    "shieldcoreunstable": {
-      "path":"voice/shieldcoreunstable.wav"
-    },
-    "transmitdockingrequest": {
-      "path":"voice/transmitdockingrequest.wav"
-    },
-    "warpdriveactive": {
-      "path":"voice/warpdriveactive2.wav"
-    },
-    "warpcoreunstable": {
-      "path":"voice/warpcoreunstable.wav"
-    }
+    } 
+     
 }

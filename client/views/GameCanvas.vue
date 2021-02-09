@@ -7,23 +7,9 @@
 
         </div>
 
+ 
 
-          <OverviewPanel
-           :class="{hidden: !connected}"
-           v-bind:rightClickRowCallback="handleOverviewRowClicked"
-           ref="overview"
-           />
-
-          <StationPanel
-           :class="{hidden: !connected}"
-           v-bind:commandCallback="handleClientCommand"
-           v-bind:localActionCallback="handleLocalActionCommand"
-           v-bind:dataRequestCallback="handleClientDataRequest"
-           v-bind:devToolsCallback="handleDevToolsRequest"
-           v-bind:handleItemActionMenuCallback="handleItemActionMenuCallback"
-           ref="stationpanel"
-           />
-
+          
           <RightClickMenu
           ref="rclickmenu"
           v-bind:commandCallback="handleClientCommand"
@@ -35,16 +21,16 @@
           v-bind:dataRequestCallback="handleClientDataRequest"
           />
 
-          <ShipHud
-          :class="{hidden: !connected}"
-          ref="shiphud"
-          />
+           
   </div>
 </template>
 
 
 <script>
 import * as THREE from 'three'
+
+import VoxelWorld from '../js/VoxelWorld'
+//const VoxelWorld = require('../js/VoxelWorld')
 
  import * as MW from '../js/meshwalk';
  MW.install( THREE );
@@ -108,7 +94,7 @@ export default {
     }
   },
   components: {
-     OverviewPanel,RightClickMenu,ShipHud,StationPanel,ItemActionMenu
+      RightClickMenu,  ItemActionMenu
   },
 
   methods: {
@@ -122,14 +108,18 @@ export default {
 
       const RENDER_DISTANCE = 20000;
 
-      this.scene = new THREE.Scene()
-      this.camera = new THREE.PerspectiveCamera(
-        75,
-        window.innerWidth / window.innerHeight,
-        0.1,
-        RENDER_DISTANCE
-      )
+      const cellSize = 32;
 
+      this.scene = new THREE.Scene()
+      this.scene.background = new THREE.Color('lightblue');
+     
+        const fov = 75;
+        const aspect = 2;  // the canvas default
+        const near = 0.1;
+        const far = 1000;
+       this.camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+
+       
       this.renderer = new THREE.WebGLRenderer({ antialias: false })
       this.renderer.setSize(window.innerWidth, window.innerHeight)
       document.getElementById('gamecanvas').appendChild(this.renderer.domElement)
@@ -137,19 +127,51 @@ export default {
 
 
 
-     this.scene.add(camera_pivot);
+        this.scene.add(camera_pivot);
         camera_pivot.add( audioSystem.getListener()  )
-
-      //  audioSystem.playSound('warpin')  //it works !
+ 
 
       this.controls = new MW.TPSCameraControls(
       	this.camera, // three.js camera
       	camera_pivot, // tracking object
       	this.renderer.domElement
       );
+ 
 
-    //  this.controls = new CameraControls( this.camera, this.renderer.domElement );
-    //set init
+      const tileSize = 16;
+      const tileTextureWidth = 256;
+      const tileTextureHeight = 64;
+
+      const texLoader = new THREE.TextureLoader();
+      const texture = texLoader.load('../assets/textures.tiles_flourish.png', function(){
+        'loaded tex'
+      });
+      texture.magFilter = THREE.NearestFilter;
+      texture.minFilter = THREE.NearestFilter;
+
+
+
+
+      const material = new THREE.MeshLambertMaterial({
+        map: texture,
+        side: THREE.DoubleSide,
+        alphaTest: 0.1,
+        transparent: true,
+      });
+
+      this.voxelWorld = new VoxelWorld({
+        material,
+        cellSize,
+        tileSize,
+        tileTextureWidth,
+        tileTextureHeight,
+      });
+
+
+        this.scene.attach(this.voxelWorld.getWorldPivot())
+        
+
+      this.voxelWorld.buildRandomWorld()
 
       this.controls.minDistance = 20
       this.controls.maxDistance = 220
@@ -256,18 +278,13 @@ export default {
 
                   entityManager.getEntitiesEventEmitter().on('playersChanged', function entityListener(myPlayer, playersOnGrid) {
                     try{
-                     this.$refs.stationpanel.playersChanged( myPlayer, playersOnGrid  )
-                     this.$refs.shiphud.playersChanged( myPlayer, playersOnGrid  )
-                     this.$refs.overview.playersChanged( myPlayer, playersOnGrid  )
-                     this.$refs.itemactionmenu.playersChanged( myPlayer, playersOnGrid  )
+                      this.$refs.itemactionmenu.playersChanged( myPlayer, playersOnGrid  )
                      }catch(e){}
                    }.bind(this));
 
 
                   entityManager.getEntitiesEventEmitter().on('entitiesChanged', function entityListener(myPossessedUnit, gridEntities) {
                     try{
-                     this.$refs.overview.entitiesChanged( myPossessedUnit, gridEntities )
-                     this.$refs.shiphud.entitiesChanged( myPossessedUnit, gridEntities )
                      this.$refs.rclickmenu.entitiesChanged( myPossessedUnit, gridEntities )
                     }catch(e){}
                    }.bind(this));
@@ -278,7 +295,7 @@ export default {
                      entityManager.getEntitiesEventEmitter().on('entitySoundEvent', function entityListener(soundEventData) {
 
 
-                        audioSystem.playSoundFromEvent(soundEventData)
+                      audioSystem.playSoundFromEvent(soundEventData)
 
 
                       }.bind(this));
@@ -370,7 +387,7 @@ export default {
 
         let sceneObj =  entityManager.getSceneObjectForEntity(focusUnit._id)
 
-        if(GalaxyHelper.playerIsDocked(playerData))
+        /*if(GalaxyHelper.playerIsDocked(playerData))
         {
             var dockingUnit = entityManager.getDataForEntityById(  playerData.dockedInStation  )
             sceneObj =  entityManager.getSceneObjectForEntity( playerData.dockedInStation )
@@ -381,7 +398,7 @@ export default {
 
             }
 
-        }
+        }*/
 
 
         if(sceneObj)
@@ -390,14 +407,7 @@ export default {
            camera_pivot.position = sceneObj.position
 
 
-        //sceneObj.add(camera_pivot)
-
-
-      //  sceneObj.add(camera_pivot)  //move the camera pivot to the focus unit
-      //   this.camera.rotation =
-
-        //   this.camera.copy(this.fakeCamera)  //copy the camera data to OrbitControls camera (a workaround https://stackoverflow.com/questions/53292145/forcing-orbitcontrols-to-navigate-around-a-moving-object-almost-working/53298655#53298655 )
-
+        
         }else{
           console.log('WARN - no scene object for my focus unit' )
         }
