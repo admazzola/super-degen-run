@@ -143,7 +143,7 @@ export default {
       const tileTextureHeight = 64;
 
       const texLoader = new THREE.TextureLoader();
-      const texture = texLoader.load('../assets/textures.tiles_flourish.png', function(){
+      const texture = texLoader.load('../assets/textures/tiles_flourish.png', function(){
         'loaded tex'
       });
       texture.magFilter = THREE.NearestFilter;
@@ -168,10 +168,12 @@ export default {
       });
 
 
-        this.scene.attach(this.voxelWorld.getWorldPivot())
+      
         
 
       this.voxelWorld.buildRandomWorld()
+
+       this.scene.add(this.voxelWorld.getWorldPivot())
 
       this.controls.minDistance = 20
       this.controls.maxDistance = 220
