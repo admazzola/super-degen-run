@@ -76,6 +76,8 @@ export default class ModelLoader   {
 
       } );
 
+     
+
       resolve( object ) 
 
     } );

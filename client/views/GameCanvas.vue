@@ -109,7 +109,7 @@ export default {
 
       const RENDER_DISTANCE = 20000;
 
-      const chunkSize = 32;
+      
 
       this.scene = new THREE.Scene()
       this.scene.background = new THREE.Color('lightblue');
@@ -138,7 +138,7 @@ export default {
       	this.renderer.domElement
       );
  
-
+      const chunkSize = 64;
       const tileSize = 128;
       const tileTextureWidth = 1152;
       const tileTextureHeight = 1280;
@@ -178,9 +178,9 @@ export default {
 
        this.scene.add(this.voxelWorld.getWorldPivot())
 
-      this.controls.minDistance = 20
-      this.controls.maxDistance = 220
-      this.controls.dollyTo(130)
+      this.controls.minDistance = 1 // not working ??? 
+      this.controls.maxDistance = 80
+      this.controls.dollyTo(20)
 
       this.controls.rotateTo(1.0, 1.0, false)
 

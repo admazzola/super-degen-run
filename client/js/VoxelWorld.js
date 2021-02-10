@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {OrbitControls} from 'three';
+import {OrbitControls, Vector3} from 'three';
 
 
 
@@ -13,6 +13,7 @@ const neighborOffsets = [
   [ 0,  0,  1], // front
 ];
 
+ 
 
 
 export default class VoxelWorld {
@@ -24,8 +25,10 @@ export default class VoxelWorld {
     this.tileTextureWidth = options.tileTextureWidth;
     this.tileTextureHeight = options.tileTextureHeight;
     const {chunkSize} = this;
-    this.cellSliceSize = chunkSize * chunkSize;
+    this.chunkSliceSize = chunkSize * chunkSize;
     this.cells = {};
+
+    this.scaleFactor = 5;
 
 
     this.cellIdToMesh = {};
@@ -38,11 +41,11 @@ export default class VoxelWorld {
     return this.worldPivot
   }
   computeVoxelOffset(x, y, z) {
-    const {chunkSize, cellSliceSize} = this;
+    const {chunkSize, chunkSliceSize} = this;
     const voxelX = THREE.MathUtils.euclideanModulo(x, chunkSize) | 0;
     const voxelY = THREE.MathUtils.euclideanModulo(y, chunkSize) | 0;
     const voxelZ = THREE.MathUtils.euclideanModulo(z, chunkSize) | 0;
-    return voxelY * cellSliceSize +
+    return voxelY * chunkSliceSize +
            voxelZ * chunkSize +
            voxelX;
   }
@@ -231,12 +234,12 @@ export default class VoxelWorld {
   buildWorld(worldGenerator){
     let worldseed = 0 
 
-    worldGenerator.generateChunk( worldseed, 0,0, this.chunkSize, this.setVoxel.bind(this) );
+     worldGenerator.generateChunk( worldseed, 0,0, this.chunkSize, this.setVoxel.bind(this) );
 
 
       
-
-     this.updateVoxelGeometry(1, 1, 1);   //needed, but i dont understand 
+        //needed, but i dont understand 
+     this.updateVoxelGeometry(1,1,1);   
   }
 
 
@@ -265,12 +268,17 @@ export default class VoxelWorld {
       mesh.name = cellId;
       this.cellIdToMesh[cellId] = mesh;
       
-      mesh.position.set(cellX * this.chunkSize, cellY * this.chunkSize, cellZ * this.chunkSize);
+      mesh.position.set(cellX * this.chunkSize * this.scaleFactor, cellY * this.chunkSize* this.scaleFactor, cellZ * this.chunkSize * this.scaleFactor);
+
+      mesh.scale.set(this.scaleFactor,this.scaleFactor,this.scaleFactor)
     }
 
     return mesh
   }
 
+  /*
+  What does this do ?
+  */
   updateVoxelGeometry(x, y, z) {
     const updatedCellIds = {};
     for (const offset of neighborOffsets) {
@@ -281,7 +289,7 @@ export default class VoxelWorld {
       if (!updatedCellIds[cellId]) {
         updatedCellIds[cellId] = true;
         let newMesh = this.getUpdatedCellMesh(ox, oy, oz);
-
+        console.log('updateVoxelGeometry  ', newMesh )
         this.worldPivot.add(newMesh);
       }
     }

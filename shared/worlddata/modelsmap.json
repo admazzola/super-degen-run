@@ -1,7 +1,7 @@
 {
   "humanA":{
     "model":"/character/Model/characterMedium.fbx",
-    "texture":"/character/Skins/survivorMaleB.png" 
+    "texture":"/character/Skins/survivorMaleB.png"
   },
   "humanB":{
     "model":"/character/Model/characterMedium.fbx",

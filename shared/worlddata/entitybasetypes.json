@@ -3,7 +3,7 @@
     "modelname":"humanA",
     "name":"human",
     "entitytype": "unit",
-    "scaleFactor": 1.0,
+    "scaleFactor": 0.05,
     "collisionRadius": 1,
     "stats": {
                 "energy": 400,
