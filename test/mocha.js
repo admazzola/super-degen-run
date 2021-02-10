@@ -96,6 +96,8 @@ describe('  server tests', function() {
     let spawnLoc = GameState.getNewPlayerSpawnLocation()
     
 
+    let pubAddress = "0x038008C398A3dC9bE14d7F1370D22777DB30B5ea"
+
     await GameState.spawnPlayerUnit( {publicAddress:ethAcct.address }, 'humanMale', spawnLoc, this.mongoInterface )
       
     console.log('spawned player unit  ')

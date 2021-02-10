@@ -36,8 +36,12 @@ async init()
       ownedByGridUpdaterId: null
     }
 
-    let gridphase = await this.mongoInterface.upsertOne('gridphases', {gridUUID: dimension.gridUUID} , newGridPhaseData )
+    let existingGridPhase = await this.mongoInterface.findOne( 'gridphases', {gridUUID: dimension.gridUUID} )
 
+    if(!existingGridPhase){
+      let gridphase = await this.mongoInterface.upsertOne('gridphases', {gridUUID: dimension.gridUUID} , newGridPhaseData )
+    }
+    
   }
  
 

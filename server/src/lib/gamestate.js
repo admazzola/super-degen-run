@@ -42,7 +42,7 @@ module.exports = class GameState {
   {
     //planet 1 on xel
     return {
-      dimension: 'eden',
+      gridUUID: 'ce7e1f47aecfa000',
       instanceUUID:  null, //'361c0d2091b08f0c',
       locationVector: new THREE.Vector3( 0, 0, 0 ),
       velocityVector: new THREE.Vector3( 0, 0, 0 )
@@ -97,7 +97,7 @@ module.exports = class GameState {
 
 
       var newUnitData = {
-        dimension: location.dimension,
+        gridUUID: location.gridUUID,
         instanceUUID: location.instanceUUID,
         locationVector: location.locationVector,// new THREE.Vector3( 0, 1, 0 )  {x: location.x, y: location.y},
         velocityVector: location.velocityVector,
@@ -107,6 +107,8 @@ module.exports = class GameState {
         active:  true,   //owner not logged out
         invisible: false,
         isStatic:false,
+        aiFaction:null,
+        dead:false,
         owningPlayerId: player._id,
  
        }
@@ -142,12 +144,13 @@ module.exports = class GameState {
 
 
 
-    let activePlayerUnits = await mongoInterface.findAll('units',{aiFaction: null, active:true, isStatic:false , dead:false/*, unittype: {$ne:'shipwreck'}*/} )
+    let activePlayerUnits = await mongoInterface.findAll('units',
+                          {aiFaction: null, active:true, isStatic:false, dead:false } )
 
     let totalActivePlayerCount = 0
  
 
-    for(var activePlayerUnit of  activePlayerUnits)
+    /*for(var activePlayerUnit of  activePlayerUnits)
     {
       var player = await mongoInterface.findOne('activePlayers', { possessedUnitId: activePlayerUnit._id })
 
@@ -157,7 +160,7 @@ module.exports = class GameState {
         var instanceuuid = activePlayerUnit.instanceUUID
  
      }
-    }
+    }*/
  
 
     let allGridPhases = await mongoInterface.findAll('gridphases')
@@ -169,15 +172,19 @@ module.exports = class GameState {
 
 
         let activePlayerUnitsInGridPhase = activePlayerUnits.filter( x => (x.gridUUID == phase.gridUUID && x.instanceUUID == phase.instanceUUID ))
- 
+      
     
         let hasActivePlayerUnits = (activePlayerUnitsInGridPhase && activePlayerUnitsInGridPhase.length>0)
 
-     
+      
+
+  //      console.log('meep', phase, activePlayerUnits, activePlayerUnitsInGridPhase, hasActivePlayerUnits)
+
+
   
         if(!isNaN(activePlayerUnitsInGridPhase.length)){
          totalActivePlayerCount = totalActivePlayerCount + parseInt(activePlayerUnitsInGridPhase.length)
-       }
+        } 
 
        let newGridUpdaterOwnedBy = null;
 
