@@ -28,3 +28,8 @@
 ** zones can be very large if I desire 
 
 * do not store player psn in mongo !! that will be in memory 
+
+
+#### Servers 
+- There will be 1 auth server that gives people tokens, stores them in redis
+- There will be ZoneServers which 

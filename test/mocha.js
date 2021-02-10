@@ -98,6 +98,11 @@ describe('  server tests', function() {
       
     console.log('spawned player unit  ')
 
+
+    await GameState.updateGridPhaseActivityMetrics(this.mongoInterface)
+
+    let gridphases = await this.mongoInterface.findOne('gradphases', {} )
+
   })
 
 /*

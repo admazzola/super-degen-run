@@ -6,6 +6,8 @@ const ethJsUtil = require('ethereumjs-util')
 //let mongoInterface = require('./mongo-interface')
 //let redisInterface = require('./redis-interface')
 
+const GameState = require('./gamestate')
+const WorldHelper = require('../../../shared/lib/WorldHelper')
 
 const geckos = require('@geckos.io/server').default
 const { iceServers } = require('@geckos.io/server')

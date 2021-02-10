@@ -284,8 +284,8 @@ module.exports = class GameState {
       return activeGrids ;
 
   }
-
-  async getEntitiesOnGrid( gridUUID )
+/*
+  static async getEntitiesOnGrid( gridUUID )
    {
       
 
@@ -299,7 +299,34 @@ module.exports = class GameState {
        return { grid:existingGrid, entities: entities,    players: players   }
 
 
+   }*/
+
+   static async getEntitiesInGridPhase( gridUUID, instanceUUID,  mongoInterface )
+  {
+       let units = await mongoInterface.findAll('units', {gridUUID: gridUUID,
+                            instanceUUID: instanceUUID, active:true })
+     
+      return {   entities: units  }
+  }
+
+
+
+   /*
+   We store player positions in redis and other data (items) in mongo 
+   */
+   static async getGridPhaseStateData(gridUUID, instanceUUID, mongoInterface, redisInterface){
+
+    let result =  await GameState.getEntitiesInGridPhase(gridUUID, instanceUUID, mongoInterface)
+    
+    let players = []
+
+
+
+    return {gridUUID: gridUUID, instanceUUID: instanceUUID, entities: result.entities }
+
+
    }
+   
 
 
    async update()
