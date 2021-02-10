@@ -138,9 +138,9 @@ module.exports = class ClientConnection {
      })
 
      //receive data about all entities on my grid
-     channel.on('gridState', async (data) => {
+     channel.on('gridPhaseState', async (data) => {
 
-       await entityManager.receivedGridStateFromServer( data )
+       await entityManager.receivedGridPhaseStateFromServer( data )
 
      })
 

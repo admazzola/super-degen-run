@@ -19,7 +19,7 @@ var broadcastGridsWorker;
 var clientSocketChannels = new Map();
 
 const GRID_UPDATE_RATE = 500;
-
+var cachedPlayerData = new Map()
 
 
 module.exports = class SocketServ {
@@ -45,12 +45,7 @@ module.exports = class SocketServ {
 
 
 
-    broadcastGridsWorker =  setInterval( function(){ 
-
-      //update loop 
-      this.broadcastGridDataToRooms( ) 
-    
-    }.bind(this)  , GRID_UPDATE_RATE)
+    broadcastGridsWorker =  setInterval( this.update.bind(this) , GRID_UPDATE_RATE)
 
 
   io.onConnection(channel => {
@@ -195,7 +190,10 @@ module.exports = class SocketServ {
  
             clientSocketChannels.set(data.publicAddress , channel  );
 
-            this.forceClientIntoGridCommsChannel(data.publicAddress  , result.gridUUID )
+         //   this.forceClientIntoGridCommsChannel(data.publicAddress  , result.gridUUID )
+
+            cachedPlayerData.set(data.publicAddress,  {}  )
+
 
         }
       }else{
@@ -264,22 +262,110 @@ module.exports = class SocketServ {
   }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+  async update(){ 
+
+    //do this in here?? 
+    let result = await GameState.updateGridPhaseActivityMetrics(this.mongoInterface)
+
+    await this.updateClientChangedGridsMonitoring(this.mongoInterface)
+    
+    await this.broadcastGridDataToRooms()
+  }
+
+ 
+
+
+  async updateClientChangedGridsMonitoring(mongoInterface){
+
+
+
+    let activePlayerUnits = await mongoInterface.findAll('units',{aiFaction: null, active:true, isStatic:false , dead:false } )
+
+    for(var activePlayerUnit of  activePlayerUnits)
+    {
+      var player = await mongoInterface.findOne('activePlayers', { possessedUnitId: activePlayerUnit._id })
+
+      if(activePlayerUnit && player)
+      {
+
+        var griduuid = activePlayerUnit.gridUUID
+        var instanceuuid = activePlayerUnit.instanceUUID
+
+        let cachedPlayer = cachedPlayerData.get(player.publicAddress)
+
+
+        //console.log('activePlayerUnit',activePlayerUnit , cachedPlayer)
+        
+        if(cachedPlayer){ 
+
+            let cachedGridUUID = cachedPlayer.gridUUID //cachedPlayerGridUUID.get(player.publicAddress)
+            let cachedInstanceUUID = cachedPlayer.instanceUUID
+                //check for player grid changes to switch their socket channel
+              if(griduuid){
+                if(griduuid != cachedGridUUID || instanceuuid!= cachedInstanceUUID){
+
+
+                    let socketRoomName = WorldHelper.getSocketRoomNameForGridInstance( griduuid,instanceuuid )
+
+
+                      this.forceClientIntoGridCommsChannel(player.publicAddress, socketRoomName )
+
+
+
+                }
+              }
+         }
+
+         //this map basically remembers the socket channel that each player is in...based on where their possessed unit is 
+         cachedPlayerData.set(player.publicAddress, Object.assign( player, {gridUUID: griduuid,instanceUUID:instanceuuid}) )
+
+
+     }
+    }
+
+
+
+
+
+}
+
+
+
+  //not happening 
   async forceClientIntoGridCommsChannel(clientPublicAddress, newGridUUID)
   {
+    console.log('force into comms ', clientPublicAddress, newGridUUID)
+
         var channel = clientSocketChannels.get( clientPublicAddress )
         channel.join( newGridUUID  )//throw the client in the grids room
   }
 
   async broadcastGridDataToRooms( ){
+
+   
     //update player queued actions
     var activeGridPhases = await this.mongoInterface.findAll('gridphases', { hasActivePlayerUnits:true })
-    for(var activePhase of  activeGridPhases)
+    for(var activePhase of activeGridPhases) 
     {
+     
       var gridUUID = activePhase.gridUUID
       var instanceUUID = activePhase.instanceUUID
       var gridPhaseState = await GameState.getGridPhaseStateData(gridUUID,instanceUUID, this.mongoInterface, this.redisInterface);
       let socketRoomName = WorldHelper.getSocketRoomNameForGridInstance( gridUUID , instanceUUID)
       io.room( socketRoomName ).emit('gridPhaseState', gridPhaseState, {reliable: false })
+     
     }
   }
 

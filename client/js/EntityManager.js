@@ -37,7 +37,7 @@ export default class EntityManager {
    this.loader = loader;
 
 
-    this.addTestModel()
+    //  this.addTestModel()
 
     //do this once we receive data from server about where we are
    //this.loadGrid()
@@ -317,13 +317,13 @@ async examineGridChangesForEvents(currentEntities, newEntitiesArray)
 
 
 //OPTIMIZATION: probably want each grid to be a socket channel, this data will automatically be broadcasted by the server-- not asked for
- async receivedGridStateFromServer(data)
+ async receivedGridPhaseStateFromServer(data)
  {
 
-   //console.log('received grid state from server', data )
+    console.log('received grid state from server', data )
 
    var newGridEntities = data.entities;
-   var gridUUID = data.grid.uuid;
+   var gridUUID = data.gridUUID;
    var newGridPlayers = data.players;
 
    currentGridTick = data.grid.gridTick

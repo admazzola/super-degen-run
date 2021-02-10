@@ -8,6 +8,9 @@ TODO
 - in the game, changes to chunk tiles are broadcasted as deltas.   If a players version of a chunk drops out of sync (use fingerprints, blockchain, like GVM) then the server sends the entire chunk state to the player [compressed]
 
 
+## CHUNKS
+Chunktiles are a uint8 array of 64x64x64 
+Compress into a buffer to send over the wire https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array 
 
 
 * when a player tries to set a block, that is relayed to everyone 
@@ -49,3 +52,9 @@ Each zoneserver will have a max player cap and a queue (like squad/wow)
 Gridupdater server will run the mob AI+physics (dont worry about that rn) 
 
 * add a WoW targetting system as opposed to the minecraft system (later -- for dungeons ) 
+
+
+* every tick, server broadcasts array of entities in the phase
+
+
+* OPTION: Group players together into phases  (players in a pocket far away are put into a different phase !)
