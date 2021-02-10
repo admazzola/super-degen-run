@@ -3,7 +3,7 @@ const THREE = require('three')
 
 const GRID_UPDATE_RATE = 500;
 
-const  GalaxyHelper = require('../../../../shared/lib/GalaxyHelper')
+const  GalaxyHelper = require('../../../../shared/lib/WorldHelper')
 
 const UnitHelper = require('../../../../shared/lib/UnitHelper')
 
@@ -28,12 +28,12 @@ module.exports = class GridUpdater {
   }
 
   //used when a client player changes his grid....forces them into a different socket server channel
-  setClientChangedGridCallback(callback)
+ /* setClientChangedGridCallback(callback)
   {
     clientChangedGridCallback = callback;
 
 
-  }
+  }*/
 
 
 

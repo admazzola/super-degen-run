@@ -1,12 +1,8 @@
-{
-  "dimensions": [
+[
     {
-      "name": "eden" 
+      "name": "eden",
+      "worldseed": 0
      
     } 
 
-  ]
-
-
-
-}
+] 

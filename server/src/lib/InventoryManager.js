@@ -2,7 +2,7 @@
 let mongoInterface = require('./mongo-interface')
 
 const ItemHelper = require('../../../shared/lib/ItemHelper')
-const GalaxyHelper = require('../../../shared/lib/GalaxyHelper')
+const WorldHelper = require('../../../shared/lib/WorldHelper')
 const UnitHelper = require('../../../shared/lib/UnitHelper')
 
 module.exports = class InventoryManager {
@@ -56,7 +56,7 @@ module.exports = class InventoryManager {
   async getActiveItemContainerForPlayer( player )
   {
 
-    let containerOwnerIdRaw = GalaxyHelper.getActiveItemContainerEncapsulatingUnitIDForPlayer(player)
+    let containerOwnerIdRaw = player.possessedUnitId // WorldHelper.getActiveItemContainerEncapsulatingUnitIDForPlayer(player)
 
     let containerOwnerUnit = await this.mongoInterface.findById('units', containerOwnerIdRaw)
 

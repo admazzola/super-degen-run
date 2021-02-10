@@ -11,7 +11,7 @@ const port = serverConfig.gameServer.port
 const bodyParser = require('body-parser')
 
 var SocketServ = require('./socket-serv')
-var GalaxyState = require('./galaxystate')
+var GalaxyState = require('./WorldBuilder')
 var InventoryManager = require('./InventoryManager')
 
 
@@ -53,14 +53,14 @@ module.exports =  class GameServer {
     await redisInterface.init()
     await mongoInterface.init('outerspace_'.concat(serverMode))
 
-    let galaxyState = new GalaxyState(mongoInterface)
+    let worldBuilder = new WorldBuilder(mongoInterface)
     let gameState = new GameState(mongoInterface, redisInterface)
     let inventoryManager = new InventoryManager(mongoInterface)
 
 
-     socketServer = new SocketServ(server, gameState)
+     socketServer = new SocketServ(server, mongoInterface, redisInterface)
 
-     await galaxyState.init()
+     await worldBuilder.init()
 
 
      this.initApiPostRequests( app , inventoryManager )

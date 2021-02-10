@@ -1,13 +1,13 @@
 const THREE = require('three')
 
-var solarsystems = require('../../shared/worlddata/solarsystems.json').solarsystems
-var celestialtypes = require('../../shared/worlddata/celestialtypes.json')
-var entitybasetypes = require('../../shared/worlddata/entitybasetypes.json')
+var dimensions = require('../worlddata/dimensions.json')
+//var celestialtypes = require('../../shared/worlddata/celestialtypes.json')
+var entitybasetypes = require('../worlddata/entitybasetypes.json')
 
 
 
 
-module.exports =  class GalaxyHelper {
+module.exports =  class WorldHelper {
 
 
  constructor()
@@ -15,7 +15,7 @@ module.exports =  class GalaxyHelper {
 
  }
 
-
+/*
  static getCelestialsInGalaxy(galaxyName)
  {
    for(var i in solarsystems)
@@ -77,23 +77,22 @@ static getActiveItemContainerEncapsulatingUnitIDForPlayer( player )
 
 
  }
+ 
+*/
 
+static getSocketRoomNameForGridInstance(gridUUID, instanceUUID){
 
-static getFacingVectorFromGridToGrid(from,to)
-{
+  if(!gridUUID){
+    console.trace( 'getSocketRoomNameForGridInstance null gridUUID' )
+  }
 
-  var fromVector = new THREE.Vector3(from.gridLocationVector.x,from.gridLocationVector.y,from.gridLocationVector.z  )
+  if(!instanceUUID){
+    return gridUUID.toString()
+  }
 
-  var facing = (fromVector.clone().sub(to.gridLocationVector)).normalize().negate()
-  return facing;
+  return gridUUID.toString().concat('_').concat(instanceUUID)
 
 }
-
-static playerIsDocked(player)
-{
-  return player.dockedInStation
-}
-
 
 
 

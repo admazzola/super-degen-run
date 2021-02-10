@@ -1,6 +1,6 @@
 const THREE = require('three')
 
-const  dimensionHelper = require('../../../shared/lib/dimensionHelper')
+const WorldHelper = require('../../../shared/lib/WorldHelper')
 const entitytypes = require('../../../shared/worlddata/entitybasetypes.json')
 
 const UnitHelper = require('../../../shared/lib/UnitHelper')
@@ -511,13 +511,13 @@ module.exports = class GameState {
      return existingGrid.gridTick
    }
 
-
+/*
    setClientChangedGridCallback(callback)
    {
 
 
      gridUpdater.setClientChangedGridCallback( callback )
-   }
+   }*/
 
 
 }

@@ -239,9 +239,10 @@ module.exports = class SocketServ {
       var gridUUID = activePhase.gridUUID
       var instanceUUID = activePhase.instanceUUID
       var gridPhaseState = await GameState.getGridPhaseStateData(gridUUID,instanceUUID, this.mongoInterface, this.redisInterface);
-     let socketRoomName = GalaxyHelper.getSocketRoomNameForGridInstance( gridUUID , instanceUUID)
+      let socketRoomName = WorldHelper.getSocketRoomNameForGridInstance( gridUUID , instanceUUID)
       io.room( socketRoomName ).emit('gridPhaseState', gridPhaseState, {reliable: false })
     }
+  }
 
   //check the redis db
   async verifyAuthToken(credentials)

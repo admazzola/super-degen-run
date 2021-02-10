@@ -1,7 +1,7 @@
 
 
 const ItemHelper = require('../../../shared/lib/ItemHelper')
-const GalaxyHelper = require('../../../shared/lib/GalaxyHelper')
+const GalaxyHelper = require('../../../shared/lib/WorldHelper')
 const UnitHelper = require('../../../shared/lib/UnitHelper')
 
 const Web3 = require('web3')

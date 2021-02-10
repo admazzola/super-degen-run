@@ -1,13 +1,13 @@
-const THREE = require('three')
+//const THREE = require('three')
 
-var  GalaxyHelper = require(  '../../../shared/lib/GalaxyHelper' )
+var  WorldHelper = require(  '../../../shared/lib/WorldHelper' )
 var  UnitHelper = require(  '../../../shared/lib/UnitHelper' )
 
-var solarsystems = require('../../../shared/worlddata/solarsystems.json').solarsystems
-var celestialtypes = require('../../../shared/worlddata/celestialtypes.json')
-let mongoInterface = require('./mongo-interface')
+//var solarsystems = require('../../../shared/worlddata/solarsystems.json').solarsystems
+//var celestialtypes = require('../../../shared/worlddata/celestialtypes.json')
+//let mongoInterface = require('./mongo-interface')
 
-module.exports = class GalaxyState {
+module.exports = class WorldBuilder {
 
 
 constructor(mongoInterface)
@@ -20,19 +20,11 @@ constructor(mongoInterface)
 async init()
 {
 
-    console.log('building world statics...')
+    console.log('building world...')
 
+ 
 
-    //do not drop these because they are stations!
-  /*  try{
-     //await this.mongoInterface.deleteMany('units', {isStatic: true} )
-
-   }catch(e)
-   {
-     console.log('could not drop statics')
-   }*/
-
-
+/*
   for(var i in solarsystems)
   {
     var celestials =   solarsystems[i].celestials
@@ -41,11 +33,11 @@ async init()
       await this.spawnCelestial( solarsystems[i], celestials[j] )
     }
   }
-
+*/
 
 }
 
-
+/*
   async spawnCelestial( galaxy, celestial )  //each celestial is a grid
   {
 
@@ -106,7 +98,7 @@ async init()
 
 
   }
-
+*/
 
 
 }

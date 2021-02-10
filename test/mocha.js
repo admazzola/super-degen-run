@@ -6,6 +6,14 @@ const EthereumHelper = require('../shared/lib/EthereumHelper')
 const MarketManager = require('../server/src/lib/MarketManager')
 
 
+
+
+var GameServer = require('../server/src/lib/GameServer')
+
+
+
+
+
 const web3connectionconfig = require('../shared/contracts/web3connection.config')
 
 const web3utils = require('web3-utils')
@@ -62,6 +70,14 @@ describe('  server tests', function() {
 
   })
 
+
+  it(" can run the server   ", async () => {
+    var gameServer = new GameServer()
+
+ 
+
+  })
+ 
 
 
 
