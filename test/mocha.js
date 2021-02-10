@@ -75,6 +75,11 @@ describe('  server tests', function() {
     var gameServer = new GameServer()
 
  
+    await gameServer.start('test', function(){  });
+
+    console.log('booted test game server ')
+
+
 
   })
  

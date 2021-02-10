@@ -11,7 +11,7 @@ const port = serverConfig.gameServer.port
 const bodyParser = require('body-parser')
 
 var SocketServ = require('./socket-serv')
-var GalaxyState = require('./WorldBuilder')
+var WorldBuilder = require('./WorldBuilder')
 var InventoryManager = require('./InventoryManager')
 
 
