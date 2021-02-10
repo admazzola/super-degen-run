@@ -36,8 +36,21 @@ export default class EntityManager {
    this.scene = scene;
    this.loader = loader;
 
+
+    this.addTestModel()
+
     //do this once we receive data from server about where we are
    //this.loadGrid()
+ }
+
+ async addTestModel(){
+
+  var testModel = await this.loader.loadModel(  "humanA" ) 
+ 
+  var scaleFactor = 0.1
+  testModel.scale.set(scaleFactor,scaleFactor,scaleFactor) 
+  this.scene.add(  testModel  );
+  console.log('add test model ')
  }
 
  /*setOverview(oview)

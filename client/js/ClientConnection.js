@@ -173,8 +173,11 @@ module.exports = class ClientConnection {
 
  async requestSpawn()
  {
-   console.log('request spawn')
-   var datagram = {authToken: this.getSessionAuthDataCache().authToken, publicAddress: publicAddress }
+
+
+  let existingAuthData =  await this.getSessionAuthDataCache()
+ 
+   var datagram = {authToken: existingAuthData.authToken, publicAddress: publicAddress }
 
    console.log(channel )
      channel.emit('spawn', datagram , { reliable: true })

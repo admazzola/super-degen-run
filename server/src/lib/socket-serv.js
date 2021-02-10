@@ -81,8 +81,8 @@ module.exports = class SocketServ {
 
         if(existingStoreData.challenge){
 
-          console.log('found existing store ', existingStore)
-          randomChallenge = existingStore.challenge
+          console.log('found existing store ', existingStore, existingStoreData.challenge )
+          randomChallenge = existingStoreData.challenge
         }
 
       }
@@ -181,9 +181,11 @@ module.exports = class SocketServ {
 
         var unittype = 'humanMale' 
 
-        var loc = this.gameState.getNewPlayerSpawnLocation()
+        var loc = GameState.getNewPlayerSpawnLocation()
 
-        var result = await this.gameState.spawnPlayerUnit( data, unittype, loc  )
+        var result = await GameState.spawnPlayerUnit( data, unittype, loc, this.mongoInterface )
+
+        console.log('spawn result ', result )
 
         if(result.error)
         {
@@ -292,7 +294,7 @@ module.exports = class SocketServ {
 
     var existingJSON  = await this.redisInterface.findHashInRedis('auth_token',publicAddress )
     var existing = JSON.parse(existingJSON)
-    console.log('found record ', existing)
+    console.log('found record ', existing, token,  existing.authToken == token )
 
     if(existing.authToken == token)
     {

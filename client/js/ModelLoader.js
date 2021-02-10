@@ -1,12 +1,15 @@
+ 
 import * as THREE from 'three'
 
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+
+//import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 
 var modelcache = {}
 var loader
 
 var modelsmap = require('../../shared/worlddata/modelsmap.json')
-const preloadedAssets = [ ]
+const preloadedAssets = [ "humanA" ]
 
 
 export default class ModelLoader   {
@@ -14,7 +17,7 @@ export default class ModelLoader   {
 
  constructor()
  {
-   loader = new GLTFLoader();
+   loader = new FBXLoader();
 
  }
 
@@ -35,16 +38,46 @@ export default class ModelLoader   {
 
    var filepath = '../assets/'+assetpath
 
-  console.log(filepath)
+
+  const texture = new THREE.TextureLoader().load( '../assets/'+'/character/Skins/survivorMaleB.png' );
+
+
+  console.log('loading', filepath)
    return new Promise ((resolve, reject) => {
 
-     loader.load(filepath, function ( gltf ) {
+     /*loader.load(filepath, function ( gltf ) {
        modelcache[cacheid]= gltf.scene
        resolve( gltf.scene )
      }.bind(this), undefined, function ( error ) {
        console.error( error );
        reject(error)
-     } );
+     } );*/
+
+
+     loader.load( filepath , function ( object ) {
+
+     //let mixer = new THREE.AnimationMixer( object );
+
+     // const action = mixer.clipAction( object.animations[ 0 ] );
+     // action.play();
+
+      object.traverse( function ( child ) {
+
+        if ( child.isMesh ) {
+
+          child.castShadow = false;
+          child.receiveShadow = false;
+          child.material.map = texture 
+         
+          
+
+        }
+
+      } );
+
+      resolve( object ) 
+
+    } );
 
 
    })
@@ -55,7 +88,7 @@ export default class ModelLoader   {
  lookupAssetName( name)
  {
    console.log('map', modelsmap, name)
-     return modelsmap[name].modelpath.toString()
+     return modelsmap[name].model.toString()
 
 
  }

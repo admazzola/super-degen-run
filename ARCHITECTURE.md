@@ -1,5 +1,15 @@
 ## Crypto Pompeii 
  
+TODO
+- spawn in human fbx model 
+- add physics (gridupdater) and walking around 
+- fix blocks rendered based on block type 
+- server needs to do worldgen and then stream that COMPRESSED chunk tile data to the users (compressed?) 
+- in the game, changes to chunk tiles are broadcasted as deltas.   If a players version of a chunk drops out of sync (use fingerprints, blockchain, like GVM) then the server sends the entire chunk state to the player [compressed]
+
+
+
+
 * when a player tries to set a block, that is relayed to everyone 
 * hash of a chunk per ServerTick is checked every so often to see if client/server are out of sync 
 
