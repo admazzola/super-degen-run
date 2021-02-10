@@ -326,14 +326,8 @@ async examineGridChangesForEvents(currentEntities, newEntitiesArray)
    var gridUUID = data.gridUUID;
    var newGridPlayers = data.players;
 
-   currentGridTick = data.grid.gridTick
-
-   /*if(currentGridUUID != gridUUID)
-   {
-     console.log('WARN: server grid and client grid UUIDs mismatching for me-- ?')
-
-     console.log(currentGridUUID , gridUUID)
-   }*/
+  // currentGridTick = data.grid.gridTick
+ 
 
    await this.loadGrid( newGridEntities, newGridPlayers  )
 

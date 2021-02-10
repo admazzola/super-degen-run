@@ -327,9 +327,18 @@ module.exports = class GameState {
     
     let players = []
 
+    for(let unit of result.entities){
+      let player = await mongoInterface.findOne('activePlayers', { possessedUnitId: unit._id })
 
+      players.push(player)
+    }
+     
 
-    return {gridUUID: gridUUID, instanceUUID: instanceUUID, entities: result.entities }
+    return {gridUUID: gridUUID,
+       instanceUUID: instanceUUID,
+        entities: result.entities,
+        players: players
+       }
 
 
    }
