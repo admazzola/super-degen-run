@@ -84,6 +84,8 @@ describe('  server tests', function() {
       this.mongoInterface = mongoInterface
      }.bind(this));
 
+    // this.mongoInterface.deleteMany('gridphases')
+
     console.log('booted test game server ')
 
      
@@ -101,7 +103,9 @@ describe('  server tests', function() {
 
     await GameState.updateGridPhaseActivityMetrics(this.mongoInterface)
 
-    let gridphases = await this.mongoInterface.findOne('gradphases', {} )
+    let gridphases = await this.mongoInterface.findAll('gridphases', {} )
+
+    console.log('gridphases', gridphases)
 
   })
 

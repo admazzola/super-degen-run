@@ -54,7 +54,7 @@ module.exports =  class GameServer {
 
 
     await redisInterface.init()
-    await mongoInterface.init('outerspace_'.concat(serverMode))
+    await mongoInterface.init('polyvoxels_'.concat(serverMode))
 
     let worldBuilder = new WorldBuilder(mongoInterface)
     //let gameState = new GameState(mongoInterface, redisInterface)

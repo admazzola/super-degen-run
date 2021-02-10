@@ -33,3 +33,5 @@
 #### Servers 
 - There will be 1 auth server that gives people tokens, stores them in redis
 - There will be ZoneServers which 
+
+Each zoneserver will have a max player cap and a queue (like squad/wow) 

@@ -1,7 +1,8 @@
 [
     {
       "name": "eden",
-      "worldseed": 0
+      "worldseed": 0,
+      "gridUUID": "ce7e1f47aecfa000"
      
     } 
 

@@ -3,6 +3,8 @@
 var  WorldHelper = require(  '../../../shared/lib/WorldHelper' )
 var  UnitHelper = require(  '../../../shared/lib/UnitHelper' )
 
+var dimensions = require('../../../shared/worlddata/dimensions.json')
+
 //var solarsystems = require('../../../shared/worlddata/solarsystems.json').solarsystems
 //var celestialtypes = require('../../../shared/worlddata/celestialtypes.json')
 //let mongoInterface = require('./mongo-interface')
@@ -22,6 +24,21 @@ async init()
 
     console.log('building world...')
 
+
+  for(let dimension of dimensions){
+
+    let newGridPhaseData = {
+      gridUUID: dimension.gridUUID,
+      instanceUUID: null,
+      gridPhaseTick: 0,
+      lastMobResetTimestamp: 0,
+      hasActivePlayerUnits: false,
+      ownedByGridUpdaterId: null
+    }
+
+    let gridphase = await this.mongoInterface.upsertOne('gridphases', {gridUUID: dimension.gridUUID} , newGridPhaseData )
+
+  }
  
 
 /*
