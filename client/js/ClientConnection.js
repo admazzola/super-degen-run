@@ -1,11 +1,12 @@
 
 
 // import geckos.io client
-import geckos from '@geckos.io/client'
+//import geckos from '@geckos.io/client'
 
+const geckos = require('@geckos.io/client').default
 
-import Web3 from 'web3'
-
+//import Web3 from 'web3'
+const Web3 = require('web3')
 
 var web3utils = require('web3-utils')
 
@@ -20,7 +21,7 @@ const serverConfig = require('../../server.config')
 
 
 
-export default class ClientConnection {
+module.exports = class ClientConnection {
 
 
 

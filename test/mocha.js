@@ -1,12 +1,16 @@
 var assert = require('chai').assert;
 var expect = require('chai').expect;
 
+
+const Web3 = require('web3')
+
 const Delay = require('delay');
 const EthereumHelper = require('../shared/lib/EthereumHelper')
 const MarketManager = require('../server/src/lib/MarketManager')
 
 
-
+const Player = require('../client/js/Player')
+const ClientConnection = require('../client/js/ClientConnection')
 
 var GameServer = require('../server/src/lib/GameServer')
 
@@ -78,10 +82,34 @@ describe('  server tests', function() {
     await gameServer.start('test', function(){  });
 
     console.log('booted test game server ')
-
-
+      
 
   })
+
+
+  it(" client can join the server   ", async () => {
+
+    let web3 = new Web3()
+
+    let ethAcct = web3.eth.accounts.create() 
+    
+    console.log('ethAcct',ethAcct)
+
+    let player = new Player( ethAcct.address )
+
+    let clientConnection = new ClientConnection( )
+     
+    await clientConnection.init( player, function(){ } )
+
+
+    console.log('client connected to server  ')
+      
+
+  })
+ 
+
+
+
  
 
 

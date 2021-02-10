@@ -1,13 +1,9 @@
-import * as THREE from 'three'
-
-
-
 
 
 var web3utils = require('web3-utils')
 
 
-export default class Player   {
+module.exports = class Player   {
 
 
    constructor(pubAddress)
