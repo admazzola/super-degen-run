@@ -34,15 +34,16 @@ export default class ModelLoader   {
      return existing
    }
 
-   var assetpath = this.lookupAssetName( name)
+   var assetData = this.lookupAssetByName( name)
 
-   var filepath = '../assets/'+assetpath
-
-
-  const texture = new THREE.TextureLoader().load( '../assets/'+'/character/Skins/survivorMaleB.png' );
+   var modelfilepath = '../assets/'+assetData.model.toString()
+   var texturefilepath = '../assets/'+assetData.texture.toString()
 
 
-  console.log('loading', filepath)
+   const texture = new THREE.TextureLoader().load( texturefilepath );
+
+
+  console.log('loading', modelfilepath)
    return new Promise ((resolve, reject) => {
 
      /*loader.load(filepath, function ( gltf ) {
@@ -54,7 +55,7 @@ export default class ModelLoader   {
      } );*/
 
 
-     loader.load( filepath , function ( object ) {
+     loader.load( modelfilepath , function ( object ) {
 
      //let mixer = new THREE.AnimationMixer( object );
 
@@ -85,10 +86,10 @@ export default class ModelLoader   {
  }
 
 
- lookupAssetName( name)
+ lookupAssetByName( name)
  {
-   console.log('map', modelsmap, name)
-     return modelsmap[name].model.toString()
+ 
+     return modelsmap[name] 
 
 
  }

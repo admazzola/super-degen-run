@@ -1,10 +1,10 @@
 {
   "humanA":{
     "model":"/character/Model/characterMedium.fbx",
-    "texture":"/character/Skins/survivorMaleB" 
+    "texture":"/character/Skins/survivorMaleB.png" 
   },
   "humanB":{
     "model":"/character/Model/characterMedium.fbx",
-    "texture":"/character/Skins/survivorFemaleA" 
+    "texture":"/character/Skins/survivorFemaleA.png" 
   }
 }
