@@ -7,25 +7,22 @@ const UnitHelper = require('../../../shared/lib/UnitHelper')
 
 var InventoryManager = require('./InventoryManager')
 
-var GridUpdater = require('./util/gridupdater')
-var gridUpdater;
-
 
 module.exports = class GameState {
 
   //this talks to mongo and redis heavily
 
-  constructor( mongoInterface, redisInterface)
+  constructor(  )
   {
-    console.log('server booted gamestate')
+    /*console.log('server booted gamestate')
     this.mongoInterface = mongoInterface
     this.redisInterface = redisInterface
 
     let inventoryManager = new InventoryManager(mongoInterface)
+    */
 
 
-    gridUpdater = new GridUpdater(1, mongoInterface,redisInterface )
-    gridUpdater.start();
+
   }
 
 
@@ -41,7 +38,7 @@ module.exports = class GameState {
 
 
   //KEEP IN MIND - the server never stores the facing vector- that is always inferred by the client and lerps
-  getNewPlayerSpawnLocation()
+  static getNewPlayerSpawnLocation()
   {
     //planet 1 on xel
     return {
@@ -56,28 +53,26 @@ module.exports = class GameState {
 
 
   //used for brand new players  
-  async spawnPlayerUnit( data, unittype , location)
+  static async spawnPlayerUnit( data, unittype , location, mongoInterface)
   {
     console.log('spawning player unit', data)
     //make sure the unit  is not already spawned
 
     let result;
       try{
-          result = await this.mongoInterface.findOne('activePlayers', {publicAddress: data.publicAddress })
+          result = await mongoInterface.findOne('activePlayers', {publicAddress: data.publicAddress })
       }catch(e)
       {
         console.log('cannot find possessed unit')
       }
 
-
-
-
+ 
     if(result)
     {
       console.log('error - player unit exists - cannot spawn')
 
       var unitId = result.possessedUnitId;
-      var unit = await this.mongoInterface.findOne('units',  {_id:unitId} )
+      var unit = await mongoInterface.findOne('units',  {_id:unitId} )
 
       if(!unit)
       {
@@ -93,12 +88,12 @@ module.exports = class GameState {
 
 
 
-      await this.mongoInterface.upsertOne('activePlayers',
+      await mongoInterface.upsertOne('activePlayers',
         {publicAddress: data.publicAddress},
         {publicAddress: data.publicAddress,  active:true}
         )
 
-      let player = await this.mongoInterface.findOne('activePlayers',{publicAddress: data.publicAddress})
+      let player = await mongoInterface.findOne('activePlayers',{publicAddress: data.publicAddress})
 
 
       var newUnitData = {
@@ -118,13 +113,13 @@ module.exports = class GameState {
 
 
 
-      var response = await this.mongoInterface.insertOne('units',  newUnitData )
+      var response = await mongoInterface.insertOne('units',  newUnitData )
 
       var insertedId = response.insertedId ;
       console.log('got insert one response',insertedId)
 
 
-      await this.mongoInterface.upsertOne('activePlayers',
+      await mongoInterface.upsertOne('activePlayers',
       {publicAddress: data.publicAddress},
         {publicAddress: data.publicAddress,
           possessedUnitId: insertedId,
@@ -142,19 +137,19 @@ module.exports = class GameState {
 
 
   //figures out which gridphases have active players and manages grid updater ids
-  async updateGridPhaseActivityMetrics()
+  static async updateGridPhaseActivityMetrics(mongoInterface)
   {
 
 
 
-    let activePlayerUnits = await this.mongoInterface.findAll('units',{aiFaction: null, active:true, isStatic:false , dead:false/*, unittype: {$ne:'shipwreck'}*/} )
+    let activePlayerUnits = await mongoInterface.findAll('units',{aiFaction: null, active:true, isStatic:false , dead:false/*, unittype: {$ne:'shipwreck'}*/} )
 
     let totalActivePlayerCount = 0
  
 
     for(var activePlayerUnit of  activePlayerUnits)
     {
-      var player = await this.mongoInterface.findOne('activePlayers', { possessedUnitId: activePlayerUnit._id })
+      var player = await mongoInterface.findOne('activePlayers', { possessedUnitId: activePlayerUnit._id })
 
       if(activePlayerUnit && player)
       {
@@ -165,7 +160,7 @@ module.exports = class GameState {
     }
  
 
-    let allGridPhases = await this.mongoInterface.findAll('gridphases')
+    let allGridPhases = await mongoInterface.findAll('gridphases')
 
 
     for( var phase of allGridPhases){
@@ -193,7 +188,7 @@ module.exports = class GameState {
        if(hasActivePlayerUnits){  //reset the count
          lastTimeWithActivePlayerUnits = Date.now()
 
-         await this.mongoInterface.updateOne('gridphases', {_id: phase._id},
+         await mongoInterface.updateOne('gridphases', {_id: phase._id},
           {
             lastTimeWithActivePlayerUnits:  lastTimeWithActivePlayerUnits
            })
@@ -208,15 +203,15 @@ module.exports = class GameState {
       if(phase.ownedByGridUpdaterId != newGridUpdaterOwnedBy || phase.hasActivePlayerUnits!= hasActivePlayerUnits){
 
         if(!phase.hasActivePlayerUnits && hasActivePlayerUnits){
-          await GameState.handleGridPhaseReactivation( phase.gridUUID, phase.instanceUUID, this.mongoInterface )
+          await GameState.handleGridPhaseReactivation( phase.gridUUID, phase.instanceUUID, mongoInterface )
         }
  
 
         if(!phase.hasActivePlayerUnits && !hasActivePlayerUnits && phase.lastMobResetTimestamp < Date.now() - 1000*60*10 ){ //ten minutes
-          await GameState.cleanupStaleGridPhase( phase.gridUUID, phase.instanceUUID, this.mongoInterface )
+          await GameState.cleanupStaleGridPhase( phase.gridUUID, phase.instanceUUID, mongoInterface )
         }
  
-        await this.mongoInterface.updateOne('gridphases', {_id: phase._id},
+        await mongoInterface.updateOne('gridphases', {_id: phase._id},
          {
            hasActivePlayerUnits: hasActivePlayerUnits,
            ownedByGridUpdaterId: newGridUpdaterOwnedBy

@@ -9,11 +9,11 @@ const EthereumHelper = require('../shared/lib/EthereumHelper')
 const MarketManager = require('../server/src/lib/MarketManager')
 
 
-const Player = require('../client/js/Player')
-const ClientConnection = require('../client/js/ClientConnection')
+//const Player = require('../client/js/Player')
+//const ClientConnection = require('../client/js/ClientConnection')
 
-var GameServer = require('../server/src/lib/GameServer')
-
+const GameServer = require('../server/src/lib/GameServer')
+const GameState = require('../server/src/lib/gamestate')
 
 
 
@@ -77,16 +77,30 @@ describe('  server tests', function() {
 
   it(" can run the server   ", async () => {
     var gameServer = new GameServer()
+    
 
  
-    await gameServer.start('test', function(){  });
+    await gameServer.start('test', function(mongoInterface,redisInterface){ 
+      this.mongoInterface = mongoInterface
+     }.bind(this));
 
     console.log('booted test game server ')
+
+     
+    let web3 = new Web3()
+
+    let ethAcct = web3.eth.accounts.create() 
+
+    let spawnLoc = GameState.getNewPlayerSpawnLocation()
+    
+
+    await GameState.spawnPlayerUnit( {publicAddress:ethAcct.address }, 'humanMale', spawnLoc, this.mongoInterface )
       
+    console.log('spawned player unit  ')
 
   })
 
-
+/*
   it(" client can join the server   ", async () => {
 
     let web3 = new Web3()
@@ -107,7 +121,7 @@ describe('  server tests', function() {
 
   })
  
-
+*/
 
 
  

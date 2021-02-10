@@ -15,9 +15,12 @@ var WorldBuilder = require('./WorldBuilder')
 var InventoryManager = require('./InventoryManager')
 
 
+var GridUpdater = require('./util/gridupdater')
+
+
 const ItemHelper = require('../../../shared/lib/ItemHelper')
 
-var GameState = require('./gamestate')
+//var GameState = require('./gamestate')
 
 let redisInterface = require('./redis-interface')
 let mongoInterface = require('./mongo-interface')
@@ -54,13 +57,20 @@ module.exports =  class GameServer {
     await mongoInterface.init('outerspace_'.concat(serverMode))
 
     let worldBuilder = new WorldBuilder(mongoInterface)
-    let gameState = new GameState(mongoInterface, redisInterface)
+    //let gameState = new GameState(mongoInterface, redisInterface)
     let inventoryManager = new InventoryManager(mongoInterface)
 
 
      socketServer = new SocketServ(server, mongoInterface, redisInterface)
 
      await worldBuilder.init()
+
+ 
+
+
+    let gridUpdater = new GridUpdater(1, mongoInterface,redisInterface )
+    gridUpdater.start();
+
 
 
      this.initApiPostRequests( app , inventoryManager )
@@ -71,7 +81,7 @@ module.exports =  class GameServer {
       console.log('Game Server is listening on http://localhost:' + port)
     })
 
-    callback()
+    callback(mongoInterface, redisInterface)
 
 
   }
