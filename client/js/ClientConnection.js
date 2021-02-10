@@ -85,26 +85,42 @@ module.exports = class ClientConnection {
 
 
      channel.on('challenge', async (data) => {
-       console.log('got challenge from socket serv ..opening web3 to personalsign')
+       console.log('got challenge from socket serv  ')
 
-      var signature = await player.personalSignWithMetamask(data.challenge, publicAddress, this.web3)
 
-      var recAddress = await player.web3ecRecover(data.challenge, signature, this.web3)
+       let existingAuthData =  await this.getSessionAuthDataCache()
 
-       if(recAddress.toLowerCase() != publicAddress.toLowerCase()){
-         console.log('ERROR: client side check of sig failed ', recAddress ,  publicAddress)
+       console.log('existingAuthData  ', existingAuthData)
+
+       if(existingAuthData && existingAuthData.challenge == data.challenge){
+
+        channel.emit('signature', {publicAddress: publicAddress, authToken: existingAuthData.authToken   } )
+       }else{
+
+        console.log(' ..opening web3 to personalsign')
+
+
+        var signature = await player.personalSignWithMetamask(data.challenge, publicAddress, this.web3)
+
+        var recAddress = await player.web3ecRecover(data.challenge, signature, this.web3)
+  
+         if(recAddress.toLowerCase() != publicAddress.toLowerCase()){
+           console.log('ERROR: client side check of sig failed ', recAddress ,  publicAddress)
+         }
+  
+         console.log('made signature',signature)
+  
+         channel.emit('signature', {publicAddress: publicAddress, signature: signature   } )
        }
 
-       console.log('made signature',signature)
 
-       channel.emit('signature', {publicAddress: publicAddress, signature: signature   } )
      })
 
      channel.on('authorized', async (data) => {
 
        //save the auth token so we can send it with all socket messages to the server
-       window.sessionStorage.setItem('authToken', data.authToken);
-       console.log('got auth token ', data.authToken)
+       window.sessionStorage.setItem('authToken', JSON.stringify({challenge: data.challenge, authToken: data.authToken}) );
+       console.log('saved auth data  ', {challenge: data.challenge, authToken: data.authToken})
 
        authedCallback()
 
@@ -158,7 +174,7 @@ module.exports = class ClientConnection {
  async requestSpawn()
  {
    console.log('request spawn')
-   var datagram = {authToken: this.getSessionAuthToken(), publicAddress: publicAddress }
+   var datagram = {authToken: this.getSessionAuthDataCache().authToken, publicAddress: publicAddress }
 
    console.log(channel )
      channel.emit('spawn', datagram , { reliable: true })
@@ -167,7 +183,7 @@ module.exports = class ClientConnection {
 /* async requestGridState( entityManager )
  {
    //DEPRECATED
-  // var datagram = {authToken: this.getSessionAuthToken(), publicAddress: publicAddress }
+  // var datagram = {authToken: this.getSessionAuthDataCache(), publicAddress: publicAddress }
   //   channel.emit('getGridState', datagram , { reliable: true })
 }*/
 
@@ -180,15 +196,15 @@ module.exports = class ClientConnection {
      ('initiateWarp',{griduuid: x})
    */
    console.log('sending client command ', cmdName, cmdParams)
-   var datagram = {cmdName: cmdName, cmdParams:cmdParams, authToken: this.getSessionAuthToken(), publicAddress: publicAddress}
+   var datagram = {cmdName: cmdName, cmdParams:cmdParams, authToken: this.getSessionAuthDataCache().authToken, publicAddress: publicAddress}
     channel.emit('clientCommand', datagram , { reliable: true })
 
  }
 
 
- async getSessionAuthToken()
+ async getSessionAuthDataCache()
  {
-     return window.sessionStorage.getItem('authToken' );
+     return JSON.parse( window.sessionStorage.getItem('authToken' )  );
  }
 
 
@@ -228,12 +244,12 @@ module.exports = class ClientConnection {
 
    var postData =  Object.assign({}, dataRequest);
 
-   postData.authToken = await this.getSessionAuthToken()
+   postData.authToken = await this.getSessionAuthDataCache().authToken
    postData.publicAddress = publicAddress
 
   /* var postData = {
      requestType: dataRequest.requestType,
-     authToken: await this.getSessionAuthToken(),
+     authToken: await this.getSessionAuthDataCache(),
      publicAddress: publicAddress
    }*/
 

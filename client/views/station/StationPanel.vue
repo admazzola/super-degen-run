@@ -111,7 +111,7 @@ Fitting panel - upper half is your ships slots, lower half is your items (rows)
 
 
 
-import GalaxyHelper from '../../../shared/lib/GalaxyHelper'
+//import GalaxyHelper from '../../../shared/lib/GalaxyHelper'
 import Sidebar from './components/Sidebar.vue'
 import Header from './components/Header.vue'
 import ModalContainer from './components/ModalContainer.vue'
@@ -169,13 +169,13 @@ export default {
 
       this.stationUnitId = myPlayer.dockedInStation
 
-      if(GalaxyHelper.playerIsDocked(myPlayer ))
+      /*if(GalaxyHelper.playerIsDocked(myPlayer ))
       {
         this.setHidden(false)
       }else{
         this.setHidden(true)
       }
-
+    */
 
     },
 

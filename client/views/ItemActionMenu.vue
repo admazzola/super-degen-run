@@ -48,9 +48,7 @@
 </template>
 <script>
 import * as THREE from 'three'
-
-import GalaxyHelper from '../../shared/lib/GalaxyHelper'
-
+ 
 export default {
   name: 'ItemActionMenu',
   props: ['dataRequestCallback','localActionCallback'],

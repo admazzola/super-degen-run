@@ -31,9 +31,7 @@
 
 
 
-
-import GalaxyHelper from '../../../../shared/lib/GalaxyHelper'
-
+ 
 import OrderForm from './OrderForm.vue'
 
 

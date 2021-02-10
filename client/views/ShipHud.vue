@@ -20,8 +20,7 @@
 </template>
 <script>
 import * as THREE from 'three'
-
-import GalaxyHelper from '../../shared/lib/GalaxyHelper'
+ 
 import UnitHelper from '../../shared/lib/UnitHelper'
 
 export default {
@@ -65,12 +64,12 @@ export default {
     playersChanged: function(myPlayer, playersOnGrid)
     {
       console.log(myPlayer)
-      if(GalaxyHelper.playerIsDocked(myPlayer ))
+      /*if(GalaxyHelper.playerIsDocked(myPlayer ))
       {
         this.setHidden(true)
       }else{
         this.setHidden(false)
-      }
+      }*/
 
 
     }

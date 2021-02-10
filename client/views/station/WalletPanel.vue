@@ -94,9 +94,7 @@ Make a faucet that will give you 0.1 matic one time if you have at least 1 0xbtc
 
 */
 
-
-import GalaxyHelper from '../../../shared/lib/GalaxyHelper'
-
+ 
 
 export default {
 

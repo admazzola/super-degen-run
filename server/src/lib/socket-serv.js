@@ -67,8 +67,27 @@ module.exports = class SocketServ {
       console.log(`got ${data} from "connect"`)
 
 
+    
+
       var publicAddress = data.publicAddress;
       var randomChallenge =  web3utils.randomHex(32 )    //make this prettier ?
+
+
+      let existingStore = await this.redisInterface.findHashInRedis(  'socket_challenge',publicAddress )
+      
+
+      if(existingStore ){
+        let existingStoreData = JSON.parse(  existingStore )
+
+        if(existingStoreData.challenge){
+
+          console.log('found existing store ', existingStore)
+          randomChallenge = existingStore.challenge
+        }
+
+      }
+
+
       console.log('meep', publicAddress)
       console.log('sending randomChallenge ', randomChallenge  )
 
@@ -82,7 +101,7 @@ module.exports = class SocketServ {
 
       let newdata = JSON.stringify({  publicAddress: publicAddress, challenge: randomChallenge})
       //store random challenge along w public address -- in redis
-      var store = await redisInterface.storeRedisHashData('socket_challenge',publicAddress,newdata)
+      var store = await this.redisInterface.storeRedisHashData('socket_challenge',publicAddress,newdata)
 
       io.emit('challenge', {challenge: randomChallenge})
     })
@@ -91,36 +110,52 @@ module.exports = class SocketServ {
     channel.on('signature', async (data) => {
       console.log(`got ${data.signature} from "signature"`)
 
-      var existingJSON  = await redisInterface.findHashInRedis('socket_challenge',data.publicAddress )
-      var existing = JSON.parse(existingJSON)
-      console.log('found record ', existing)
+      if(data.authToken){//signing in with existing authToken that is not expired
+        var authed = await this.verifyAuthToken(data)
 
-      if(data.publicAddress != existing.publicAddress )
-      {
-        //throw error
-        console.log('error - address mismatch during signature checking')
-        return;
+        if(!authed){
+          return 
+        }
+
+        clientSocketChannels.set(data.publicAddress , channel  );
+
+
+      }else{ 
+        //make and store a new auth token 
+
+        var existingJSON  = await this.redisInterface.findHashInRedis('socket_challenge',data.publicAddress )
+        var existing = JSON.parse(existingJSON)
+        console.log('found record ', existing)
+  
+        if(data.publicAddress != existing.publicAddress )
+        {
+          //throw error
+          console.log('error - address mismatch during signature checking')
+          return;
+        }
+  
+  
+        var recoveredAddress = await this.ethJsUtilecRecover(existing.challenge, data.signature)
+  
+        if(recoveredAddress != existing.publicAddress )
+        {
+          //throw error
+          console.log('error - recovered address mismatch',recoveredAddress, existing.publicAddress )
+          return;
+        }
+  
+        var authToken = web3utils.randomHex(20).toString()
+  
+        var newdata = JSON.stringify({  publicAddress: recoveredAddress, authToken: authToken})
+        var store = await this.redisInterface.storeRedisHashData('auth_token',recoveredAddress,newdata)
+
+        clientSocketChannels.set(recoveredAddress , channel  );
+
       }
 
+     
 
-      var recoveredAddress = await this.ethJsUtilecRecover(existing.challenge, data.signature)
-
-      if(recoveredAddress != existing.publicAddress )
-      {
-        //throw error
-        console.log('error - recovered address mismatch',recoveredAddress, existing.publicAddress )
-        return;
-      }
-
-      var authToken = web3utils.randomHex(20).toString()
-
-      var newdata = JSON.stringify({  publicAddress: recoveredAddress, authToken: authToken})
-      var store = await redisInterface.storeRedisHashData('auth_token',recoveredAddress,newdata)
-
-
-
-         clientSocketChannels.set(recoveredAddress , channel  );
-
+     
       //auth token should expire after some time...?
       io.emit('authorized', {publicAddress: recoveredAddress, authToken: authToken})
 
@@ -139,7 +174,7 @@ module.exports = class SocketServ {
     channel.on('spawn', async (data) => {
       console.log(`got ${data.publicAddress} from "spawn"`)
 
-      var authed = this.verifyAuthToken(data)
+      var authed = await this.verifyAuthToken(data)
 
       if(authed)
       {
@@ -173,7 +208,7 @@ module.exports = class SocketServ {
     channel.on('clientCommand', async data => {
       console.log(`got ${data} from "clientCommands"`)
 
-      var authed = this.verifyAuthToken(data)
+      var authed = await this.verifyAuthToken(data)
 
       if(authed)
       {
@@ -247,6 +282,7 @@ module.exports = class SocketServ {
   }
 
   //check the redis db
+  //make sure this has an expire time of 24 hours 
   async verifyAuthToken(credentials)
   {
     var token = credentials.authToken;
@@ -254,7 +290,7 @@ module.exports = class SocketServ {
 
     console.log('checking credentials', credentials)
 
-    var existingJSON  = await redisInterface.findHashInRedis('auth_token',publicAddress )
+    var existingJSON  = await this.redisInterface.findHashInRedis('auth_token',publicAddress )
     var existing = JSON.parse(existingJSON)
     console.log('found record ', existing)
 
@@ -289,8 +325,6 @@ async web3ecRecover(challenge,signature)
 
   async ethJsUtilecRecover(msg,signature)
   {
-
-
 
     console.log('ecrecover ', msg, signature)
       var res = ethJsUtil.fromRpcSig(signature)

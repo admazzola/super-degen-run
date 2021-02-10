@@ -12,13 +12,7 @@
 
 <script>
 
-
-
-
-import GalaxyHelper from '../../../shared/lib/GalaxyHelper'
-
-
-
+ 
 
 export default {
 

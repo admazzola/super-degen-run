@@ -198,10 +198,7 @@
 <script>
 
 
-
-
-import GalaxyHelper from '../../../../shared/lib/GalaxyHelper'
-
+ 
 import { defineComponent, ref } from "vue";
 
 
@@ -246,12 +243,12 @@ export default {
 
     playersChanged: function(myPlayer, playersOnGrid)
     {
-      if(GalaxyHelper.playerIsDocked(myPlayer ))
+     /* if(GalaxyHelper.playerIsDocked(myPlayer ))
       {
         this.setHidden(false)
       }else{
         this.setHidden(true)
-      }
+      }*/
 
 
     },

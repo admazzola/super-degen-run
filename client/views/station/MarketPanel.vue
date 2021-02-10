@@ -36,8 +36,7 @@
 
 const web3connectionconfig = require('../../../shared/contracts/web3connection.config.js')
 
-
-import GalaxyHelper from '../../../shared/lib/GalaxyHelper'
+ 
 import EthereumHelper from '../../../shared/lib/EthereumHelper'
 
 

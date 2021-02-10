@@ -27,7 +27,7 @@
 <script>
 import * as THREE from 'three'
 
-import GalaxyHelper from '../../shared/lib/GalaxyHelper'
+//import GalaxyHelper from '../../shared/lib/GalaxyHelper'
 
 import UnitHelper from '../../shared/lib/UnitHelper'
 
@@ -76,12 +76,7 @@ export default {
       data._id = entity._id
       data.name =   UnitHelper.getNameForEntity( entity.basetype )
 
-      /*console.log('meep', entity )
-      if(entity.unittype == 'celestial' ) //is celestial
-      {
-        data.name = GalaxyHelper.getEntityData( entity ).name
-
-      }*/
+     
 
 
       //distance is broken ?
@@ -106,12 +101,12 @@ export default {
         playersChanged: function(myPlayer, playersOnGrid)
         {
 
-          if(GalaxyHelper.playerIsDocked(myPlayer ))
+          /*if(GalaxyHelper.playerIsDocked(myPlayer ))
           {
             this.setHidden(true)
           }else{
             this.setHidden(false)
-          }
+          }*/
 
 
         }

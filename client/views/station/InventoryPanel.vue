@@ -34,12 +34,7 @@
 
 <script>
 
-
-
-
-import GalaxyHelper from '../../../shared/lib/GalaxyHelper'
-
-
+ 
 import ItemHelper from '../../../shared/lib/ItemHelper'
 
 

@@ -52,7 +52,7 @@ const delay = require('delay')
 
 import SkyBox from '../js/SkyBox'
 import EntityManager from '../js/EntityManager'
-import GalaxyHelper from '../../shared/lib/GalaxyHelper'
+import WorldHelper from '../../shared/lib/WorldHelper'
 import EthereumHelper from '../../shared/lib/EthereumHelper'
 import Player from '../js/Player'
 import ModelLoader from '../js/ModelLoader'

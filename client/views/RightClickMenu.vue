@@ -61,9 +61,7 @@
 import * as THREE from 'three'
 
 import HoverMenu from './components/HoverMenu'
-
-import GalaxyHelper from '../../shared/lib/GalaxyHelper'
-
+ 
 export default {
   name: 'RightClickMenu',
   props: ['commandCallback'],
@@ -86,6 +84,7 @@ export default {
     /// need player and solar system data
     entitiesChanged: function(myPossessedUnit, entities){
 
+      /*
       if(myPossessedUnit)
       {
         var myGridUUID = myPossessedUnit.grid;
@@ -143,7 +142,7 @@ export default {
 
       //  this.celestialswarpGates = warpGateOptions
 
-      }
+      }*/
 
     },
 

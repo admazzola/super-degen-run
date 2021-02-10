@@ -35,3 +35,7 @@
 - There will be ZoneServers which 
 
 Each zoneserver will have a max player cap and a queue (like squad/wow) 
+
+Gridupdater server will run the mob AI+physics (dont worry about that rn) 
+
+* add a WoW targetting system as opposed to the minecraft system (later -- for dungeons ) 

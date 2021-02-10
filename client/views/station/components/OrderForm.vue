@@ -51,9 +51,7 @@
 
 
 
-
-import GalaxyHelper from '../../../../shared/lib/GalaxyHelper'
-
+ 
 const web3connectionconfig = require('../../../../shared/contracts/web3connection.config')
 
 export default {
