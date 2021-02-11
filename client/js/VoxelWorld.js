@@ -249,9 +249,15 @@ module.exports =  class VoxelWorld {
       let tileTypeId = face[4]
 
       // face[0..3] are the vertices  
-        geometry.faces.push( new THREE.Face3(face[0],face[3] ,face[2])   )  //2 tris 
-        geometry.faces.push( new THREE.Face3(face[0],face[1] ,face[3])   )
 
+        let faceA = new THREE.Face3(face[0],face[1] ,face[3])
+        faceA.vertexColors[0] = new THREE.Color( 0xff00ff );
+        geometry.faces.push( faceA )  
+
+        let faceB = new THREE.Face3(face[1],face[2],face[3])
+        faceB.vertexColors[0] = new THREE.Color( 0x0000ff );
+        geometry.faces.push( faceB )   //2 tris 
+       
 
         let direction = 0; //1 for bottom ,  2 for top  
 
@@ -283,7 +289,7 @@ module.exports =  class VoxelWorld {
         )*/
         
         geometry.faceVertexUvs[0].push( 
-          [ new THREE.Vector2(coord_x0, coord_y0), new THREE.Vector2(xm, ym), new THREE.Vector2(coord_x1, coord_y0) ],
+          [ new THREE.Vector2(coord_x0, coord_y0),  new THREE.Vector2(coord_x1, coord_y0), new THREE.Vector2(xm, ym) ],
           [ new THREE.Vector2(coord_x1, coord_y0), new THREE.Vector2(xm, ym), new THREE.Vector2(coord_x1, coord_y1) ] 
         )
 
@@ -508,8 +514,9 @@ module.exports =  class VoxelWorld {
 
     //this.material
     let customMat =   new THREE.MeshBasicMaterial({
-      color: 0xff0000,
-      wireframe: true
+      color: 0xffffff,
+      shading: THREE.FlatShading, 
+      vertexColors: THREE.VertexColors
   });
 
 
