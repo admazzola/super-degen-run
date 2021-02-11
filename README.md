@@ -1,11 +1,20 @@
-## Etherpunks
+## Polyvoxels
 
-Legends say that a single Satoasti can purchase entire countries on the planet of Buterin IX...
 
 
 
 
 #TODO
+
+** https://github.com/joshmarinacci/voxeljs-next
+  ^ Implement this soup to nuts.  Much better code than old voxel-js
+
+https://github.com/joshmarinacci/voxeljs-next/blob/master/examples/simple.html
+
+Use these tile textures: 
+https://github.com/joshmarinacci/voxeljs-next/blob/master/examples/public/textures/kenneynl/tiles/dirt.png
+
+
 
  ** add a grid with enemy NPCs, allow player to atk them [activate module]
  ** allow player to warp to different grids (using a gui)
@@ -30,18 +39,18 @@ Legends say that a single Satoasti can purchase entire countries on the planet o
 
 
 
-** Make panels load faster w a function call.. 
+** Make panels load faster w a function call..
 
 
-https://voxelplace.com/  WOW graphics 
+https://voxelplace.com/  WOW graphics
 
 https://0fps.net/2012/06/30/meshing-in-a-minecraft-game/
 
 
-*** greedy meshing ! 
+*** greedy meshing !
 https://github.com/joshmarinacci/voxeljs-next/blob/master/src/GreedyMesher.js
 
- 
+
 https://github.com/mikolalysenko/mikolalysenko.github.com/blob/master/MinecraftMeshes2/js/testdata.js
 
 
@@ -56,25 +65,25 @@ https://www.npmjs.com/package/voxel-engine
 https://threejsfundamentals.org/threejs/lessons/threejs-custom-geometry.html
 
 
-** maybe we just use voxeljs so we can get greedy meshing 
+** maybe we just use voxeljs so we can get greedy meshing
 
 
-## greedy shader 
+## greedy shader
 https://github.com/deathcap/voxel-texture-shader
 
 https://github.com/shama/voxel-texture
 
 
-## FAKE ao 
+## FAKE ao
 https://www.npmjs.com/package/voxel-fakeao
 
 
 
-## gen terrain 
+## gen terrain
 https://github.com/mikolalysenko/mikolalysenko.github.com/tree/master/Terrain/js
 
 
 
 ## Credits
 
-Kenney's Humanoid Models 
+Kenney's Humanoid Models

@@ -7,9 +7,9 @@
 
         </div>
 
- 
 
-          
+
+
           <RightClickMenu
           ref="rclickmenu"
           v-bind:commandCallback="handleClientCommand"
@@ -21,7 +21,7 @@
           v-bind:dataRequestCallback="handleClientDataRequest"
           />
 
-           
+
   </div>
 </template>
 
@@ -109,18 +109,18 @@ export default {
 
       const RENDER_DISTANCE = 20000;
 
-      
+
 
       this.scene = new THREE.Scene()
       this.scene.background = new THREE.Color('lightblue');
-     
+
         const fov = 75;
         const aspect = 2;  // the canvas default
         const near = 0.1;
         const far = 1000;
        this.camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 
-       
+
       this.renderer = new THREE.WebGLRenderer({ antialias: false })
       this.renderer.setSize(window.innerWidth, window.innerHeight)
       document.getElementById('gamecanvas').appendChild(this.renderer.domElement)
@@ -130,14 +130,17 @@ export default {
 
         this.scene.add(camera_pivot);
         camera_pivot.add( audioSystem.getListener()  )
- 
+
 
       this.controls = new MW.TPSCameraControls(
       	this.camera, // three.js camera
       	camera_pivot, // tracking object
       	this.renderer.domElement
       );
- 
+
+
+
+      //voxel world 
       const chunkSize = 64;
       const tileSize = 128;
       const tileTextureWidth = 1152;
@@ -171,14 +174,14 @@ export default {
       });
 
 
-      
+
       let voxelWorldGenerator = new VoxelWorldGenerator()
 
       this.voxelWorld.buildWorld(  voxelWorldGenerator )
 
        this.scene.add(this.voxelWorld.getWorldPivot())
 
-      this.controls.minDistance = 1 // not working ??? 
+      this.controls.minDistance = 1 // not working ???
       this.controls.maxDistance = 80
       this.controls.dollyTo(20)
 
@@ -412,7 +415,7 @@ export default {
            camera_pivot.position = sceneObj.position
 
 
-        
+
         }else{
           console.log('WARN - no scene object for my focus unit' )
         }
