@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 
-const VoxelWorld = require('./VoxelWorld')
+//const VoxelWorld = require('./VoxelWorld')
 
 const EventEmitter = require('events');
 const entitiesEmitter = new EventEmitter();

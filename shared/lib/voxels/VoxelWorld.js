@@ -11,6 +11,8 @@
 
 const THREE = require('three')
 
+
+const tileImages = require('../../worlddata/tileimages.json')
 const tileTypes = require('../../worlddata/tiletypes.json')
 
 const GreedyMesher = require('./greedymesher')
@@ -18,7 +20,7 @@ const CulledMesher = require('./culledmesher')
 //import {GreedyMesher} from "../src/GreedyMesher.js"
 
 
-import VoxelTextureManager from './voxeltexturemanager'
+import {VoxelTextureManager} from './voxeltexturemanager'
 
 import ChunkManager from './chunkmanager'
 
@@ -76,9 +78,10 @@ export default class VoxelWorld {
 
     this.chunkManager = new ChunkManager({
             chunkDistance:1,
-            blockSize:5,
-            mesher: new CulledMesher(),
+            blockSize:1,
+            mesher: new GreedyMesher(),
             chunkSize:32,
+            //this will come from cache - from server-  when its ready 
             generateVoxelChunk: (low, high, pos) => {
                 const id = [pos.x,pos.y,pos.z].join('|')
                 return VoxelUtils.generateChunkInfoFromFunction(low, high, flatGen)
@@ -89,54 +92,14 @@ export default class VoxelWorld {
 
       //app.comps.push(app.chunkManager.textureManager)
 
-      this.chunkManager.textureManager.loadTextures([
-          {
-              src:'./assets/textures/tiles/grass.png'
-          },
-          {
-             src:'./assets/textures/tiles/grass.png'
-          },
-          {
-             src:'./assets/textures/tiles/grass.png'
-          },
-          {
-             src:'./assets/textures/tiles/grass.png'
-          },
-          {
-             src:'./assets/textures/tiles/grass.png'
-          },
-          {
-             src:'./assets/textures/tiles/grass.png'
-          },
-          {
-             src:'./assets/textures/tiles/grass.png'
-          },
-          {
-             src:'./assets/textures/tiles/grass.png'
-          },
 
-          // {
-          //     src:'./textures/kenneynl/tiles/ice.png',
-          // },
-        /*  {
-              src:'./textures/kenneynl/tiles/lava.png',
-          },
-          {
-              src:'./textures/kenneynl/tiles/stone.png',
-          },
-          {
-              src:'./textures/kenneynl/tiles/sand.png',
-          },
-          {
-              src:'./textures/tnt.png',
-          },
-          {
-              src:'./textures/heart.png',
-          },
-          {
-              src:'./textures/tnt.png',
-          },*/
-      ]).then(()=>{
+
+      const tilesPath = './assets/textures/Tiles/'
+      
+      let texturesDataArray = tileImages.map(t => {return {id: t.id, src: tilesPath.concat(t.imgurl) } } )
+        
+      //this comes from TileTypes.json 
+      this.chunkManager.textureManager.loadTextures(texturesDataArray).then(()=>{
           this.chunkManager.rebuildAllMeshes()
           this.chunkManager.requestMissingChunks(new THREE.Vector3(0,0,0))
           //app.dialog.setSelectedToDefault()

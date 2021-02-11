@@ -20,7 +20,7 @@ import {
 
 
 
-export default class VoxelTextureManager {
+export class VoxelTextureManager {
     constructor(opts) {
         this.canvas = document.createElement('canvas')
         this.canvas.setAttribute('id','texture')
@@ -70,7 +70,7 @@ export default class VoxelTextureManager {
                 vOcclusion = occlusion;
                 vec4 mvPosition = modelViewMatrix * vec4(position,1.0);
                 gl_Position = projectionMatrix * mvPosition;
-            }
+            } 
             `,
             fragmentShader: `
                 uniform sampler2D texture;
@@ -89,10 +89,10 @@ export default class VoxelTextureManager {
                     float frameCount = 3.0;
                     // float cframe = mod(uTime,frameCount);
                     float cframe = mod(uTime,vFrameCount);
-                    float cframe2 = floor(cframe);
+                    float cframe2 = floor(cframe); 
                     sr.x = sr.x + cframe2*sr.z;
                     fuv.x = sr.x + fract(vUv.x*vRepeat.x)*sr.z;
-                    fuv.y = sr.y + fract(vUv.y*vRepeat.y)*sr.w;
+                    fuv.y = sr.y + vUv.y*sr.w;
                     vec4 color = vec4(1.0,1.0,1.0,1.0);
                     if(texturesEnabled) {
                         color = texture2D(texture, fuv);
