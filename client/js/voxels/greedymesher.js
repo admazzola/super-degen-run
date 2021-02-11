@@ -1,6 +1,6 @@
 let mask = new Int32Array(4096);
 
-export class GreedyMesher {
+module.exports =  class GreedyMesher {
     constructor() {
     }
 

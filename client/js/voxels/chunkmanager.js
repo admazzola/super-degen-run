@@ -1,6 +1,6 @@
 import {Vector3,} from "three"
-import {CulledMesher} from "./CulledMesher.js"
-import {VoxelMesh} from "./VoxelMesh.js"
+import {GreedyMesher} from "./greedymesher.js"
+import {VoxelMesh} from "./voxelmesh.js"
 
 class Chunk {
     constructor(data, pos, chunkBits) {
@@ -44,7 +44,7 @@ class Chunk {
 
 const SCALE = new Vector3(1.0,1.0,1.0)
 
-export class ChunkManager {
+export default class ChunkManager {
     constructor(opts) {
         this.listeners = {}
         this.container = opts.container
@@ -53,7 +53,7 @@ export class ChunkManager {
         this.blockSize = opts.blockSize || 1
         this.generateVoxelChunk = opts.generateVoxelChunk
         this.chunks = {}
-        this.mesher = opts.mesher || new CulledMesher()
+        this.mesher = opts.mesher || new GreedyMesher()
         this.textureManager = opts.textureManager
 
         if (this.chunkSize & this.chunkSize - 1 !== 0)

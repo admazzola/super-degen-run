@@ -140,13 +140,13 @@ export default {
 
 
 
-      //voxel world 
+      //voxel world
       const chunkSize = 64;
       const tileSize = 128;
       const tileTextureWidth = 1152;
       const tileTextureHeight = 1280;
 
-      const texLoader = new THREE.TextureLoader();
+      /*const texLoader = new THREE.TextureLoader();
       const texture = texLoader.load('../assets/textures/spritesheet_tiles.png', function(){
         'loaded tex'
       });
@@ -163,10 +163,10 @@ export default {
         transparent: true,
       });
 
-
+          */
 
       this.voxelWorld = new VoxelWorld({
-        material,
+      //  material,
         chunkSize,
         tileSize,
         tileTextureWidth,
@@ -177,7 +177,7 @@ export default {
 
       let voxelWorldGenerator = new VoxelWorldGenerator()
 
-      this.voxelWorld.buildWorld(  voxelWorldGenerator )
+   //    this.voxelWorld.buildWorld(  voxelWorldGenerator )
 
        this.scene.add(this.voxelWorld.getWorldPivot())
 

@@ -20,7 +20,7 @@ import {
 
 
 
-export class TextureManager {
+export default class VoxelTextureManager {
     constructor(opts) {
         this.canvas = document.createElement('canvas')
         this.canvas.setAttribute('id','texture')

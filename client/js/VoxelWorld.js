@@ -4,7 +4,7 @@
 /*
   Integrated from
   https://github.com/joshmarinacci/voxeljs-next/blob/master/examples/simple.html
-  
+
 
 */
 
@@ -17,11 +17,11 @@ const GreedyMesher = require('./voxels/greedymesher')
 //import {GreedyMesher} from "../src/GreedyMesher.js"
 
 
-const VoxelTextureManager = require('./voxels/voxeltexturemanager')
+import VoxelTextureManager from './voxels/voxeltexturemanager'
 
-const ChunkManager = require('./voxels/chunkmanager')
+import ChunkManager from './voxels/chunkmanager'
 
-
+const VoxelUtils = require('./voxels/voxelutils')
 
 const neighborOffsets = [
   [ 0,  0,  0], // self
@@ -36,10 +36,10 @@ const neighborOffsets = [
 
 
 
-module.exports =  class VoxelWorld {
+export default class VoxelWorld {
   constructor(options) {
     this.worldPivot =  new THREE.Object3D()
-    this.material = options.material;
+  //  this.material = options.material;
     this.chunkSize = options.chunkSize;
     this.tileSize = options.tileSize;
     this.tileTextureWidth = options.tileTextureWidth;
@@ -80,25 +80,25 @@ module.exports =  class VoxelWorld {
             chunkSize:16,
             generateVoxelChunk: (low, high, pos) => {
                 const id = [pos.x,pos.y,pos.z].join('|')
-                return generateChunkInfoFromFunction(low, high, flatGen)
+                return VoxelUtils.generateChunkInfoFromFunction(low, high, flatGen)
             },
-            container: new Group(),
+            container: new THREE.Group(),
             textureManager: new VoxelTextureManager({aoEnabled:true}),
         }/*,app*/);
 
       //app.comps.push(app.chunkManager.textureManager)
 
-      app.chunkManager.textureManager.loadTextures([
+      this.chunkManager.textureManager.loadTextures([
           {
-              src:'./textures/kenneynl/tiles/grass_top.png'
+              src:'./assets/textures/tiles/grass.png'
           },
           {
-              src:'./textures/kenneynl/tiles/dirt.png'
+             src:'./assets/textures/tiles/grass.png'
           },
           // {
           //     src:'./textures/kenneynl/tiles/ice.png',
           // },
-          {
+        /*  {
               src:'./textures/kenneynl/tiles/lava.png',
           },
           {
@@ -115,12 +115,15 @@ module.exports =  class VoxelWorld {
           },
           {
               src:'./textures/tnt.png',
-          },
+          },*/
       ]).then(()=>{
           this.chunkManager.rebuildAllMeshes()
-          this.chunkManager.requestMissingChunks(new Vector3(0,0,0))
+          this.chunkManager.requestMissingChunks(new THREE.Vector3(0,0,0))
           //app.dialog.setSelectedToDefault()
       })
+
+      //attach the mesh to the scene
+      this.worldPivot.add( this.chunkManager.container )
 
 
   }
