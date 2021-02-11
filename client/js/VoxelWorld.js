@@ -1,7 +1,6 @@
-import * as THREE from 'three';
-import {OrbitControls, Vector3} from 'three';
+import * as THREE from 'three'; 
 
-
+const tileTypes = require('../../shared/worlddata/tiletypes.json')
 
 const neighborOffsets = [
   [ 0,  0,  0], // self
@@ -107,7 +106,8 @@ export default class VoxelWorld {
           const voxel = this.getVoxel(voxelX, voxelY, voxelZ);
           if (voxel) {
             // voxel 0 is sky (empty) so for UVs we start at 0
-            const uvVoxel = voxel - 1;
+            
+
             // There is a voxel here but do we need faces for it?
             for (const {dir, corners, uvRow} of VoxelWorld.faces) {
               const neighbor = this.getVoxel(
@@ -115,14 +115,24 @@ export default class VoxelWorld {
                   voxelY + dir[1],
                   voxelZ + dir[2]);
               if (!neighbor) {
+
+                var uvVoxel =  this.getVoxelFaceTextureIndexNumber(voxel, uvRow)  //voxel - 1;
+                console.log('meep uvVoxel', uvVoxel, voxel, uvRow)
+
+                let uv_x = uvVoxel % 9;
+                let ux_y = uvVoxel / 9;
+
                 // this voxel has no neighbor in this direction so we need a face.
                 const ndx = positions.length / 3;
                 for (const {pos, uv} of corners) {
                   positions.push(pos[0] + x, pos[1] + y, pos[2] + z);
                   normals.push(...dir);
                   uvs.push(
+                        (uv_x +   uv[0]) * tileSize / tileTextureWidth,
+                        (ux_y -   uv[1]) * tileSize / tileTextureHeight); 
+                 /* uvs.push(
                         (uvVoxel +   uv[0]) * tileSize / tileTextureWidth,
-                    1 - (uvRow + 1 - uv[1]) * tileSize / tileTextureHeight);
+                    1 - (uvRow + 1 - uv[1]) * tileSize / tileTextureHeight);*/
                 }
                 indices.push(
                   ndx, ndx + 1, ndx + 2,
@@ -141,6 +151,24 @@ export default class VoxelWorld {
       uvs,
       indices,
     };
+  }
+
+  getVoxelFaceTextureIndexNumber(voxel, uvRow){
+    
+    let tileType = tileTypes[voxel]
+
+    if(!tileType){tileType = tileTypes[1]}
+
+
+    console.log('parse', parseInt(uvRow))
+
+    switch(parseInt(uvRow)){
+      case 0: return tileType.side;
+      case 1: return tileType.bottom;
+      case 2: return tileType.top;
+    }
+    return tileType.side  
+
   }
 
     // from

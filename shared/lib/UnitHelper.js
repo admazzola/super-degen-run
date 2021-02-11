@@ -96,15 +96,16 @@ module.exports =  class UnitHelper   {
   static collidingWithAnyEntity(loc, entityArray)
   {
     var locVector = new THREE.Vector3(loc.x,loc.y,loc.z)
-    for(var i in entityArray)
+    for(var entity of entityArray)
     {
+      console.log('entity',entity)
 
-      var typedata = entitybasetypes[entityArray[i].basetype]
-      var dist = locVector.distanceTo(entityArray[i].locationVector)
+      var typedata = entitybasetypes[entity.basetype]
+      var dist = locVector.distanceTo(entity.locationVector)
     //  console.log('meep',typedata.collisionRadius, dist  )
       if(dist <  typedata.collisionRadius )
       {
-        return entityArray[i]
+        return entity
       }
     }
 
