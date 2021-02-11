@@ -118,9 +118,10 @@ export default class VoxelWorld {
 
                 var uvVoxel =  this.getVoxelFaceTextureIndexNumber(voxel, uvRow)  //voxel - 1;
                 console.log('meep uvVoxel', uvVoxel, voxel, uvRow)
+                
 
-                let uv_x = uvVoxel % 9;
-                let ux_y = uvVoxel / 9;
+                let uv_x = Math.floor(uvVoxel % 9);
+                let ux_y = Math.floor(uvVoxel / 9);
 
                 // this voxel has no neighbor in this direction so we need a face.
                 const ndx = positions.length / 3;
@@ -129,7 +130,7 @@ export default class VoxelWorld {
                   normals.push(...dir);
                   uvs.push(
                         (uv_x +   uv[0]) * tileSize / tileTextureWidth,
-                        (ux_y -   uv[1]) * tileSize / tileTextureHeight); 
+                       1 - (ux_y + 1 -   uv[1]) * tileSize / tileTextureHeight); 
                  /* uvs.push(
                         (uvVoxel +   uv[0]) * tileSize / tileTextureWidth,
                     1 - (uvRow + 1 - uv[1]) * tileSize / tileTextureHeight);*/
