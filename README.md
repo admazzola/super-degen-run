@@ -56,6 +56,25 @@ https://www.npmjs.com/package/voxel-engine
 https://threejsfundamentals.org/threejs/lessons/threejs-custom-geometry.html
 
 
+** maybe we just use voxeljs so we can get greedy meshing 
+
+
+## greedy shader 
+https://github.com/deathcap/voxel-texture-shader
+
+https://github.com/shama/voxel-texture
+
+
+## FAKE ao 
+https://www.npmjs.com/package/voxel-fakeao
+
+
+
+## gen terrain 
+https://github.com/mikolalysenko/mikolalysenko.github.com/tree/master/Terrain/js
+
+
+
 ## Credits
 
 Kenney's Humanoid Models 

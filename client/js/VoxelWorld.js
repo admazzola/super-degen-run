@@ -6,6 +6,7 @@ const tileTypes = require('../../shared/worlddata/tiletypes.json')
 
 const GreedyMesh = require('./voxels/greedymesh').mesher
  
+const VoxelTextureShader = require('./voxels/voxeltextureshader')
 
 
 const neighborOffsets = [
@@ -290,7 +291,7 @@ module.exports =  class VoxelWorld {
         
         geometry.faceVertexUvs[0].push( 
           [ new THREE.Vector2(coord_x0, coord_y0),  new THREE.Vector2(coord_x1, coord_y0), new THREE.Vector2(xm, ym) ],
-          [ new THREE.Vector2(coord_x1, coord_y0), new THREE.Vector2(xm, ym), new THREE.Vector2(coord_x1, coord_y1) ] 
+          [ new THREE.Vector2(coord_x1, coord_y0),  new THREE.Vector2(coord_x1, coord_y1) , new THREE.Vector2(xm, ym)] 
         )
 
     } 
@@ -511,6 +512,25 @@ module.exports =  class VoxelWorld {
 
     let geometry = this.generateGreedyGeometryDataForCell(cellX, cellY, cellZ);
 
+    let artpacks = {} 
+ 
+
+    var textureEngine = VoxelTextureShader({
+      // a copy of your voxel.js game
+      //game: game,
+    
+      // path to your textures
+      texturePath: '../assets/textures/tiles/'
+    });
+
+    textureEngine.load('grass', function(textures) {
+      // textures = [grass, grass, grass, grass, grass, grass]
+      console.log('tex engine loaded', textures )
+    });
+ 
+     // textureEngine.paint(voxelMesh)
+
+
 
     //this.material
     let customMat =   new THREE.MeshBasicMaterial({
@@ -530,6 +550,8 @@ module.exports =  class VoxelWorld {
       mesh.scale.set(this.scaleFactor,this.scaleFactor,this.scaleFactor)
     }
 
+    textureEngine.paint(voxelMesh)
+    
     return mesh
   }
 
