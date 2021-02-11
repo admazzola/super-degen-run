@@ -92,7 +92,7 @@ export default class VoxelTextureManager {
                     float cframe2 = floor(cframe);
                     sr.x = sr.x + cframe2*sr.z;
                     fuv.x = sr.x + fract(vUv.x*vRepeat.x)*sr.z;
-                    fuv.y = sr.y + vUv.y*sr.w;
+                    fuv.y = sr.y + fract(vUv.y*vRepeat.y)*sr.w;
                     vec4 color = vec4(1.0,1.0,1.0,1.0);
                     if(texturesEnabled) {
                         color = texture2D(texture, fuv);
