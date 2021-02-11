@@ -6,13 +6,15 @@
 
 #TODO
 
-** https://github.com/joshmarinacci/voxeljs-next
-  ^ Implement this soup to nuts.  Much better code than old voxel-js
+** Use culled mesher for now... greedy mesh later (small bug) 
 
 https://github.com/joshmarinacci/voxeljs-next/blob/master/examples/simple.html
 
-Use these tile textures: 
+Use these tile textures:
 https://github.com/joshmarinacci/voxeljs-next/blob/master/examples/public/textures/kenneynl/tiles/dirt.png
+
+Water:
+https://www.gamasutra.com/blogs/MattKlingensmith/20130811/198050/How_Water_Works_In_DwarfCorp.php
 
 
 

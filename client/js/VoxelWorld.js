@@ -14,6 +14,7 @@ const THREE = require('three')
 const tileTypes = require('../../shared/worlddata/tiletypes.json')
 
 const GreedyMesher = require('./voxels/greedymesher')
+const CulledMesher = require('./voxels/culledmesher')
 //import {GreedyMesher} from "../src/GreedyMesher.js"
 
 
@@ -75,15 +76,15 @@ export default class VoxelWorld {
 
     this.chunkManager = new ChunkManager({
             chunkDistance:1,
-            blockSize:1,
-            mesher: new GreedyMesher(),
-            chunkSize:16,
+            blockSize:5,
+            mesher: new CulledMesher(),
+            chunkSize:32,
             generateVoxelChunk: (low, high, pos) => {
                 const id = [pos.x,pos.y,pos.z].join('|')
                 return VoxelUtils.generateChunkInfoFromFunction(low, high, flatGen)
             },
             container: new THREE.Group(),
-            textureManager: new VoxelTextureManager({aoEnabled:true}),
+            textureManager: new VoxelTextureManager({aoEnabled:false}),
         }/*,app*/);
 
       //app.comps.push(app.chunkManager.textureManager)
@@ -95,6 +96,25 @@ export default class VoxelWorld {
           {
              src:'./assets/textures/tiles/grass.png'
           },
+          {
+             src:'./assets/textures/tiles/grass.png'
+          },
+          {
+             src:'./assets/textures/tiles/grass.png'
+          },
+          {
+             src:'./assets/textures/tiles/grass.png'
+          },
+          {
+             src:'./assets/textures/tiles/grass.png'
+          },
+          {
+             src:'./assets/textures/tiles/grass.png'
+          },
+          {
+             src:'./assets/textures/tiles/grass.png'
+          },
+
           // {
           //     src:'./textures/kenneynl/tiles/ice.png',
           // },

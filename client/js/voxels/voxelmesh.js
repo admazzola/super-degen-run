@@ -267,6 +267,10 @@ export class VoxelMesh {
         geometry.addAttribute('frameCount',new Float32BufferAttribute(frameCount,1))
         geometry.addAttribute('occlusion',new Float32BufferAttribute(occlusion,1))
 
+
+        //repeat uv is working properly !
+        console.log('repeat uv ',repeatUV)
+
         geometry.computeFaceNormals()
         geometry.uvsNeedUpdate = true
         geometry.verticesNeedUpdate = true
