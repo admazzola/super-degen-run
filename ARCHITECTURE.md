@@ -1,15 +1,20 @@
 ## Crypto Pompeii 
  
 TODO
+
+- server needs to do worldgen
+- Client loads in and realizes it doesnt have data for nearby chunks - it will ask the server for them [array of chunk Ids]
+- THe server will respond to the request for those chunks' data and will send it to the client 
+
   
 - add physics (gridupdater) and walking around [ray tracing]
 
-- server needs to do worldgen and then stream that COMPRESSED chunk tile data to the users (compressed?) 
-- in the game, changes to chunk tiles are broadcasted as deltas.   If a players version of a chunk drops out of sync (use fingerprints, blockchain, like GVM) then the server sends the entire chunk state to the player [compressed -]
+  
+- in the game, changes to chunk tiles are broadcasted as deltas.  They use GameTicks (turn based architecture).   If a players version of a chunk drops out of sync (use fingerprints, blockchain, like GVM... more than 10 ticks) then the client asks the server for the updated data for that chunk 
 
 Chunks have checkpoints + deltas. Similar to GVM . 
 
-Server will store chunkdata in mongo, will keep a local copy for physics 
+Server will store chunkdata in mongo, will keep a local copy for physics  [keeps copies in memory for physics - copies also have GameTick numbers and hashe on them to check for desyncs with the MongoDB which is the master ]
 
 
 ## CHUNKS
