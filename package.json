@@ -12,7 +12,8 @@
     "server": "node server/src/index.js",
     "testserver": "node test/server/testserver",
     "karmatest": "karma start --single-run  --browsers ChromeHeadless karma.conf.js",
-    "mochatest": "mocha test/mocha.js"
+    "mochatest": "mocha test/mocha.js",
+    "voxeltest": "mocha test/voxels.js"
   },
   "main": "index.js",
   "dependencies": {

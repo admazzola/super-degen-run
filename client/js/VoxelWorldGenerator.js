@@ -31,7 +31,7 @@ export default class VoxelWorldGenerator {
 
          // const height = (Math.sin(x / chunkSize * Math.PI * 2) + Math.sin(z / chunkSize * Math.PI * 3)) * (chunkSize / 6) + (chunkSize / 2);
           if (y <   (noiseOutput)) {
-            output[index] = this.randInt(1, 4);
+            output[index] = this.randInt(1, 1);
           }
         }
       }

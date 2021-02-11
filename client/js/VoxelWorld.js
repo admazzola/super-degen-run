@@ -1,6 +1,12 @@
-import * as THREE from 'three'; 
+//import * as THREE from 'three'; 
+
+const THREE = require('three')
 
 const tileTypes = require('../../shared/worlddata/tiletypes.json')
+
+const GreedyMesh = require('./voxels/greedymesh').mesher
+ 
+
 
 const neighborOffsets = [
   [ 0,  0,  0], // self
@@ -15,7 +21,7 @@ const neighborOffsets = [
  
 
 
-export default class VoxelWorld {
+module.exports =  class VoxelWorld {
   constructor(options) {
     this.worldPivot =  new THREE.Object3D()
     this.material = options.material;
@@ -25,7 +31,7 @@ export default class VoxelWorld {
     this.tileTextureHeight = options.tileTextureHeight;
     const {chunkSize} = this;
     this.chunkSliceSize = chunkSize * chunkSize;
-    this.cells = {};
+    this.cells = {}; // contains the chunks which are each a uint8 flat array 
 
     this.scaleFactor = 5;
 
@@ -65,6 +71,10 @@ export default class VoxelWorld {
     }
     return cell;
   }
+  getCellFromChunkCoordinates(cellX, cellY, cellZ) {
+    let id =  `${cellX},${cellY},${cellZ}`;
+    return this.cells[id];
+  }
   getCellForVoxel(x, y, z) {
     return this.cells[this.computeCellId(x, y, z)];
   }
@@ -87,6 +97,10 @@ export default class VoxelWorld {
     const voxelOffset = this.computeVoxelOffset(x, y, z);
     return cell[voxelOffset];
   }
+
+
+
+  //This is a decent algo but it is not greedy 
   generateGeometryDataForCell(cellX, cellY, cellZ) {
     const {chunkSize, tileSize, tileTextureWidth, tileTextureHeight} = this;
     const positions = [];
@@ -109,6 +123,7 @@ export default class VoxelWorld {
             
 
             // There is a voxel here but do we need faces for it?
+            //Iterate over each face 
             for (const {dir, corners, uvRow} of VoxelWorld.faces) {
               const neighbor = this.getVoxel(
                   voxelX + dir[0],
@@ -126,14 +141,13 @@ export default class VoxelWorld {
                 // this voxel has no neighbor in this direction so we need a face.
                 const ndx = positions.length / 3;
                 for (const {pos, uv} of corners) {
+
                   positions.push(pos[0] + x, pos[1] + y, pos[2] + z);
                   normals.push(...dir);
                   uvs.push(
                         (uv_x +   uv[0]) * tileSize / tileTextureWidth,
                        1 - (ux_y + 1 -   uv[1]) * tileSize / tileTextureHeight); 
-                 /* uvs.push(
-                        (uvVoxel +   uv[0]) * tileSize / tileTextureWidth,
-                    1 - (uvRow + 1 - uv[1]) * tileSize / tileTextureHeight);*/
+                
                 }
                 indices.push(
                   ndx, ndx + 1, ndx + 2,
@@ -153,6 +167,211 @@ export default class VoxelWorld {
       indices,
     };
   }
+
+
+  /*
+  Pass in coordinates for the Chunk
+  (a cell is the datastorage uint array for a chunk) 
+  */
+  generateGreedyGeometryDataForCell(cellX, cellY, cellZ) {
+
+
+    //const geometry =  new THREE.BufferGeometry();
+ 
+
+
+    var geometry	= new THREE.Geometry();		 
+
+
+
+    const {chunkSize, tileSize, tileTextureWidth, tileTextureHeight} = this;
+    const positions = [];
+    const normals = [];
+    const uvs = [];
+    const indices = [];
+    const startX = cellX * chunkSize;
+    const startY = cellY * chunkSize;
+    const startZ = cellZ * chunkSize;
+
+    const faceMerged = [] 
+
+
+    let flatVoxelArray = this.getCellFromChunkCoordinates(cellX, cellY, cellZ);
+
+    let greedyQuads = GreedyMesh( flatVoxelArray,  [chunkSize,chunkSize,chunkSize] )
+
+    console.log('greedy quads', greedyQuads)
+
+    /*
+    geometry.vertices.push(
+      new THREE.Vector3(-1, -1,  1),  // 0
+      new THREE.Vector3( 1, -1,  1),  // 1
+      new THREE.Vector3(-1,  1,  1),  // 2
+      new THREE.Vector3( 1,  1,  1),  // 3
+      new THREE.Vector3(-1, -1, -1),  // 4
+      new THREE.Vector3( 1, -1, -1),  // 5
+      new THREE.Vector3(-1,  1, -1),  // 6
+      new THREE.Vector3( 1,  1, -1),  // 7
+    );
+
+    geometry.faces.push(
+      // front
+      new THREE.Face3(0, 3, 2),
+      new THREE.Face3(0, 1, 3),
+      // right
+      new THREE.Face3(1, 7, 3),
+      new THREE.Face3(1, 5, 7),
+      // back
+      new THREE.Face3(5, 6, 7),
+      new THREE.Face3(5, 4, 6),
+      // left
+      new THREE.Face3(4, 2, 6),
+      new THREE.Face3(4, 0, 2),
+      // top
+      new THREE.Face3(2, 7, 6),
+      new THREE.Face3(2, 3, 7),
+      // bottom
+      new THREE.Face3(4, 1, 0),
+      new THREE.Face3(4, 5, 1),
+    );
+*/
+    
+    
+    for(let vertex of greedyQuads.vertices){
+      
+       geometry.vertices.push( new THREE.Vector3(...vertex)  )
+
+
+    } 
+ 
+    for(let face of greedyQuads.faces){
+
+      let tileTypeId = face[4]
+
+      // face[0..3] are the vertices  
+        geometry.faces.push( new THREE.Face3(face[0],face[3] ,face[2])   )  //2 tris 
+        geometry.faces.push( new THREE.Face3(face[0],face[1] ,face[3])   )
+
+
+        let direction = 0; //1 for bottom ,  2 for top  
+
+        var uvVoxel =  this.getVoxelFaceTextureIndexNumber(tileTypeId, direction)   
+      
+        let uv_x = Math.floor(uvVoxel % 9);
+        let uv_y = Math.floor(uvVoxel / 9);
+
+        let cellsAcross = 9
+        let cellsDeep = 10
+
+        let coord_x0 = uv_x / cellsAcross  
+        let coord_y0 = uv_y / cellsDeep  
+        let coord_x1 = (uv_x+1) / cellsAcross 
+        let coord_y1 = (uv_y+1) / cellsDeep  
+
+        let xm = (coord_x0 + coord_x1) / 2;
+        let ym = (coord_y0 + coord_y1) / 2; 
+
+        /*const u0 = uv_x / cellsAcross;
+        const v0 = ux_y / cellsDeep;
+        const u1 = (uv_x + 1) / cellsAcross;
+        const v1 = (ux_y + 1) / cellsDeep;
+        const um = (u0 + u1) / 2;
+        const vm = (v0 + v1) / 2;
+            geometry.faceVertexUvs[0].push( 
+          [ new THREE.Vector2(u0, v0), new THREE.Vector2(xm, ym), new THREE.Vector2(u1, v0) ],
+          [ new THREE.Vector2(u1, v0), new THREE.Vector2(xm, ym), new THREE.Vector2(u1, v1) ] 
+        )*/
+        
+        geometry.faceVertexUvs[0].push( 
+          [ new THREE.Vector2(coord_x0, coord_y0), new THREE.Vector2(xm, ym), new THREE.Vector2(coord_x1, coord_y0) ],
+          [ new THREE.Vector2(coord_x1, coord_y0), new THREE.Vector2(xm, ym), new THREE.Vector2(coord_x1, coord_y1) ] 
+        )
+
+    } 
+
+     
+
+
+    geometry.computeFaceNormals();
+
+
+    /*
+    for (const {dir, corners, uvRow} of VoxelWorld.faces) {
+
+
+      for (let y = 0; y < chunkSize; ++y) {
+        const voxelY = startY + y;
+        for (let z = 0; z < chunkSize; ++z) {
+          const voxelZ = startZ + z;
+          for (let x = 0; x < chunkSize; ++x) {
+            const voxelX = startX + x;
+            const voxel = this.getVoxel(voxelX, voxelY, voxelZ);
+            if (voxel) {
+            // voxel 0 is sky (empty) so for UVs we start at 0
+            
+
+            // There is a voxel here but do we need faces for it?
+            //Iterate over each face 
+           
+              const neighbor = this.getVoxel(
+                  voxelX + dir[0],
+                  voxelY + dir[1],
+                  voxelZ + dir[2]);
+              if (!neighbor) {
+
+                var uvVoxel =  this.getVoxelFaceTextureIndexNumber(voxel, uvRow)  //voxel - 1;
+                console.log('meep uvVoxel', uvVoxel, voxel, uvRow)
+                
+
+                let uv_x = Math.floor(uvVoxel % 9);
+                let ux_y = Math.floor(uvVoxel / 9);
+
+                // this voxel has no neighbor in this direction so we need a face.
+                const ndx = positions.length / 3;
+                for (const {pos, uv} of corners) {
+
+                  positions.push(pos[0] + x, pos[1] + y, pos[2] + z);
+                  normals.push(...dir);
+                  uvs.push(
+                        (uv_x +   uv[0]) * tileSize / tileTextureWidth,
+                       1 - (ux_y + 1 -   uv[1]) * tileSize / tileTextureHeight); 
+                
+                }
+                indices.push(
+                  ndx, ndx + 1, ndx + 2,
+                  ndx + 2, ndx + 1, ndx + 3,
+                );
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return {
+      positions,
+      normals,
+      uvs,
+      indices,
+    };*/
+
+
+/*
+    const positionNumComponents = 3;
+    geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), positionNumComponents));
+    const normalNumComponents = 3;
+    geometry.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(normals), normalNumComponents));
+    const uvNumComponents = 2;
+    geometry.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(uvs), uvNumComponents));
+    geometry.setIndex(indices);
+    //geometry.computeBoundingSphere();
+*/
+
+    return geometry; 
+
+
+  }
+ 
 
   getVoxelFaceTextureIndexNumber(voxel, uvRow){
     
@@ -274,23 +493,25 @@ export default class VoxelWorld {
 
   
 
+  
+
+    //the mesh for a chunk 
   getUpdatedCellMesh(x, y, z) {
     const cellX = Math.floor(x / this.chunkSize);
     const cellY = Math.floor(y / this.chunkSize);
     const cellZ = Math.floor(z / this.chunkSize);
     const cellId = this.computeCellId(x, y, z);
     let mesh = this.cellIdToMesh[cellId];
-    const geometry = mesh ? mesh.geometry : new THREE.BufferGeometry();
 
-    const {positions, normals, uvs, indices} = this.generateGeometryDataForCell(cellX, cellY, cellZ);
-    const positionNumComponents = 3;
-    geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(positions), positionNumComponents));
-    const normalNumComponents = 3;
-    geometry.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(normals), normalNumComponents));
-    const uvNumComponents = 2;
-    geometry.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(uvs), uvNumComponents));
-    geometry.setIndex(indices);
-    geometry.computeBoundingSphere();
+    let geometry = this.generateGreedyGeometryDataForCell(cellX, cellY, cellZ);
+
+
+    //this.material
+    let customMat =   new THREE.MeshBasicMaterial({
+      color: 0xff0000,
+      wireframe: true
+  });
+
 
     if (!mesh) {
       mesh = new THREE.Mesh(geometry, this.material);
@@ -420,8 +641,7 @@ export default class VoxelWorld {
 
 
 }
-
-VoxelWorld.faces = [
+const faces = [
   { // left
     uvRow: 0,
     dir: [ -1,  0,  0, ],

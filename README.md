@@ -32,6 +32,30 @@ Legends say that a single Satoasti can purchase entire countries on the planet o
 
 ** Make panels load faster w a function call.. 
 
+
+https://voxelplace.com/  WOW graphics 
+
+https://0fps.net/2012/06/30/meshing-in-a-minecraft-game/
+
+
+*** greedy meshing ! 
+https://github.com/joshmarinacci/voxeljs-next/blob/master/src/GreedyMesher.js
+
+ 
+https://github.com/mikolalysenko/mikolalysenko.github.com/blob/master/MinecraftMeshes2/js/testdata.js
+
+
+https://bitbucket.org/admazzola/sandsbucket1/src/master/src/mygame/voxelengine/rendering/VoxelRenderData.java
+
+https://github.com/roboleary/GreedyMesh/blob/master/src/mygame/Main.java
+
+https://github.com/maxogden/voxel-perlin-terrain
+https://www.npmjs.com/package/voxel-engine
+
+
+https://threejsfundamentals.org/threejs/lessons/threejs-custom-geometry.html
+
+
 ## Credits
 
 Kenney's Humanoid Models 
