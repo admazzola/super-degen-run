@@ -5,7 +5,7 @@ TODO
 - add physics (gridupdater) and walking around [ray tracing]
 
 - server needs to do worldgen and then stream that COMPRESSED chunk tile data to the users (compressed?) 
-- in the game, changes to chunk tiles are broadcasted as deltas.   If a players version of a chunk drops out of sync (use fingerprints, blockchain, like GVM) then the server sends the entire chunk state to the player [compressed]
+- in the game, changes to chunk tiles are broadcasted as deltas.   If a players version of a chunk drops out of sync (use fingerprints, blockchain, like GVM) then the server sends the entire chunk state to the player [compressed -]
 
 Chunks have checkpoints + deltas. Similar to GVM . 
 
@@ -15,6 +15,11 @@ Server will store chunkdata in mongo, will keep a local copy for physics
 ## CHUNKS
 Chunktiles are a uint8 array of 64x64x64 
 Compress into a buffer to send over the wire https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array 
+
+Compression: https://www.npmjs.com/package/voxel-crunch , https://github.com/maxogden/voxel-server/blob/master/index.js
+
+Storage on disc:   Mongo table 'chunks': { chunkId: '', voxelArray: [] , voxelArrayHash: '' }   
+
 
 
 * when a player tries to set a block, that is relayed to everyone 

@@ -29,8 +29,8 @@
 <script>
 import * as THREE from 'three'
 
-import VoxelWorld from '../js/VoxelWorld'
-import VoxelWorldGenerator from '../js/VoxelWorldGenerator'
+import VoxelWorld from '../../shared/lib/voxels/VoxelWorld'
+//import VoxelWorldGenerator from '../../shared/lib/voxels/VoxelWorldGenerator'
 //const VoxelWorld = require('../js/VoxelWorld')
 
  import * as MW from '../js/meshwalk';
@@ -151,9 +151,7 @@ export default {
         'loaded tex'
       });
       texture.magFilter = THREE.NearestFilter;
-      texture.minFilter = THREE.NearestFilter;
-
-
+      texture.minFilter = THREE.NearestFilter; 
 
 
       const material = new THREE.MeshLambertMaterial({
@@ -175,10 +173,7 @@ export default {
 
 
 
-      let voxelWorldGenerator = new VoxelWorldGenerator()
-
-   //    this.voxelWorld.buildWorld(  voxelWorldGenerator )
-
+     
        this.scene.add(this.voxelWorld.getWorldPivot())
 
       this.controls.minDistance = 1 // not working ???

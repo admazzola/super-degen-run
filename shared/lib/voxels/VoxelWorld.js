@@ -11,18 +11,18 @@
 
 const THREE = require('three')
 
-const tileTypes = require('../../shared/worlddata/tiletypes.json')
+const tileTypes = require('../../worlddata/tiletypes.json')
 
-const GreedyMesher = require('./voxels/greedymesher')
-const CulledMesher = require('./voxels/culledmesher')
+const GreedyMesher = require('./greedymesher')
+const CulledMesher = require('./culledmesher')
 //import {GreedyMesher} from "../src/GreedyMesher.js"
 
 
-import VoxelTextureManager from './voxels/voxeltexturemanager'
+import VoxelTextureManager from './voxeltexturemanager'
 
-import ChunkManager from './voxels/chunkmanager'
+import ChunkManager from './chunkmanager'
 
-const VoxelUtils = require('./voxels/voxelutils')
+const VoxelUtils = require('./voxelutils')
 
 const neighborOffsets = [
   [ 0,  0,  0], // self
