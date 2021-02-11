@@ -541,7 +541,7 @@ module.exports =  class VoxelWorld {
 
 
     if (!mesh) {
-      mesh = new THREE.Mesh(geometry, this.material);
+      mesh = new THREE.Mesh(geometry, textureEngine.material);
       mesh.name = cellId;
       this.cellIdToMesh[cellId] = mesh;
       
@@ -550,8 +550,9 @@ module.exports =  class VoxelWorld {
       mesh.scale.set(this.scaleFactor,this.scaleFactor,this.scaleFactor)
     }
 
-    textureEngine.paint(voxelMesh)
-    
+    console.log('textureEngine paint')
+    textureEngine.paint(mesh)
+
     return mesh
   }
 
