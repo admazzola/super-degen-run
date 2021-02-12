@@ -61,37 +61,17 @@ export default class VoxelWorld {
             mesher: new GreedyMesher(),
             chunkSize:32,
             //this will come from cache - from server-  when its ready 
-            //pos is in chunk coords 
-            /*generateVoxelChunk: (low, high, pos) => {
-                const id = [pos.x,pos.y,pos.z].join('|')
-                return VoxelUtils.generateChunkInfoFromFunction(low, high, flatGen)
-            },*/
+            
             container: new THREE.Group(),
             textureManager: new VoxelTextureManager({aoEnabled:false}),
-        }/*,app*/);
-
-      //app.comps.push(app.chunkManager.textureManager)
-
-
+        } );
+ 
 
       const tilesPath = './assets/textures/Tiles/'
       
       let texturesDataArray = tileImages.map(t => {return {id: t.id, src: tilesPath.concat(t.imgurl) } } )
         
-
-      let worldseed = 0 
-
-      let voxelWorldGenerator = new VoxelWorldGenerator()
-      voxelWorldGenerator.buildNoiseMaps(worldseed) 
-
-
-      this.chunkManager.generateVoxelChunk = function( lowBounds, highBounds, chunkCoords, chunkSize ){
-        
-        return voxelWorldGenerator.generateChunkInfo(  lowBounds, highBounds, chunkCoords, chunkSize )
-      //  return VoxelUtils.generateChunkInfoFromFunction(low, high, flatGen)
-    } 
-
-
+ 
       //this comes from TileTypes.json 
       this.chunkManager.textureManager.loadTextures(texturesDataArray).then(()=>{
           this.chunkManager.rebuildAllMeshes()
@@ -104,6 +84,29 @@ export default class VoxelWorld {
 
 
   }
+
+
+  offlineGen(){
+
+
+    let worldseed = 0 
+
+    let voxelWorldGenerator = new VoxelWorldGenerator()
+    voxelWorldGenerator.buildNoiseMaps(worldseed) 
+
+
+    this.chunkManager.generateVoxelChunk = function( lowBounds, highBounds, chunkCoords, chunkSize ){
+      
+      return voxelWorldGenerator.generateChunkInfo(  lowBounds, highBounds, chunkCoords, chunkSize )
+    
+    } 
+
+    this.chunkManager.rebuildAllMeshes()
+    this.chunkManager.requestMissingChunks(new THREE.Vector3(0,0,0))
+
+ 
+  }
+
   getWorldPivot(){
     return this.worldPivot
   }

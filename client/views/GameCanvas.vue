@@ -171,6 +171,7 @@ export default {
         tileTextureHeight,
       });
 
+      this.voxelWorld.offlineGen() //test 
 
 
      
