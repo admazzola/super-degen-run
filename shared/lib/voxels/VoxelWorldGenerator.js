@@ -22,6 +22,8 @@ export default class VoxelWorldGenerator {
 
     }*/
 
+    this.tileLookupTable = this.buildTileLookupTable()
+
     this.builtNoiseMaps = true 
   }
 
@@ -59,7 +61,7 @@ export default class VoxelWorldGenerator {
     }*/
     console.log('generateChunk '   )
 
-    const worldBounds = ChunkManager.getWorldBounds()
+     const worldBounds = ChunkManager.getWorldBounds()
 
 
     let dimensions = [ highBounds[0]-lowBounds[0], highBounds[1]-lowBounds[1], highBounds[2]-lowBounds[2] ]
@@ -67,28 +69,33 @@ export default class VoxelWorldGenerator {
     let voxelsArray = new Int32Array(dimensions[0]*dimensions[1]*dimensions[2])
 
 
-    for (let y = lowBounds[1]; y < highBounds[1]; ++y) {
+     
+
+    
       for (let z = lowBounds[2]; z < highBounds[2]; ++z) {
         for (let x = lowBounds[0]; x < highBounds[0]; ++x) {
 
           var dirtThreshold = 5 +  ( this.simplex.noise2D(x/50,z/50) ) * 15 ;
+          var greystoneThreshold = -1*worldBounds[1] + 10 + this.simplex.noise2D(x,z)
+
+          for (let y = lowBounds[1]; y < highBounds[1]; ++y) {
+
+         
 
           let index = x + dimensions[0]*y + dimensions[0]*dimensions[1]*z
           
            //impenetrable greystone at bottom 
-           if (y < -1*worldBounds[1] + 10 + this.simplex.noise2D(x,z)) { 
-            voxelsArray[index] = ( this.findTileIdByName('greystone').id )
+           if (y < (greystoneThreshold)) { 
+            voxelsArray[index] = ( this.tileLookupTable['greystone'].id )
             continue
           }
 
           if (y <   (dirtThreshold)) { 
-            voxelsArray[index] = ( this.findTileIdByName('dirt').id )
+            voxelsArray[index] = ( this.tileLookupTable['dirt'].id )
             continue
-          }
+          } 
 
-         
-
-          voxelsArray[index] = 0//( this.findTileIdByName('air').id )
+          //voxelsArray[index] = 0//( this.findTileIdByName('air').id )
           continue
  
         }
@@ -120,6 +127,19 @@ export default class VoxelWorldGenerator {
     };
 
 
+  }
+
+
+  buildTileLookupTable(){
+    let table = {} 
+
+    let tiletypesarray = Object.values(tiletypes)
+
+    for(let type of tiletypesarray){
+      table[type.name] = type
+    }
+
+    return table 
   }
 
   findTileIdByName(name){

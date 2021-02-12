@@ -44,7 +44,10 @@ class Chunk {
 
 const SCALE = new Vector3(0.2,0.2,0.2) //change me later 
 
-const WORLDBOUNDS  = [4096, 512 ,4096]
+//const WORLDBOUNDS  = [4096, 512 ,4096]
+ 
+const WORLDBOUNDS  = [512, 512 ,512]
+
 
 export default class ChunkManager {
     constructor(opts) {
@@ -57,6 +60,8 @@ export default class ChunkManager {
         this.chunks = {}
         this.mesher = opts.mesher || new GreedyMesher()
         this.textureManager = opts.textureManager
+
+        this.chunkBounds = WORLDBOUNDS.map(b => Math.floor(b/this.blockSize))
 
         if (this.chunkSize & this.chunkSize - 1 !== 0)
             throw new Error('chunkSize must be a power of 2')
@@ -106,14 +111,12 @@ export default class ChunkManager {
     }
 
     chunkCoordsWithinWorldBounds(chunkCoords){
-        return chunkCoords[0] >= (-1*WORLDBOUNDS[0]/this.chunkSize ) && 
-                chunkCoords[0] <= (1*WORLDBOUNDS[0]/this.chunkSize ) && 
-                chunkCoords[1] >= (-1*WORLDBOUNDS[1]/this.chunkSize ) && 
-                chunkCoords[1] <= (1*WORLDBOUNDS[1]/this.chunkSize ) && 
-                chunkCoords[2] >= (-1*WORLDBOUNDS[2]/this.chunkSize ) && 
-                chunkCoords[2] <= (1*WORLDBOUNDS[2]/this.chunkSize )   
-                
-
+        return chunkCoords[0] >= (-1*this.chunkBounds[0] ) && 
+                chunkCoords[0] <= (1*this.chunkBounds[0] ) && 
+                chunkCoords[1] >= (-1*this.chunkBounds[1] ) && 
+                chunkCoords[1] <= (1*this.chunkBounds[1] ) && 
+                chunkCoords[2] >= (-1*this.chunkBounds[2] ) && 
+                chunkCoords[2] <= (1*this.chunkBounds[2] )    
 
     }
 
@@ -136,12 +139,44 @@ export default class ChunkManager {
         return nearby
     }
 
-    //get missing chunks. position is in world coords
-    requestMissingChunks(pos,distance) {
+    chunksWithinBounds( ) {
+        const result = []
+        for (let cx = (-1 * WORLDBOUNDS[0]/this.chunkSize); cx < (1 * WORLDBOUNDS[0]/this.chunkSize); ++cx) {
+            for (let cy = (-1 * WORLDBOUNDS[1]/this.chunkSize); cy < (1 * WORLDBOUNDS[1]/this.chunkSize); ++cy) {
+                for (let cz = (-1 * WORLDBOUNDS[2]/this.chunkSize); cz < (1 * WORLDBOUNDS[2]/this.chunkSize); ++cz) {
+                    result.push([cx, cy, cz])
+                }
+            }
+        }
+        return result
+    }
+
+    
+    //only for testing 
+   /* buildChunkMeshesNearPosition(pos,distance) {
         this.nearbyChunks(pos,distance).map((chunkIndex) => {
             if (!this.chunks[chunkIndex.join('|')]) {
                 this.rebuildMesh(this.generateChunk(
                     new Vector3(chunkIndex[0],chunkIndex[1],chunkIndex[2])))
+            }
+        })
+    }*/
+
+    //  position is in world coords, distance is in number of chunks 
+    //used by the server 
+    generateChunksNearPosition(pos,distance) {  
+        this.generateChunks( this.nearbyChunks(pos,distance) )
+    }
+
+    generateChunksWithinBounds() {  
+        this.generateChunks( this.chunksWithinBounds() )
+    }
+
+    generateChunks(chunkIndexArray) {
+        chunkIndexArray.map((chunkIndex) => {
+            if (!this.chunks[chunkIndex.join('|')]) {
+                this.generateChunk(
+                    new Vector3(chunkIndex[0],chunkIndex[1],chunkIndex[2]))
             }
         })
     }

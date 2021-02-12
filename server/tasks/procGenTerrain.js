@@ -1,6 +1,12 @@
 
 const mongoInterface = require('../src/lib/mongo-interface')
  
+import VoxelWorldGenerator from '../../shared/lib/voxels/VoxelWorldGenerator'
+import  ChunkManager from '../../shared/lib/voxels/chunkmanager'
+import  GreedyMesher from '../../shared/lib/voxels/greedymesher'
+
+
+
 
 async function task()
 {
@@ -12,21 +18,42 @@ async function task()
 
     //Do not overwrite chunks that already exist 
 
-    let dims = {x:64, y:64, z:64}
+   
 
-    for(let x= -dims.x; x <= dims.x; x++){
-        for(let y= -dims.y; x <= dims.y; y++){
-            for(let z= -dims.z; z <= dims.z; z++){
 
-                let chunkId = ''
-                
-                let voxelArray = this.genChunkVoxels( )
+    let chunkManager = new ChunkManager({
+        chunkDistance:1,
+        blockSize:1,
+        mesher: new GreedyMesher(),
+        chunkSize:32,
+        //this will come from cache - from server-  when its ready 
+        
+        container:  {},
+        textureManager:  {} ,
+    } );
+  
 
-                let existingChunkData = await this.mongoInterface.findOne('chunks',{'chunkId':chunkId})
 
-            }
-        }
-    }
+    let worldseed = 0 
+
+    let voxelWorldGenerator = new VoxelWorldGenerator()
+    voxelWorldGenerator.buildNoiseMaps(worldseed) 
+
+ 
+    
+    chunkManager.generateVoxelChunk = function( lowBounds, highBounds, chunkCoords, chunkSize ){
+      
+      return voxelWorldGenerator.generateChunkInfo(  lowBounds, highBounds, chunkCoords, chunkSize )
+    
+    } 
+
+
+    chunkManager.generateChunksWithinBounds(  )
+
+
+    let allChunks = chunkManager.chunks
+
+    console.log(allChunks.length)
 
 
 }

@@ -101,9 +101,9 @@ export default class VoxelWorld {
     
     } 
 
+     
+    this.chunkManager.generateChunksNearPosition(new THREE.Vector3(0,0,0), 4)
     this.chunkManager.rebuildAllMeshes()
-    this.chunkManager.requestMissingChunks(new THREE.Vector3(0,0,0), 4)
-
  
 
  
@@ -124,6 +124,8 @@ export default class VoxelWorld {
 
 
 }
+
+/*
 const faces = [
   { // left
     uvRow: 0,
@@ -185,4 +187,4 @@ const faces = [
       { pos: [ 1, 1, 1 ], uv: [ 1, 1 ], },
     ],
   },
-];
+];*/
