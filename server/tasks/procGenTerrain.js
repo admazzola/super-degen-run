@@ -1,11 +1,11 @@
 
 const mongoInterface = require('../src/lib/mongo-interface')
  
-import VoxelWorldGenerator from '../../shared/lib/voxels/VoxelWorldGenerator'
+import  VoxelWorldGenerator from '../../shared/lib/voxels/VoxelWorldGenerator'
 import  ChunkManager from '../../shared/lib/voxels/chunkmanager'
 import  GreedyMesher from '../../shared/lib/voxels/greedymesher'
 
-
+var WorldBuilder = require('../../server/src/lib/WorldBuilder')
 
 
 async function task()
@@ -14,7 +14,7 @@ async function task()
 
     let serverMode = 'production'
 
-    mongoInterface.init( 'polyvoxels_'.concat(serverMode) )
+    await mongoInterface.init( 'polyvoxels_'.concat(serverMode) )
 
     //Do not overwrite chunks that already exist 
 
@@ -51,9 +51,15 @@ async function task()
     chunkManager.generateChunksWithinBounds(  )
 
 
-    let allChunks = chunkManager.chunks
+    let allChunksArray = Object.values(chunkManager.chunks)
 
-    console.log(allChunks.length)
+    console.log('generated chunks: ', allChunksArray.length)
+
+    for(let chunkInfo of allChunksArray){
+
+        let stored = await WorldBuilder.storeNewChunk(chunkInfo, mongoInterface)
+       
+    }
 
 
 }

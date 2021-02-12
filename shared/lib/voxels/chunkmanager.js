@@ -2,9 +2,12 @@ import {Vector3,} from "three"
 import GreedyMesher from "./greedymesher.js"
 import {VoxelMesh} from "./voxelmesh.js"
 
+var hash = require('object-hash');
+
+
 class Chunk {
     constructor(data, pos, chunkBits) {
-        this.data = data
+        //this.data = data //wasteful of memory 
         this.dims = data.dims
         this.voxels = data.voxels
         this.vmesh = null
@@ -14,6 +17,8 @@ class Chunk {
         this.id = this.chunkPosition.join('|')
         this.chunkBits = chunkBits
     }
+
+  
 
     voxelIndexFromCoordinates(x, y, z) {
         const bits = this.chunkBits
@@ -75,12 +80,17 @@ export default class ChunkManager {
         let bits = 0
         for (let size = this.chunkSize; size > 0; size >>= 1) bits++;
         this.chunkBits = bits - 1;
-        this.CHUNK_CACHE = {}
+     //   this.CHUNK_CACHE = {}
     }
 
     static getChunkId( chunkCoords ){
         return [chunkCoords.x,chunkCoords.y,chunkCoords.z].join('|')
     }
+
+      //for easily comparing for changes between server and client .. to know if we desync
+      static getChunkHash(chunk){
+        return  hash( chunk.voxels ) 
+      }
 
     static getBitsFromChunkSize(chunkSize){
         return Math.log(chunkSize*2)/Math.log(2)
@@ -104,7 +114,7 @@ export default class ChunkManager {
             const chunk = this.chunks[key]
             this.container.remove(chunk.surfaceMesh)
             chunk.surfaceMesh.geometry.dispose()
-            this.CHUNK_CACHE[chunk.id] = chunk.data
+     //       this.CHUNK_CACHE[chunk.id] = chunk.data
             chunk.dispose()
         })
         this.chunks = {}
@@ -196,11 +206,11 @@ export default class ChunkManager {
         const bounds = this.getBounds(pos.x, pos.y, pos.z)
         const id = [pos.x,pos.y,pos.z].join('|')
         let chunkData
-        if(this.CHUNK_CACHE[id]) {
-            chunkData = this.CHUNK_CACHE[id]
-        } else {
+        //if(this.CHUNK_CACHE[id]) {
+       //     chunkData = this.CHUNK_CACHE[id]
+        //} else {
             chunkData = this.generateVoxelChunk(bounds[0], bounds[1], pos, this.chunkSize)
-        }
+        //}
         const chunkObj = new Chunk(chunkData, pos, this.chunkBits)
         this.chunks[chunkObj.id] = chunkObj
         return chunkObj
@@ -307,7 +317,7 @@ export default class ChunkManager {
             if (!chunk) return
             this.container.remove(chunk.surfaceMesh)
             chunk.surfaceMesh.geometry.dispose()
-            this.CHUNK_CACHE[chunk.id] = chunk.data
+          //  this.CHUNK_CACHE[chunk.id] = chunk.data
             chunk.dispose()
             delete this.chunks[chunkIndex]
         })
