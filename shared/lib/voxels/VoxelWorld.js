@@ -52,21 +52,6 @@ export default class VoxelWorld {
 
 
 
-   /* const flatGen = (i,j,k) => {
-           //an gap in the floor made of air
-           // if(j <1 && k < -5 && k > -10 ) return 0
-           //the floor is brick, from depth 0 to -10
-           if(j < 1 && j > -10) return 1
-
-           //move back 10
-           k+=20
-           // a dome
-           if((i*i + j*j + k*k) < 80) {
-               return 2
-           }
-           //nothing else in the world
-           return 0
-       }*/
 
     this.chunkManager = new ChunkManager({
             chunkDistance:1,
@@ -91,12 +76,21 @@ export default class VoxelWorld {
       
       let texturesDataArray = tileImages.map(t => {return {id: t.id, src: tilesPath.concat(t.imgurl) } } )
         
-      
+
+      let worldseed = 0 
+
+
+      this.chunkManager.generateVoxelChunk = function( lowBounds, highBounds, chunkCoords, chunkSize ){
+        
+        return VoxelWorldGenerator.generateChunkInfo( )
+      //  return VoxelUtils.generateChunkInfoFromFunction(low, high, flatGen)
+    } 
+
 
       //this comes from TileTypes.json 
       this.chunkManager.textureManager.loadTextures(texturesDataArray).then(()=>{
           this.chunkManager.rebuildAllMeshes()
-         // this.chunkManager.requestMissingChunks(new THREE.Vector3(0,0,0))
+           this.chunkManager.requestMissingChunks(new THREE.Vector3(0,0,0))
           //app.dialog.setSelectedToDefault()
       })
 

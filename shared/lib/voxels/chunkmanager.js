@@ -64,10 +64,19 @@ export default class ChunkManager {
         //TODO: count the number of bits wide the chunksize is. seems like we could just use Math.log()
         //ex: if chunksize is 16 the bits is 4
         //I think bits is just used for efficient multiplication and division.
+        //2^chunkbits = chunksize 
         let bits = 0
         for (let size = this.chunkSize; size > 0; size >>= 1) bits++;
         this.chunkBits = bits - 1;
         this.CHUNK_CACHE = {}
+    }
+
+    getBitsFromChunkSize(chunkSize){
+        return Math.log(chunkSize*2)/Math.log(2)
+    }
+
+    getChunkSizeFromBits(bits){
+        return Math.pow(2,bits-1)
     }
 
     on(type, cb) {
@@ -118,6 +127,9 @@ export default class ChunkManager {
         })
     }
 
+    /*
+    Input is chunk coords, output is voxel coords 
+    */
     getBounds(x, y, z) {
         const bits = this.chunkBits
         const low = [x << bits, y << bits, z << bits]
@@ -133,7 +145,7 @@ export default class ChunkManager {
         if(this.CHUNK_CACHE[id]) {
             chunkData = this.CHUNK_CACHE[id]
         } else {
-            chunkData = this.generateVoxelChunk(bounds[0], bounds[1], pos)
+            chunkData = this.generateVoxelChunk(bounds[0], bounds[1], pos, this.chunkSize)
         }
         const chunkObj = new Chunk(chunkData, pos, this.chunkBits)
         this.chunks[chunkObj.id] = chunkObj
