@@ -1,6 +1,8 @@
   
 var SimplexNoise = require('simplex-noise')
 
+const tiletypes = require('../../worlddata/tiletypes.json')
+
 import ChunkManager from './chunkmanager'
 
 export default class VoxelWorldGenerator {
@@ -55,6 +57,11 @@ export default class VoxelWorldGenerator {
         }
       }
     }*/
+    console.log('generateChunk '   )
+
+    const worldBounds = ChunkManager.getWorldBounds()
+
+
     let dimensions = [ highBounds[0]-lowBounds[0], highBounds[1]-lowBounds[1], highBounds[2]-lowBounds[2] ]
     
     let voxelsArray = new Int32Array(dimensions[0]*dimensions[1]*dimensions[2])
@@ -64,14 +71,25 @@ export default class VoxelWorldGenerator {
       for (let z = lowBounds[2]; z < highBounds[2]; ++z) {
         for (let x = lowBounds[0]; x < highBounds[0]; ++x) {
 
-          var noiseOutput = 15 + Math.abs( this.simplex.noise2D(x,z) ) * 2 ;
+          var dirtThreshold = 5 +  ( this.simplex.noise2D(x/50,z/50) ) * 15 ;
 
           let index = x + dimensions[0]*y + dimensions[0]*dimensions[1]*z
- 
-          if (y <   (noiseOutput)) { 
-            voxelsArray[index] = ( this.randInt(1, 4) )
-          }
           
+           //impenetrable greystone at bottom 
+           if (y < -1*worldBounds[1] + 10 + this.simplex.noise2D(x,z)) { 
+            voxelsArray[index] = ( this.findTileIdByName('greystone').id )
+            continue
+          }
+
+          if (y <   (dirtThreshold)) { 
+            voxelsArray[index] = ( this.findTileIdByName('dirt').id )
+            continue
+          }
+
+         
+
+          voxelsArray[index] = 0//( this.findTileIdByName('air').id )
+          continue
  
         }
       }
@@ -86,12 +104,7 @@ export default class VoxelWorldGenerator {
   generateChunkInfo(lowBounds, highBounds, chunkCoords, chunkSize ){
 
     const id = ChunkManager.getChunkId( chunkCoords  )
-
-    //var simplex = new SimplexNoise(worldseed);
-
-    
-    //let tilesArray = this.getTilesForChunk(worldseed, chunkCoords, chunkSize)
-    //gen noise maps here 
+  
 
     console.log('generateChunkInfo ', id   )
 
@@ -107,6 +120,20 @@ export default class VoxelWorldGenerator {
     };
 
 
+  }
+
+  findTileIdByName(name){
+    let tiletypesarray = Object.values(tiletypes)
+
+    for(let type of tiletypesarray){
+      if(type.name == name){
+        return type
+      }
+
+    }
+
+    console.error('Warn: Could not find tile ', name)
+    return tiletypesarray[0]
   }
 
 

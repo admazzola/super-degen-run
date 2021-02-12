@@ -26,20 +26,47 @@
   },
   {
     "id": 3,
-    "name":"dirt",
+    "name":"sand",
     "meshtype": "block",
-    "top": 3,
-    "side":3,
-    "bottom": 3,
+    "top": 4,
+    "side":4,
+    "bottom": 4,
     "collisiontype":"solid"
   },
   {
     "id": 4,
-    "name":"dirt",
+    "name":"stone",
     "meshtype": "block",
-    "top": 3,
-    "side":3,
-    "bottom": 3,
+    "top": 5,
+    "side":5,
+    "bottom": 5,
+    "collisiontype":"solid"
+  },
+  {
+    "id": 5,
+    "name":"wood",
+    "meshtype": "block",
+    "top": 6,
+    "side":6,
+    "bottom": 6,
+    "collisiontype":"solid"
+  },
+  {
+    "id": 6,
+    "name":"snow",
+    "meshtype": "block",
+    "top": 7,
+    "side":7,
+    "bottom": 7,
+    "collisiontype":"solid"
+  },
+  {
+    "id": 7,
+    "name":"greystone",
+    "meshtype": "block",
+    "top": 13,
+    "side":13,
+    "bottom": 13,
     "collisiontype":"solid"
   }
 

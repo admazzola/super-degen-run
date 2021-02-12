@@ -141,7 +141,7 @@ export default {
 
 
       //voxel world
-      const chunkSize = 64;
+      const chunkSize = 32;
       const tileSize = 128;
       const tileTextureWidth = 1152;
       const tileTextureHeight = 1280;

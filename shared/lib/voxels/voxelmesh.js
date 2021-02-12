@@ -260,16 +260,16 @@ export class VoxelMesh {
             }
         }
         geometry.setIndex(indices)
-        geometry.addAttribute('position',new Float32BufferAttribute(vertices,3))
-        geometry.addAttribute('uv', new Float32BufferAttribute(normaluvs,2))
-        geometry.addAttribute('subrect',new Float32BufferAttribute(subrects,4))
-        geometry.addAttribute('repeat', new Float32BufferAttribute(repeatUV,2))
-        geometry.addAttribute('frameCount',new Float32BufferAttribute(frameCount,1))
-        geometry.addAttribute('occlusion',new Float32BufferAttribute(occlusion,1))
+        geometry.setAttribute('position',new Float32BufferAttribute(vertices,3))
+        geometry.setAttribute('uv', new Float32BufferAttribute(normaluvs,2))
+        geometry.setAttribute('subrect',new Float32BufferAttribute(subrects,4))
+        geometry.setAttribute('repeat', new Float32BufferAttribute(repeatUV,2))
+        geometry.setAttribute('frameCount',new Float32BufferAttribute(frameCount,1))
+        geometry.setAttribute('occlusion',new Float32BufferAttribute(occlusion,1))
 
 
         //repeat uv is working properly !
-        console.log('repeat uv ',repeatUV)
+        //console.log('repeat uv ',repeatUV)
 
         geometry.computeFaceNormals()
         geometry.uvsNeedUpdate = true
@@ -278,7 +278,7 @@ export class VoxelMesh {
         geometry.normalsNeedUpdate = true
 
         geometry.computeBoundingBox()
-        geometry.computeBoundingSphere()
+        //geometry.computeBoundingSphere()
 
     }
 

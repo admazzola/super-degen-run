@@ -14,7 +14,7 @@
     "procGenTerrain": "node server/tasks/procGenTerrain.js",
     "karmatest": "karma start --single-run  --browsers ChromeHeadless karma.conf.js",
     "mochatest": "mocha test/mocha.js",
-    "voxeltest": "mocha test/voxels.js"
+    "voxeltest": "mocha -r esm test/voxels.js"
   },
   "main": "index.js",
   "dependencies": {
@@ -30,6 +30,7 @@
     "core-js": "^2.6.5",
     "dat.gui": "^0.7.7",
     "delay": "^4.4.0",
+    "esm": "^3.2.25",
     "ethereumjs-util": "^7.0.5",
     "noisejs": "^2.1.0",
     "oimo": "^1.0.9",

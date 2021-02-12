@@ -1,5 +1,5 @@
 import {Vector3,} from "three"
-import {GreedyMesher} from "./greedymesher.js"
+import GreedyMesher from "./greedymesher.js"
 import {VoxelMesh} from "./voxelmesh.js"
 
 class Chunk {
@@ -42,7 +42,9 @@ class Chunk {
     }
 }
 
-const SCALE = new Vector3(1.0,1.0,1.0)
+const SCALE = new Vector3(0.2,0.2,0.2) //change me later 
+
+const WORLDBOUNDS  = [4096, 512 ,4096]
 
 export default class ChunkManager {
     constructor(opts) {
@@ -103,8 +105,20 @@ export default class ChunkManager {
         this.chunks = {}
     }
 
+    chunkCoordsWithinWorldBounds(chunkCoords){
+        return chunkCoords[0] >= (-1*WORLDBOUNDS[0]/this.chunkSize ) && 
+                chunkCoords[0] <= (1*WORLDBOUNDS[0]/this.chunkSize ) && 
+                chunkCoords[1] >= (-1*WORLDBOUNDS[1]/this.chunkSize ) && 
+                chunkCoords[1] <= (1*WORLDBOUNDS[1]/this.chunkSize ) && 
+                chunkCoords[2] >= (-1*WORLDBOUNDS[2]/this.chunkSize ) && 
+                chunkCoords[2] <= (1*WORLDBOUNDS[2]/this.chunkSize )   
+                
 
-    // position in chunk indexes?
+
+    }
+
+
+    // position is world coords, distance is number of chunks 
     nearbyChunks(position, distance) {
         const current = this.chunkAtPosition(position)
         const x = current[0]
@@ -123,10 +137,11 @@ export default class ChunkManager {
     }
 
     //get missing chunks. position is in world coords
-    requestMissingChunks(pos) {
-        this.nearbyChunks(pos).map((chunkIndex) => {
+    requestMissingChunks(pos,distance) {
+        this.nearbyChunks(pos,distance).map((chunkIndex) => {
             if (!this.chunks[chunkIndex.join('|')]) {
-                this.rebuildMesh(this.generateChunk(new Vector3(chunkIndex[0],chunkIndex[1],chunkIndex[2])))
+                this.rebuildMesh(this.generateChunk(
+                    new Vector3(chunkIndex[0],chunkIndex[1],chunkIndex[2])))
             }
         })
     }
@@ -167,6 +182,10 @@ export default class ChunkManager {
         const chunk = new Chunk(chunkData, pos, this.chunkBits)
         this.chunks[chunk.id] = chunk
         return chunk
+    }
+
+    static getWorldBounds(){
+        return WORLDBOUNDS
     }
 
     chunkIndexAtCoordinates(x, y, z) {
@@ -264,6 +283,12 @@ export default class ChunkManager {
     }
 
     rebuildMesh(chunk) {
+
+        if(!this.chunkCoordsWithinWorldBounds(chunk.chunkPosition)){
+            console.error('Warn: Tried to build out-of-bounds chunk')
+            return
+        }
+
         if(chunk.surfaceMesh) this.container.remove(chunk.surfaceMesh)
         chunk.surfaceMesh = new VoxelMesh(chunk, this.mesher, SCALE, this)
             .createSurfaceMesh(this.textureManager.material)

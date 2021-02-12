@@ -18,6 +18,12 @@ https://www.gamasutra.com/blogs/MattKlingensmith/20130811/198050/How_Water_Works
 
 
 
+
+## Small bugs
+- shader for textures has little white lines 
+- new voxel terrain gen has some sort of weird overflow .. when writing to flat array ?
+
+
  ** add a grid with enemy NPCs, allow player to atk them [activate module]
  ** allow player to warp to different grids (using a gui)
      --warping will be a bit tricky, there will be a 5 second delay on the server ..align time
