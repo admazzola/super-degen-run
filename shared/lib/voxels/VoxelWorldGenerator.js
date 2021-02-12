@@ -66,7 +66,7 @@ export default class VoxelWorldGenerator {
 
           var noiseOutput = 15 + Math.abs( this.simplex.noise2D(x,z) ) * 2 ;
 
-          let index = x + dimensions[1]*y + dimensions[2]*dimensions[2]*z
+          let index = x + dimensions[0]*y + dimensions[0]*dimensions[1]*z
  
           if (y <   (noiseOutput)) { 
             voxelsArray[index] = ( this.randInt(1, 4) )

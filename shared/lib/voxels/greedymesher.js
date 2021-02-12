@@ -1,5 +1,13 @@
 let mask = new Int32Array(4096);
 
+const tiletypes = require('../../worlddata/tiletypes.json')
+
+/*
+
+Improvement: could add more culling 
+
+*/
+
 module.exports =  class GreedyMesher {
     constructor() {
     }
@@ -40,11 +48,33 @@ module.exports =  class GreedyMesher {
                 xd = x[d]
                 n = 0;
 
+                
+
                 for (x[v] = 0; x[v] < dimsV; ++x[v]) {
                     for (x[u] = 0; x[u] < dimsU; ++x[u], ++n) {
-                        var a = xd >= 0 && volume[x[0] + dimsX * x[1] + dimsXY * x[2]]
+
+                        let facing = 0; //0 is side, top is 1, bottom is 2 
+
+                       
+
+                        let blockType = volume[x[0] + dimsX * x[1] + dimsXY * x[2]]
+                        let adjacentBlockType = volume[x[0] + q[0] + dimsX * x[1] + qdimsX + dimsXY * x[2] + qdimsXY]
+
+                         
+                        if(d == 1){                             
+                            facing = 1
+                            //detect if we are top or bottom 
+                            if(x[1]< 0){facing = 2} 
+                        } 
+
+                        let tileType = this.getTileTypeOfBlockFace(blockType ,facing)
+                        let adjacentTileType = this.getTileTypeOfBlockFace(adjacentBlockType ,facing)
+
+
+
+                        var a = xd >= 0 && tileType
                             ,
-                            b = xd < dimsD - 1 && volume[x[0] + q[0] + dimsX * x[1] + qdimsX + dimsXY * x[2] + qdimsXY]
+                            b = xd < dimsD - 1 && adjacentTileType
                         if (a ? b : !b) {
                             mask[n] = 0;
                             continue;
@@ -97,6 +127,9 @@ module.exports =  class GreedyMesher {
                             dv[u] = w;
                             dv[v] = 0;
                         }
+
+                        
+
                         var vertex_count = vertices.length;
                         vertices.push([x[0], x[1], x[2]]);
                         vertices.push([x[0] + du[0], x[1] + du[1], x[2] + du[2]]);
@@ -120,5 +153,22 @@ module.exports =  class GreedyMesher {
             }
         }
         return {vertices: vertices, faces: faces};
+    }
+
+
+    getTileTypeOfBlockFace(blockType, facing){
+        let tiletype = Object.values(tiletypes)[blockType]
+
+        if(!tiletype){
+            console.log('warn: no tiletype ',blockType)
+            return 0
+        }
+
+        switch(facing){
+            case 0: return tiletype.side;
+            case 1: return tiletype.top;
+            case 2: return tiletype.bottom; 
+        }
+        
     }
 }

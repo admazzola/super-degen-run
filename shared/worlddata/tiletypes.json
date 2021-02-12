@@ -9,9 +9,9 @@
     "id": 1,
     "name":"grass",
     "meshtype": "block",
-    "top": 8,
-    "side": 43,
-    "bottom": 52,
+    "top": 1,
+    "side": 2,
+    "bottom": 3,
     "collisiontype":"solid"
   },
 
@@ -19,9 +19,27 @@
     "id": 2,
     "name":"dirt",
     "meshtype": "block",
-    "top": 52,
-    "side":52,
-    "bottom": 52,
+    "top": 3,
+    "side":3,
+    "bottom": 3,
+    "collisiontype":"solid"
+  },
+  {
+    "id": 3,
+    "name":"dirt",
+    "meshtype": "block",
+    "top": 3,
+    "side":3,
+    "bottom": 3,
+    "collisiontype":"solid"
+  },
+  {
+    "id": 4,
+    "name":"dirt",
+    "meshtype": "block",
+    "top": 3,
+    "side":3,
+    "bottom": 3,
     "collisiontype":"solid"
   }
 
