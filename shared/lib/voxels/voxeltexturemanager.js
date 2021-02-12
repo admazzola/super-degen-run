@@ -48,7 +48,7 @@ export class VoxelTextureManager {
         this.material = new ShaderMaterial( {
             uniforms: {
                 'uTime': { value: 0.0 },
-                texture: { value: this.texture},
+                textureSamp: { value: this.texture},
                 texturesEnabled: { value: this.texturesEnabled },
             },
             vertexColors:VertexColors,
