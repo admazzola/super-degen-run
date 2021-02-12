@@ -259,6 +259,7 @@ export default class ChunkManager {
         Object.keys(this.chunks).forEach(key => this.rebuildMesh(this.chunks[key]))
     }
 
+    //this frees up memory 
     updateCenterPosition(pos) {
         this.requestMissingChunks(pos)
         // and remove the chunks that might be out of range now
