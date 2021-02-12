@@ -98,6 +98,8 @@ export default class VoxelWorld {
       
       let texturesDataArray = tileImages.map(t => {return {id: t.id, src: tilesPath.concat(t.imgurl) } } )
         
+      
+
       //this comes from TileTypes.json 
       this.chunkManager.textureManager.loadTextures(texturesDataArray).then(()=>{
           this.chunkManager.rebuildAllMeshes()
