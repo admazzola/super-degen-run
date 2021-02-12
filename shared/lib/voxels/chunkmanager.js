@@ -71,11 +71,15 @@ export default class ChunkManager {
         this.CHUNK_CACHE = {}
     }
 
-    getBitsFromChunkSize(chunkSize){
+    static getChunkId( chunkCoords ){
+        return [chunkCoords.x,chunkCoords.y,chunkCoords.z].join('|')
+    }
+
+    static getBitsFromChunkSize(chunkSize){
         return Math.log(chunkSize*2)/Math.log(2)
     }
 
-    getChunkSizeFromBits(bits){
+    static getChunkSizeFromBits(bits){
         return Math.pow(2,bits-1)
     }
 

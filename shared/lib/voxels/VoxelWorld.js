@@ -13,8 +13,10 @@ const CulledMesher = require('./culledmesher')
 
 
 import {VoxelTextureManager} from './voxeltexturemanager'
+ 
 
 import ChunkManager from './chunkmanager'
+import VoxelWorldGenerator from './VoxelWorldGenerator'
 
 const VoxelUtils = require('./voxelutils')
 
@@ -79,10 +81,13 @@ export default class VoxelWorld {
 
       let worldseed = 0 
 
+      let voxelWorldGenerator = new VoxelWorldGenerator()
+      voxelWorldGenerator.buildNoiseMaps(worldseed) 
+
 
       this.chunkManager.generateVoxelChunk = function( lowBounds, highBounds, chunkCoords, chunkSize ){
         
-        return VoxelWorldGenerator.generateChunkInfo( )
+        return voxelWorldGenerator.generateChunkInfo(  lowBounds, highBounds, chunkCoords, chunkSize )
       //  return VoxelUtils.generateChunkInfoFromFunction(low, high, flatGen)
     } 
 

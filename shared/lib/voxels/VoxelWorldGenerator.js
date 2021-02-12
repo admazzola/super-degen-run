@@ -1,9 +1,27 @@
   
 var SimplexNoise = require('simplex-noise')
 
+import ChunkManager from './chunkmanager'
+
 export default class VoxelWorldGenerator {
    
+  constructor(){
+    this.builtNoiseMaps = false 
+  }
 
+  buildNoiseMaps(worldseed){
+
+    this.worldseed=worldseed
+    this.simplex = new SimplexNoise(worldseed) 
+
+   /* this.noiseMaps = {
+      base: this.simplex.noise2D(x,z)
+       
+
+    }*/
+
+    this.builtNoiseMaps = true 
+  }
 
   getBiomeTypeForChunk(worldseed, chunkX, chunkZ){
       return 0
@@ -11,13 +29,14 @@ export default class VoxelWorldGenerator {
 
 
 
-  getTilesForChunk(worldseed, chunkX, chunkZ, chunkSize  ){
+  getTilesForChunk( lowBounds,highBounds  ){
+    if(!this.builtNoiseMaps){
+      this.buildNoiseMaps(0)
+      console.error('Warn: noise maps not prebuilt')
+    }
+  
 
-
-    var simplex = new SimplexNoise(worldseed);
-     
-
-    let output = new Uint8Array(  chunkSize * chunkSize * chunkSize    )
+    /*let output = new Uint8Array(  chunkSize * chunkSize * chunkSize    )
 
 
     for (let y = 0; y < chunkSize; ++y) {
@@ -35,41 +54,48 @@ export default class VoxelWorldGenerator {
           }
         }
       }
-    }
-     
-    return output 
-
-
-  }
-  
-  
-  generateChunkInfo(worldseed, lowBounds, highBounds, chunkCoords, chunkSize ){
-
-    const id = [chunkCoords.x,chunkCoords.y,chunkCoords.z].join('|')
-
-    var simplex = new SimplexNoise(worldseed);
-
+    }*/
     let dimensions = [ highBounds[0]-lowBounds[0], highBounds[1]-lowBounds[1], highBounds[2]-lowBounds[2] ]
+    
     let voxelsArray = new Int32Array(dimensions[0]*dimensions[1]*dimensions[2])
-
-    //let tilesArray = this.getTilesForChunk(worldseed, chunkCoords, chunkSize)
-    //gen noise maps here 
-
-    console.log('generateChunkInfo ', id   )
 
 
     for (let y = lowBounds[1]; y < highBounds[1]; ++y) {
       for (let z = lowBounds[2]; z < highBounds[2]; ++z) {
         for (let x = lowBounds[0]; x < highBounds[0]; ++x) {
 
+          var noiseOutput = 15 + Math.abs( this.simplex.noise2D(x,z) ) * 2 ;
 
-          let index = x + chunkSize*y + chunkSize*chunkSize*z
+          let index = x + dimensions[1]*y + dimensions[2]*dimensions[2]*z
  
-           
+          if (y <   (noiseOutput)) { 
+            voxelsArray[index] = ( this.randInt(1, 4) )
+          }
+          
  
         }
       }
     }
+     
+    return {voxelsArray,dimensions} 
+
+
+  }
+  
+  
+  generateChunkInfo(lowBounds, highBounds, chunkCoords, chunkSize ){
+
+    const id = ChunkManager.getChunkId( chunkCoords  )
+
+    //var simplex = new SimplexNoise(worldseed);
+
+    
+    //let tilesArray = this.getTilesForChunk(worldseed, chunkCoords, chunkSize)
+    //gen noise maps here 
+
+    console.log('generateChunkInfo ', id   )
+
+    const {voxelsArray,dimensions} = this.getTilesForChunk(lowBounds, highBounds)
      
 
       return {
