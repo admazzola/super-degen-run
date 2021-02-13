@@ -163,15 +163,11 @@ export default {
 
           */
 
-      this.voxelWorld = new VoxelWorld({
-      //  material,
-        chunkSize,
-        tileSize,
-        tileTextureWidth,
-        tileTextureHeight,
-      });
+      this.voxelWorld = new VoxelWorld( );
 
-      this.voxelWorld.offlineGen() //test 
+
+     
+      //this.voxelWorld.offlineGen() //test 
 
 
      
@@ -262,6 +258,9 @@ export default {
       clientConnection.setEntityManager( entityManager )
 
       clientConnection.requestSpawn()
+
+
+       this.voxelReader = new VoxelReader( entityManager, clientConnection  )
 
       //setInterval( function(){  clientConnection.requestGridState() }.bind(this)  , 500)
 

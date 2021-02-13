@@ -75,7 +75,7 @@ export default class VoxelWorldGenerator {
       for (let z = lowBounds[2]; z < highBounds[2]; ++z) {
         for (let x = lowBounds[0]; x < highBounds[0]; ++x) {
 
-          var dirtThreshold = 5 +  ( this.simplex.noise2D(x/50,z/50) ) * 15 ;
+          var dirtThreshold = 5 +  ( this.simplex.noise2D(x/500,z/500) ) * 8 ;
           var greystoneThreshold = -1*worldBounds[1] + 10 + this.simplex.noise2D(x,z)
 
           for (let y = lowBounds[1]; y < highBounds[1]; ++y) {
