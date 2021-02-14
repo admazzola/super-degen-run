@@ -45,15 +45,17 @@ static compressVoxelArray(voxelArray){
     let uint8Array =   Uint8Array.from( voxelArray )
 
     let cArray =   LZUTF8.compress(uint8Array ,{outputEncoding: "Buffer" });
-
-     
-
+ 
     return cArray
 }
 
 static uncompressVoxelArray(compressedVoxelArray){
 
-    return voxelArray
+    let uArray =   LZUTF8.decompress(compressedVoxelArray ,{inputEncoding: "Buffer" , outputEncoding: 'ByteArray'});
+     
+    //need to make it an object ? 
+
+    return uArray
 }
 
 
