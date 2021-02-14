@@ -2,8 +2,12 @@
 var GameServer = require('./lib/GameServer')
 var gameServer = new GameServer()
 
-var MarketServer = require('./lib/MarketServer')
-var marketServer = new MarketServer()
+var RelayServer = require('./lib/RelayServer')
+var relayServer = new RelayServer()
+
+var GridServer = require('./lib/GridServer')
+var gridServer = new GridServer()
+
 
 async function init()
 {
@@ -22,8 +26,14 @@ async function init()
     });
 
 
-    marketServer.start(serverMode, function(){
-      console.log('booted market server ')
+
+    relayServer.start(serverMode, function(){
+      console.log('booted relay server ')
+    });
+
+
+    gridServer.start(serverMode, function(){
+      console.log('booted grid server ')
     });
 
 

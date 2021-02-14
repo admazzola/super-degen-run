@@ -4,12 +4,12 @@ module.exports = {
     "port": 9208
 
   },
-  "marketServer":{
+  "relayServer":{
     "url": "http://localhost",
     "port": 9209
 
   },
-  "chatServer":{
+  "gridServer":{
     "url": "http://localhost",
     "port": 9210
 

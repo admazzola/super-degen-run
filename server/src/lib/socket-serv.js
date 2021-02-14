@@ -8,6 +8,7 @@ const ethJsUtil = require('ethereumjs-util')
 
 const GameState = require('./gamestate')
 const WorldHelper = require('../../../shared/lib/WorldHelper')
+
 const VoxelHelper = require('../../../shared/lib/voxels/VoxelHelper')
 
 const geckos = require('@geckos.io/server').default
@@ -25,14 +26,14 @@ var cachedPlayerData = new Map()
 
 module.exports = class SocketServ {
 
-  constructor(gameState, expressServer, mongoInterface, redisInterface )
+  constructor(  expressServer, mongoInterface, redisInterface )
   {
     this.mongoInterface=mongoInterface;
     this.redisInterface=redisInterface
 
     
 
-      this.gameState = gameState;
+      
 
     //this.gameState.setClientChangedGridCallback( this.forceClientIntoGridCommsChannel )
 
@@ -220,9 +221,14 @@ module.exports = class SocketServ {
         let nearbyLocalChunks = data.nearbyLocalChunks
 
 
-        let desyncedChunkIdArray = VoxelHelper.findDesyncedChunks(nearbyLocalChunks,this.gameState.voxelWorld.chunks) 
+        let localChunksKeys = Object.keys( nearbyLocalChunks  )
 
-        let updatedChunkArray = desyncedChunkIdArray.map( x=> { this.gameState.voxelWorld.chunks[x.id] }  )   
+        let currentChunkArray ==  GETFROM MONGo 
+
+
+        let desyncedChunkIdArray = VoxelHelper.findDesyncedChunks(nearbyLocalChunks,currentChunkArray ) 
+
+        let updatedChunkArray = desyncedChunkIdArray.map( x=> { currentChunkArray[x.id] }  )   
 
         let updatedCompressedChunkArray = VoxelHelper.getCompressedChunkArray( updatedChunkArray )
 
@@ -244,7 +250,7 @@ module.exports = class SocketServ {
 
       if(authed)
       {
-        var result = await this.gameState.handleClientCommand( data  )
+       // var result = await this.gameState.handleClientCommand( data  )
 
 
 

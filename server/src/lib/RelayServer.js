@@ -9,13 +9,9 @@ const serverConfig = require('../../../server.config')
 
 
 const bodyParser = require('body-parser')
- 
-var GridManager = require('./GridManager')
- 
-const ItemHelper = require('../../../shared/lib/ItemHelper')
 
- var GameState = require('./gamestate')
-
+var SocketServ = require('./socket-serv')
+  
 let redisInterface = require('./redis-interface')
 let mongoInterface = require('./mongo-interface')
 var socketServer
@@ -24,7 +20,7 @@ var socketServer
   //only for testing
 const ENABLE_DEVELOPER_COMMANDS = true;
 
-const port = serverConfig.gameServer.port
+const port = serverConfig.relayServer.port
 
 module.exports =  class GameServer {
 
@@ -34,29 +30,32 @@ module.exports =  class GameServer {
   async start(serverMode, callback)
   {
     console.log('Booting game server: ',serverMode)
- 
+
+    app.use(cors())
+    app.use(compression())
+
+
+    app.use( bodyParser.json() );       // to support JSON-encoded bodies
+    app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+      extended: true
+    }));
+
 
 
 
     await redisInterface.init()
     await mongoInterface.init('polyvoxels_'.concat(serverMode))
 
-    
-     let gameState = new GameState(mongoInterface, redisInterface)
+     
+     socketServer = new SocketServ(   server, mongoInterface, redisInterface)
 
  
-
-     let gridManager = new GridManager(mongoInterface)  
-      await gridManager.init()  //gridPhases 
-
- 
- 
-     //this.initApiPostRequests( app , inventoryManager )
+     this.initApiPostRequests( app , inventoryManager )
 
 
 
     server.listen(port, () => {
-      console.log('Game Server is listening on http://localhost:' + port)
+      console.log('Relay Server is listening on http://localhost:' + port)
     })
 
     callback(mongoInterface, redisInterface)

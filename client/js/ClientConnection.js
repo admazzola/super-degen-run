@@ -53,8 +53,8 @@ module.exports = class ClientConnection {
 
     let options = {
     //  authorization: auth,
-      url: serverConfig.gameServer.url, //"http://localhost",
-      port: serverConfig.gameServer.port
+      url: serverConfig.relayServer.url, //"http://localhost",
+      port: serverConfig.relayServer.port
     }
 
      channel = geckos(options)
