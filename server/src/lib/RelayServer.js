@@ -50,7 +50,7 @@ module.exports =  class GameServer {
      socketServer = new SocketServ(   server, mongoInterface, redisInterface)
 
  
-     this.initApiPostRequests( app , inventoryManager )
+     this.initApiPostRequests( app  )
 
 
 
@@ -63,7 +63,7 @@ module.exports =  class GameServer {
 
   }
 
-  initApiPostRequests(expressapp, inventoryManager )
+  initApiPostRequests(expressapp )
   {
 
 
@@ -83,7 +83,7 @@ module.exports =  class GameServer {
           if( authed ){
             //console.log('got api request', data)
 
-            if(data.requestType == 'inventory')
+            /*if(data.requestType == 'inventory')
             {
               let containerOwnerId = data.containerOwnerId
 
@@ -103,7 +103,7 @@ module.exports =  class GameServer {
               }
 
 
-            }
+            }*/
 
 
             if(ENABLE_DEVELOPER_COMMANDS)
@@ -111,7 +111,7 @@ module.exports =  class GameServer {
               if(data.requestType == 'spawnItem')
               {
 
-                response.data = await inventoryManager.createItemForPlayerByAddress( {playerAddress: publicAddress , itemInternalName: 'metalscrap', quantity: 5}  )
+            //    response.data = await inventoryManager.createItemForPlayerByAddress( {playerAddress: publicAddress , itemInternalName: 'metalscrap', quantity: 5}  )
               }
 
             }

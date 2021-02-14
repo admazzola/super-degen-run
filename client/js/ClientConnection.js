@@ -127,8 +127,8 @@ module.exports = class ClientConnection {
      })
 
 
-     channel.on('updatedChunkArray', async (data) => {
-      console.log('updatedChunkArray', data )
+     channel.on('updatedChunk', async (data) => {
+      console.log('updatedChunk', data )
 
       //pass this data to my chunk manager 
         

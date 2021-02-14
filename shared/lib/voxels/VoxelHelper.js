@@ -1,6 +1,7 @@
 
 var hash = require('object-hash');
 
+var LZUTF8 = require('lzutf8');
 
 module.exports=  class VoxelHelper{
     
@@ -18,15 +19,20 @@ static getCompressedChunkArray(chunkArray){
 }
 
 static getCompressedChunkData(chunk){
+    
+    if(typeof chunk == 'undefined' ){
+       
+        return {} 
+    }
 
     return {
-        id: chunk.id,
+        chunkId: chunk.chunkId,
         dims: chunk.dims,
         chunkBits: chunk.chunkBits, 
         chunkPosition: chunk.chunkPosition,
         hash: chunk.hash,
         deltaCounter: chunk.deltaCounter ,
-        compressedVoxels: VoxelHelper.compressVoxelArray( chunk.voxels  )
+        compressedVoxels: VoxelHelper.compressVoxelArray( Object.values(chunk.voxels) )
     }
     
 }
@@ -34,7 +40,15 @@ static getCompressedChunkData(chunk){
 //todo 
 static compressVoxelArray(voxelArray){
 
-    return voxelArray
+    console.log('voxelArray length', voxelArray.length )
+
+    let uint8Array =   Uint8Array.from( voxelArray )
+
+    let cArray =   LZUTF8.compress(uint8Array ,{outputEncoding: "Buffer" });
+
+     
+
+    return cArray
 }
 
 static uncompressVoxelArray(compressedVoxelArray){
@@ -48,17 +62,17 @@ static findDesyncedChunks(localChunks,  actualChunks){
 
 
     for (const [key, chunk] of Object.entries(localChunks)) {
-        console.log(`${key}: ${value}`);
+        console.log(`${key}: ${chunk}`);
 
-        if(typeof chunk == 'undefined'){
-            result.push(chunk.id)
+        if(typeof chunk == 'undefined' || chunk == null){
+            result.push( key )
             continue 
         }   
 
-        let actualChunk = actualChunks[chunk.id]
+        let actualChunk = actualChunks[ key ]
 
-        if(chunk.hash != actualChunk.hash){
-            result.push(chunk.id)
+        if(  chunk.hash != actualChunk.hash){
+            result.push( key )
             continue 
         }  
         
@@ -72,7 +86,9 @@ static findDesyncedChunks(localChunks,  actualChunks){
 
 
 static chunkArrayToFingerprints(chunkArray){
-    let result = []
+    let result = {}
+
+    
 
     for (const [key, value] of Object.entries(chunkArray)) {
         console.log(`${key}: ${value}`);
@@ -88,6 +104,11 @@ static chunkArrayToFingerprints(chunkArray){
 
 static chunkToFingerprint(chunk){
 
+    if(typeof chunk == 'undefined'){
+        return null
+    }
+
+
     return {
         hash: hash(chunk.voxels),
         deltaCounter: chunk.deltaCounter, 
@@ -96,6 +117,28 @@ static chunkToFingerprint(chunk){
 
 }
 
+
+
+//SERVER ONLY 
+static async readChunksFromDatabase(chunkKeys, mongoInterface){
+    let chunkArray = {}
+
+    for (let key of chunkKeys) {
+
+        console.log('read chunk with key', key.toString()) 
+
+        ///not working !? 
+        let chunk =  await mongoInterface.findOne('chunks', {'chunkId': '-1|0|0'})
+
+         console.log('read chunk from db', chunk.chunkId, Object.keys(chunk) ) 
+
+        chunkArray[key] = chunk 
+
+    }
+
+    return chunkArray
+
+}
 
 
 }

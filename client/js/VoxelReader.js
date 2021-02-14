@@ -30,15 +30,18 @@ export default class VoxelReader {
 
 
         //make sure I know about the chunks that are near me 
-        let nearbyChunkIndices = this.voxelWorld.chunkManager.nearbyChunks( locationVector , 2  ) 
+        let nearbyChunkIndices = this.voxelWorld.chunkManager.nearbyChunks( locationVector , 1  ) 
         console.log('nearbyChunkIndices', nearbyChunkIndices)
 
         let nearbyLocalChunks = this.voxelWorld.chunkManager.getChunksArray(nearbyChunkIndices)
         //figure out if we know about these chunks (and have non-stale versions) 
 
-        //if they are stale, request them from the server (or request the deltas we are missing.. each delta adds a 'deltaCounter' to a chunk ) 
-        let nearbyLocalChunksFingerprints = VoxelHelper.chunkArrayToFingerprints(this.voxelWorld.chunkManager.getChunksArray )
+        console.log('nearbyLocalChunks', nearbyLocalChunks)  //works 
 
+
+        //if they are stale, request them from the server (or request the deltas we are missing.. each delta adds a 'deltaCounter' to a chunk ) 
+        let nearbyLocalChunksFingerprints = VoxelHelper.chunkArrayToFingerprints( nearbyLocalChunks )
+ 
         console.log('nearbyLocalChunksFingerprints',nearbyLocalChunksFingerprints)
 
         this.clientConnection.requestNearbyChunkState(locationVector,  nearbyLocalChunksFingerprints)

@@ -41,9 +41,10 @@ module.exports = class SocketServ {
     //redisInterface.init()
 
     var options = {
+      autoManageBuffering :false //allow large packets ?  Does not work. 
 
       //iceServers: process.env.NODE_ENV === 'production' ? iceServers : [],
-    }
+    } 
 
       io = geckos(options)
 
@@ -102,7 +103,7 @@ module.exports = class SocketServ {
       //store random challenge along w public address -- in redis
       var store = await this.redisInterface.storeRedisHashData('socket_challenge',publicAddress,newdata)
 
-      io.emit('challenge', {challenge: randomChallenge})
+      channel.emit('challenge', {challenge: randomChallenge})
     })
 
 
@@ -156,7 +157,7 @@ module.exports = class SocketServ {
 
      
       //auth token should expire after some time...?
-      io.emit('authorized', {publicAddress: recoveredAddress, authToken: authToken})
+      channel.emit('authorized', {publicAddress: recoveredAddress, authToken: authToken})
 
     })
 
@@ -188,7 +189,7 @@ module.exports = class SocketServ {
 
         if(result.error)
         {
-            io.emit('errormessage', {message: result.error})
+          channel.emit('errormessage', {message: result.error})
         }else{
 
  
@@ -201,7 +202,7 @@ module.exports = class SocketServ {
 
         }
       }else{
-        io.emit('errormessage', {message: 'unauthorized'})
+        channel.emit('errormessage', {message: 'unauthorized'})
       }
 
 
@@ -221,21 +222,45 @@ module.exports = class SocketServ {
         let nearbyLocalChunks = data.nearbyLocalChunks
 
 
+        console.log('data', JSON.stringify(data)) 
+
         let localChunksKeys = Object.keys( nearbyLocalChunks  )
 
-        let currentChunkArray ==  GETFROM MONGo 
+        //console.log('localChunksKeys', localChunksKeys) 
 
+        let currentChunkArray =  await VoxelHelper.readChunksFromDatabase( localChunksKeys , this.mongoInterface ) 
+        
+        //console.log('currentChunkArray', currentChunkArray) 
 
         let desyncedChunkIdArray = VoxelHelper.findDesyncedChunks(nearbyLocalChunks,currentChunkArray ) 
 
-        let updatedChunkArray = desyncedChunkIdArray.map( x=> { currentChunkArray[x.id] }  )   
+        console.log('desyncedChunkIdArray', desyncedChunkIdArray) 
+
+       // console.log('test chunk ', currentChunkArray[ desyncedChunkIdArray[0]])
+
+       let updatedChunkArray = {} 
+
+        for(let key of desyncedChunkIdArray){
+          updatedChunkArray[key] = currentChunkArray[key]
+
+        } 
+          
 
         let updatedCompressedChunkArray = VoxelHelper.getCompressedChunkArray( updatedChunkArray )
 
-        io.emit('updatedChunkArray', {data:  {chunks: updatedCompressedChunkArray} })
+        console.log( updatedCompressedChunkArray['-1|0|0'] )
+        ///Error in sendMessage.ts:  maxMessageSize of 262144 exceeded
+        
+        for (const [key, chunk] of Object.entries(updatedCompressedChunkArray)) {
+
+            console.log( 'emit ',  {chunk:  {key: chunk} } )
+            channel.emit('updatedChunk', {chunk:  {key: chunk} })
+        }
+
+       
 
       }else{
-        io.emit('errormessage', {message: 'unauthorized'})
+        channel.emit('errormessage', {message: 'unauthorized'})
       }
 
 
@@ -255,7 +280,7 @@ module.exports = class SocketServ {
 
 
       }else{
-        io.emit('errormessage', {message: 'unauthorized'})
+        channel.emit('errormessage', {message: 'unauthorized'})
       }
 
     })
