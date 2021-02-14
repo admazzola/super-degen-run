@@ -66,9 +66,9 @@ module.exports =  class GameServer {
      socketServer = new SocketServ(gameState,  server, mongoInterface, redisInterface)
 
 
-     
-     let GridManager = new GridManager(mongoInterface)  
-      await GridManager.init()  //gridPhases 
+
+     let gridManager = new GridManager(mongoInterface)  
+      await gridManager.init()  //gridPhases 
 
  
 

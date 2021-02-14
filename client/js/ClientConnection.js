@@ -185,6 +185,7 @@ module.exports = class ClientConnection {
 
   let existingAuthData =  await this.getSessionAuthDataCache() 
   var datagram = {authToken: existingAuthData.authToken, 
+     publicAddress: publicAddress,
     locationVector: locationVector, 
     nearbyLocalChunks: nearbyLocalChunks }
 

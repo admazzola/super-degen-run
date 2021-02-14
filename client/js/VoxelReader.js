@@ -1,6 +1,7 @@
 
  import * as THREE from 'three'
 
+ import VoxelHelper from '../../shared/lib/voxels/VoxelHelper'
 
 export default class VoxelReader {
 

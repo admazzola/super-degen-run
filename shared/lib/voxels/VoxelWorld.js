@@ -36,7 +36,11 @@ const neighborOffsets = [
 export default class VoxelWorld {
   constructor(options) {
     this.worldPivot =  new THREE.Object3D()
- 
+    
+    if(options){
+      this.headless = options.headless
+    }
+    
     //this.chunkSize = options.chunkSize;
    // this.tileSize = options.tileSize;
     //this.tileTextureWidth = options.tileTextureWidth;
@@ -52,35 +56,61 @@ export default class VoxelWorld {
 
     //this.renderRequested = false;
 
+    if(this.headless){
 
 
 
     this.chunkManager = new ChunkManager({
-            chunkDistance:1,
-            blockSize:1,
-            mesher: new GreedyMesher(),
-            chunkSize:32,
-            //this will come from cache - from server-  when its ready 
-            
-            container: new THREE.Group(),
-            textureManager: new VoxelTextureManager({aoEnabled:false}),
-        } );
- 
-
-      const tilesPath = './assets/textures/Tiles/'
+      chunkDistance:1,
+      blockSize:1,
+     // mesher: new GreedyMesher(),
+      chunkSize:32,
+      //this will come from cache - from server-  when its ready 
       
-      let texturesDataArray = tileImages.map(t => {return {id: t.id, src: tilesPath.concat(t.imgurl) } } )
-        
- 
-      //this comes from TileTypes.json 
-      this.chunkManager.textureManager.loadTextures(texturesDataArray).then(()=>{
-        //  this.chunkManager.rebuildAllMeshes()
-        //   this.chunkManager.requestMissingChunks(new THREE.Vector3(0,0,0))
-         
-      })
+      container:  {} ,
+      textureManager:  {} ,
+  } );
 
-      //attach the mesh to the scene
-      this.worldPivot.add( this.chunkManager.container )
+
+     
+
+
+    }else {
+
+
+
+
+      this.chunkManager = new ChunkManager({
+        chunkDistance:1,
+        blockSize:1,
+        mesher: new GreedyMesher(),
+        chunkSize:32,
+        //this will come from cache - from server-  when its ready 
+        
+        container: new THREE.Group(),
+        textureManager: new VoxelTextureManager({aoEnabled:false}),
+    } );
+
+
+  const tilesPath = './assets/textures/Tiles/'
+  
+  let texturesDataArray = tileImages.map(t => {return {id: t.id, src: tilesPath.concat(t.imgurl) } } )
+    
+
+  //this comes from TileTypes.json 
+  this.chunkManager.textureManager.loadTextures(texturesDataArray).then(()=>{
+    //  this.chunkManager.rebuildAllMeshes()
+    //   this.chunkManager.requestMissingChunks(new THREE.Vector3(0,0,0))
+     
+  })
+
+  //attach the mesh to the scene
+  this.worldPivot.add( this.chunkManager.container )
+
+
+
+    }
+
 
 
   }

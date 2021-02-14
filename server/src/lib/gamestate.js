@@ -24,7 +24,7 @@ module.exports = class GameState {
     let inventoryManager = new InventoryManager(mongoInterface)
     */
 
-    this.voxelWorld = new VoxelWorld()
+    this.voxelWorld = new VoxelWorld({headless:true })
 
   }
 

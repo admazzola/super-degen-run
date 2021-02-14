@@ -2,14 +2,14 @@
 var hash = require('object-hash');
 
 
-export default class VoxelHelper{
+module.exports=  class VoxelHelper{
     
 
-getCompressedChunkArray(chunkArray){
+static getCompressedChunkArray(chunkArray){
     
     let result = {}
 
-    for (const [key, chunk] of Object.entries(localChunks)) {
+    for (const [key, chunk] of Object.entries(chunkArray)) {
         result[key] = VoxelHelper.getCompressedChunkData(chunk)
     }
 
@@ -17,7 +17,7 @@ getCompressedChunkArray(chunkArray){
 
 }
 
-getCompressedChunkData(chunk){
+static getCompressedChunkData(chunk){
 
     return {
         id: chunk.id,
@@ -25,25 +25,25 @@ getCompressedChunkData(chunk){
         chunkBits: chunk.chunkBits, 
         chunkPosition: chunk.chunkPosition,
         hash: chunk.hash,
-        deltaCounter: chunk.deltaCounter 
+        deltaCounter: chunk.deltaCounter ,
         compressedVoxels: VoxelHelper.compressVoxelArray( chunk.voxels  )
     }
     
 }
 
 //todo 
-compressVoxelArray(voxelArray){
+static compressVoxelArray(voxelArray){
 
     return voxelArray
 }
 
-uncompressVoxelArray(compressedVoxelArray){
+static uncompressVoxelArray(compressedVoxelArray){
 
     return voxelArray
 }
 
 
-findDesyncedChunks(localChunks,  actualChunks){
+static findDesyncedChunks(localChunks,  actualChunks){
     let result = [] 
 
 
@@ -71,7 +71,7 @@ findDesyncedChunks(localChunks,  actualChunks){
 
 
 
-chunkArrayToFingerprints(chunkArray){
+static chunkArrayToFingerprints(chunkArray){
     let result = []
 
     for (const [key, value] of Object.entries(chunkArray)) {
@@ -86,7 +86,7 @@ chunkArrayToFingerprints(chunkArray){
 }
 
 
-chunkToFingerprint(chunk){
+static chunkToFingerprint(chunk){
 
     return {
         hash: hash(chunk.voxels),
