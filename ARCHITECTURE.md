@@ -1,16 +1,28 @@
 ## Crypto Pompeii 
  
-TODO
 
+
+## TODO
+ 
+ - Client loads in and realizes it doesnt have data for nearby chunks - it will ask the server for them [array of chunk Ids]
+- THe server will respond to the request for those chunks' data and will send it to the client 
+
+
+
+* Server needs to be watching for where active players are and needs to  load nearby voxels into  memory in the Chunk Manager (load from mongo ! )
+
+
+
+- add physics (gridupdater) and walking around [ray tracing]
+
+  
+  
+
+## minor bugs 
 -chunks are not being produced in the Z direction?  They are being produced but not attached or rendered.. 
 
 
-- server needs to do worldgen
-- Client loads in and realizes it doesnt have data for nearby chunks - it will ask the server for them [array of chunk Ids]
-- THe server will respond to the request for those chunks' data and will send it to the client 
-
-  
-- add physics (gridupdater) and walking around [ray tracing]
+ 
 
   
 - in the game, changes to chunk tiles are broadcasted as deltas.  They use GameTicks (turn based architecture).   If a players version of a chunk drops out of sync (use fingerprints, blockchain, like GVM... more than 10 ticks) then the client asks the server for the updated data for that chunk 
@@ -36,6 +48,14 @@ Storage on disc:   Mongo table 'chunks': { chunkId: '', voxelArray: [] , voxelAr
 
 * Players only load chunks that are nearby 
 * Players can remove/add blocks for chunks 
+
+
+
+
+* In the server, each chunk has a fingerprint of its current state,  a stateCounter, and deltas for each stateChange.   Clients submit new deltas, the server will assign them a stateCount, apply them to the chunk: increment the chunks stateCounter and change the voxelArray, updating the hash of the chunk 
+* if a client detects a chunk desync wrt the server (based on fingerprint) the client will ask the server for the recent deltas for that chunk   
+
+* mongo table 'chunkdeltas' 
 
 
 

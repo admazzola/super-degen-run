@@ -11,7 +11,7 @@ const port = serverConfig.gameServer.port
 const bodyParser = require('body-parser')
 
 var SocketServ = require('./socket-serv')
-var WorldBuilder = require('./WorldBuilder')
+var GridManager = require('./GridManager')
 var InventoryManager = require('./InventoryManager')
 
 
@@ -20,7 +20,7 @@ var GridUpdater = require('./util/gridupdater')
 
 const ItemHelper = require('../../../shared/lib/ItemHelper')
 
-//var GameState = require('./gamestate')
+ var GameState = require('./gamestate')
 
 let redisInterface = require('./redis-interface')
 let mongoInterface = require('./mongo-interface')
@@ -56,14 +56,19 @@ module.exports =  class GameServer {
     await redisInterface.init()
     await mongoInterface.init('polyvoxels_'.concat(serverMode))
 
-    let worldBuilder = new WorldBuilder(mongoInterface)
-    //let gameState = new GameState(mongoInterface, redisInterface)
+    
+     let gameState = new GameState(mongoInterface, redisInterface)
+
+
     let inventoryManager = new InventoryManager(mongoInterface)
 
 
-     socketServer = new SocketServ(server, mongoInterface, redisInterface)
+     socketServer = new SocketServ(gameState,  server, mongoInterface, redisInterface)
 
-     await worldBuilder.init()
+
+     
+     let GridManager = new GridManager(mongoInterface)  
+      await GridManager.init()  //gridPhases 
 
  
 

@@ -65,6 +65,9 @@ import RightClickMenu from './RightClickMenu'
 import ItemActionMenu from './ItemActionMenu'
 import ShipHud from './ShipHud'
 
+
+import VoxelReader from '../js/VoxelReader'
+
 import UnitHelper from '../../shared/lib/UnitHelper'
 
 var clientConnection = new ClientConnection()
@@ -260,7 +263,7 @@ export default {
       clientConnection.requestSpawn()
 
 
-       this.voxelReader = new VoxelReader( entityManager, clientConnection  )
+       this.voxelReader = new VoxelReader( this.voxelWorld, entityManager, clientConnection  )
 
       //setInterval( function(){  clientConnection.requestGridState() }.bind(this)  , 500)
 

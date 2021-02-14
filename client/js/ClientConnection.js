@@ -127,15 +127,14 @@ module.exports = class ClientConnection {
      })
 
 
-     channel.on('setGrid', async (data) => {
+     channel.on('updatedChunkArray', async (data) => {
+      console.log('updatedChunkArray', data )
 
-         //DEPRECATED
-
-      //  entityManager.setCurrentGrid( data )
-
-
-        //channel.join(  data.gridUUID  ) //join room
+      //pass this data to my chunk manager 
+        
      })
+
+
 
      //receive data about all entities on my grid
      channel.on('gridPhaseState', async (data) => {
@@ -175,12 +174,23 @@ module.exports = class ClientConnection {
  {
 
 
-  let existingAuthData =  await this.getSessionAuthDataCache()
- 
-   var datagram = {authToken: existingAuthData.authToken, publicAddress: publicAddress }
+  let existingAuthData =  await this.getSessionAuthDataCache() 
+  var datagram = {authToken: existingAuthData.authToken, publicAddress: publicAddress }
 
    console.log(channel )
-     channel.emit('spawn', datagram , { reliable: true })
+   channel.emit('spawn', datagram , { reliable: true })
+ }
+
+ async requestNearbyChunkState(locationVector, nearbyLocalChunks){
+
+  let existingAuthData =  await this.getSessionAuthDataCache() 
+  var datagram = {authToken: existingAuthData.authToken, 
+    locationVector: locationVector, 
+    nearbyLocalChunks: nearbyLocalChunks }
+
+   console.log(channel )
+   channel.emit('requestNearbyChunkState', datagram , { reliable: false })
+
  }
 
 /* async requestGridState( entityManager )

@@ -16,6 +16,9 @@ class Chunk {
         this.chunkPosition = [pos.x, pos.y, pos.z]
         this.id = this.chunkPosition.join('|')
         this.chunkBits = chunkBits
+
+        this.deltaCounter = 0 
+        this.deltas = [] 
     }
 
   
@@ -80,7 +83,8 @@ export default class ChunkManager {
         let bits = 0
         for (let size = this.chunkSize; size > 0; size >>= 1) bits++;
         this.chunkBits = bits - 1;
-     //   this.CHUNK_CACHE = {}
+
+        //this.CHUNK_CACHE = {}
     }
 
     static getChunkId( chunkCoords ){
@@ -98,6 +102,21 @@ export default class ChunkManager {
 
     static getChunkSizeFromBits(bits){
         return Math.pow(2,bits-1)
+    }
+
+    getChunksArray(chunkIndices){
+        let result =  {} 
+
+        for (let pos of chunkIndices){
+
+             const id = [pos[0],pos[1],pos[2]].join('|')
+
+            let chunk = this.chunks[id]
+ 
+            result[id] = chunk
+        }
+
+        return result 
     }
 
     on(type, cb) {

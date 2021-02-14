@@ -9,7 +9,7 @@
     "lint": "vue-cli-service lint",
     "deploy": "node deploy.js",
     "dev": "vue-cli-service serve",
-    "server": "node server/src/index.js",
+    "server": "node -r esm  server/src/index.js",
     "testserver": "node test/server/testserver",
     "procGenTerrain": "node -r esm server/tasks/procGenTerrain.js",
     "karmatest": "karma start --single-run  --browsers ChromeHeadless karma.conf.js",

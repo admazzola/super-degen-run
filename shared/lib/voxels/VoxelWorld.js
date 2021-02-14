@@ -74,9 +74,9 @@ export default class VoxelWorld {
  
       //this comes from TileTypes.json 
       this.chunkManager.textureManager.loadTextures(texturesDataArray).then(()=>{
-          this.chunkManager.rebuildAllMeshes()
-           this.chunkManager.requestMissingChunks(new THREE.Vector3(0,0,0))
-          //app.dialog.setSelectedToDefault()
+        //  this.chunkManager.rebuildAllMeshes()
+        //   this.chunkManager.requestMissingChunks(new THREE.Vector3(0,0,0))
+         
       })
 
       //attach the mesh to the scene

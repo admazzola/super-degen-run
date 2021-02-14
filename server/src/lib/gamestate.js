@@ -8,6 +8,9 @@ const UnitHelper = require('../../../shared/lib/UnitHelper')
 var InventoryManager = require('./InventoryManager')
 
 
+import VoxelWorld from '../../../shared/lib/voxels/VoxelWorld'
+
+
 module.exports = class GameState {
 
   //this talks to mongo and redis heavily
@@ -21,7 +24,7 @@ module.exports = class GameState {
     let inventoryManager = new InventoryManager(mongoInterface)
     */
 
-
+    this.voxelWorld = new VoxelWorld()
 
   }
 
