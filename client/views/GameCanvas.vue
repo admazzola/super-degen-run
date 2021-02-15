@@ -33,13 +33,15 @@ import VoxelWorld from '../../shared/lib/voxels/VoxelWorld'
 //import VoxelWorldGenerator from '../../shared/lib/voxels/VoxelWorldGenerator'
 //const VoxelWorld = require('../js/VoxelWorld')
 
+
+
  import * as MW from '../js/meshwalk';
  MW.install( THREE );
 
 
  //import * as dat from 'dat.gui';
  //const gui = new dat.GUI();
-
+ 
 
 const clock = new THREE.Clock();
 
@@ -70,7 +72,7 @@ import VoxelReader from '../js/VoxelReader'
 
 import UnitHelper from '../../shared/lib/UnitHelper'
 
-var clientConnection = new ClientConnection()
+var clientConnection 
 var entityManager;
 var audioSystem;
 var player;
@@ -104,7 +106,7 @@ export default {
   methods: {
     startGameClient: async function() {
 
-      while(!this.assetsLoaded && typeof entityManager == 'undefined')
+      while(!this.assetsLoaded  )
       {
         await delay(1000);
         console.log('assets loading...')
@@ -166,13 +168,14 @@ export default {
 
           */
 
-      this.voxelWorld = new VoxelWorld( );
+         
+          clientConnection.requestSpawn() 
 
+         this.voxelReader = new VoxelReader( this.voxelWorld, entityManager, clientConnection  )
 
-     
-      //this.voxelWorld.offlineGen() //test 
+       //this.voxelWorld.offlineGen() //test 
 
-
+        this.scene.add(entityManager.getWorldPivot())
      
        this.scene.add(this.voxelWorld.getWorldPivot())
 
@@ -212,14 +215,7 @@ export default {
       this.scene.add(directionallight);
       this.scene.add(directionallight.target);
 
-      /*
-      var stats = new Stats();
-      stats.setMode(0);
-      stats.domElement.style.position = 'absolute';
-      stats.domElement.style.left = '0';
-      stats.domElement.style.top = '0';
-      gamecanvas.appendChild( stats.domElement );*/
-
+     
       var skybox = new SkyBox().getMesh()
       skybox.name="skybox"
       camera_pivot.add(skybox);
@@ -240,30 +236,9 @@ export default {
 
 
 
-      //const clientConnection = new ClientConnection()
-      //clientConnection.init()
+       this.scene.add(entityManager.getWorldPivot())
 
 
-
-      //load player data from server
-
-      //load entity data from server  ..await.. feed it to the entity manager
-
-
-      // galaxyManager = new GalaxyManager()
-
-      //load player and galaxy data from the server
-
-
-
-        entityManager = new EntityManager(player,this.scene,loader )
-
-      clientConnection.setEntityManager( entityManager )
-
-      clientConnection.requestSpawn()
-
-
-       this.voxelReader = new VoxelReader( this.voxelWorld, entityManager, clientConnection  )
 
       //setInterval( function(){  clientConnection.requestGridState() }.bind(this)  , 500)
 
@@ -313,6 +288,8 @@ export default {
            });
 
 
+      
+       
 
 
       const animate = function() {}
@@ -324,7 +301,9 @@ export default {
     {
 
        this.preloadAssets()
-       await this.connectToServer( )
+     
+        
+        await this.connectToServer( )
 
 
 
@@ -344,15 +323,34 @@ export default {
     connectToServer: async function( ) {
 
 
-      var accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+        this.voxelWorld = new VoxelWorld( );
+
+ 
+  
+
+
+        var accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
 
         player = new Player( accounts[0] )
+
+
+        entityManager = new EntityManager(player, loader ) 
+
+        clientConnection = new ClientConnection(this.voxelWorld, entityManager   )
+   
 
         await new Promise ((resolve, reject) => {
             clientConnection.init(player, function(){
                 resolve()
           })
         })
+
+
+
+        
+
+     
 
         this.connected=true
         this.startGameClient()  //start this game canvas up!

@@ -18,6 +18,26 @@ static getCompressedChunkArray(chunkArray){
 
 }
 
+
+static getDecompressedChunkData(chunk){
+    
+    if(typeof chunk == 'undefined' ){
+       
+        return {} 
+    }
+
+    return {
+        chunkId: chunk.chunkId,
+        dims: chunk.dims,
+        chunkBits: chunk.chunkBits, 
+        chunkPosition: chunk.chunkPosition,
+        hash: chunk.hash,
+        deltaCounter: chunk.deltaCounter ,
+        voxels: VoxelHelper.decompressVoxelArray(  chunk.compressedVoxels  )
+    }
+    
+}
+
 static getCompressedChunkData(chunk){
     
     if(typeof chunk == 'undefined' ){
@@ -49,13 +69,28 @@ static compressVoxelArray(voxelArray){
     return cArray
 }
 
-static uncompressVoxelArray(compressedVoxelArray){
+//this works now 
+static decompressVoxelArray(compressedVoxelArray){
+
+    
+    compressedVoxelArray =  Buffer.from(compressedVoxelArray)
+    console.log("comp vox ", compressedVoxelArray)
+
 
     let uArray =   LZUTF8.decompress(compressedVoxelArray ,{inputEncoding: "Buffer" , outputEncoding: 'ByteArray'});
      
     //need to make it an object ? 
 
-    return uArray
+    let voxels = {}
+    let i = 0;
+
+    for(let i in uArray){ 
+        voxels[i] = uArray[i]
+    }
+
+    console.log("decomp vox ", voxels)
+
+    return voxels
 }
 
 

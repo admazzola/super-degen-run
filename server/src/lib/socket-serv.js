@@ -248,13 +248,13 @@ module.exports = class SocketServ {
 
         let updatedCompressedChunkArray = VoxelHelper.getCompressedChunkArray( updatedChunkArray )
 
-        console.log( updatedCompressedChunkArray['-1|0|0'] )
-        ///Error in sendMessage.ts:  maxMessageSize of 262144 exceeded
-        
+        //console.log( updatedCompressedChunkArray['-1|0|0'] ) 
+
+        //may have to send chunk slices.. but for now we do this 
         for (const [key, chunk] of Object.entries(updatedCompressedChunkArray)) {
 
             console.log( 'emit ',  {chunk:  {key: chunk} } )
-            channel.emit('updatedChunk', {chunk:  {key: chunk} })
+            channel.emit('updatedChunk', {chunk:   chunk  })
         }
 
        

@@ -18,7 +18,7 @@ const axios = require('axios').default;
 
 const serverConfig = require('../../server.config')
 
-
+const VoxelHelper = require('../../shared/lib/voxels/VoxelHelper')
 
 
 module.exports = class ClientConnection {
@@ -26,18 +26,20 @@ module.exports = class ClientConnection {
 
 
 
- constructor()
+ constructor(voxelWorld, entityManager)
  {
-
+  this.entityManager = entityManager;
+  this.voxelWorld = voxelWorld;
  }
 
 
- async init(  player, authedCallback )
+ async init(   player, authedCallback )
  {
    var web3 = new Web3(Web3.givenProvider );
 
    this.web3 = web3;
 
+  
    //console.log('web3 is ',web3)
 
    /**
@@ -129,7 +131,11 @@ module.exports = class ClientConnection {
 
      channel.on('updatedChunk', async (data) => {
       console.log('updatedChunk', data )
+ 
 
+       let chunk = VoxelHelper.getDecompressedChunkData( data.chunk  )
+
+       this.voxelWorld.receiveChunkInfoFromServer(chunk)
       //pass this data to my chunk manager 
         
      })
@@ -139,7 +145,7 @@ module.exports = class ClientConnection {
      //receive data about all entities on my grid
      channel.on('gridPhaseState', async (data) => {
 
-       await entityManager.receivedGridPhaseStateFromServer( data )
+       await this.entityManager.receivedGridPhaseStateFromServer( data )
 
      })
 
@@ -160,10 +166,11 @@ module.exports = class ClientConnection {
 
  }
 
+ /*
  setEntityManager(entMgr)
  {
     entityManager = entMgr;
- }
+ }*/
 
  getPublicAddress()
  {

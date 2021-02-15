@@ -145,8 +145,8 @@ export default class VoxelWorld {
 
   //this is how the server gives us chunk data ! 
   //we need to be able to request this and compare hashes of this data 
-  receiveChunkInfoFromServer(info,voxels){
-    let chunk = this.chunkManager.makeChunkFromData(info,voxels)
+  receiveChunkInfoFromServer(chunkInfo){
+    let chunk = this.chunkManager.makeChunkFromData(chunkInfo)
     this.chunkManager.rebuildMesh(chunk)
   }
 

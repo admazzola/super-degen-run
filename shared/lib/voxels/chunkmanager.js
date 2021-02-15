@@ -235,15 +235,19 @@ export default class ChunkManager {
         return chunkObj
     }
 
-    makeChunkFromData(info,voxels) {
-        const pos = new Vector3(info.position[0],info.position[1],info.position[2])
+    makeChunkFromData(info ) {
+        console.log('make chunk from data', Object.keys(info))
+
+        const pos = new Vector3(info.chunkPosition[0],info.chunkPosition[1],info.chunkPosition[2])
         const chunkData = {
             low:info.low,
             high:info.high,
-            voxels:voxels,
+            voxels:info.voxels,
             dims:info.dims,
         }
         const chunk = new Chunk(chunkData, pos, this.chunkBits)
+        chunk.deltaCounter = info.deltaCounter
+
         this.chunks[chunk.id] = chunk
         return chunk
     }

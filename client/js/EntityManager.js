@@ -31,10 +31,12 @@ const SERVER_GRID_UPDATE_RATE = 500; //this much match the servers
 export default class EntityManager {
 
 
- constructor(player, scene, loader ) {
+ constructor(player , loader ) {
    this.player = player;
-   this.scene = scene;
+  // this.scene = scene;
    this.loader = loader;
+
+   this.worldPivot = new THREE.Object3D()
 
 
     //  this.addTestModel()
@@ -43,13 +45,18 @@ export default class EntityManager {
    //this.loadGrid()
  }
 
+
+ getWorldPivot(){
+  return this.worldPivot
+}
+
  async addTestModel(){
 
   var testModel = await this.loader.loadModel(  "humanA" ) 
  
   var scaleFactor = 0.1
   testModel.scale.set(scaleFactor,scaleFactor,scaleFactor) 
-  this.scene.add(  testModel  );
+  this.worldPivot.add(  testModel  );
   console.log('add test model ')
  }
 
@@ -192,7 +199,7 @@ getMyPlayerData()
 
 
 
-          this.scene.add(  shipModel  );
+          this.worldPivot.add(  shipModel  );
           var newObj = shipModel
       //    THREE.SceneUtils.attach( child, scene, parent );
 
@@ -223,7 +230,7 @@ getMyPlayerData()
      {
 
            var sceneObj = sceneObjectsMap.get( currentGridEntities.get(key).sceneObjectUUID )
-           this.scene.remove( sceneObj );
+           this.worldPivot.remove( sceneObj );
 
            sceneObjectsMap.delete(currentGridEntities.get(key).sceneObjectUUID)
            currentGridEntities.delete(key)
