@@ -91,6 +91,10 @@ export default class ChunkManager {
         return [chunkCoords.x,chunkCoords.y,chunkCoords.z].join('|')
     }
 
+    findChunkById( id ){
+        return this.chunks[id]
+    }
+
       //for easily comparing for changes between server and client .. to know if we desync
       static getChunkHash(chunk){
         return  hash( chunk.voxels ) 

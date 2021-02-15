@@ -74,7 +74,7 @@ static decompressVoxelArray(compressedVoxelArray){
 
     
     compressedVoxelArray =  Buffer.from(compressedVoxelArray)
-    console.log("comp vox ", compressedVoxelArray)
+    //console.log("comp vox ", compressedVoxelArray)
 
 
     let uArray =   LZUTF8.decompress(compressedVoxelArray ,{inputEncoding: "Buffer" , outputEncoding: 'ByteArray'});
@@ -88,7 +88,7 @@ static decompressVoxelArray(compressedVoxelArray){
         voxels[i] = uArray[i]
     }
 
-    console.log("decomp vox ", voxels)
+    //console.log("decomp vox ", voxels)
 
     return voxels
 }
@@ -147,7 +147,7 @@ static chunkToFingerprint(chunk){
 
 
     return {
-        hash: hash(chunk.voxels),
+       // hash: hash(chunk.voxels),
         deltaCounter: chunk.deltaCounter, 
         id: chunk.id  
     }
@@ -165,7 +165,7 @@ static async readChunksFromDatabase(chunkKeys, mongoInterface){
         console.log('read chunk with key', key.toString()) 
 
         ///not working !? 
-        let chunk =  await mongoInterface.findOne('chunks', {'chunkId': '-1|0|0'})
+        let chunk =  await mongoInterface.findOne('chunks', {'chunkId': key.toString()})
 
          console.log('read chunk from db', chunk.chunkId, Object.keys(chunk) ) 
 

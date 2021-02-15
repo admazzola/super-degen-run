@@ -3,6 +3,10 @@
 
 
 ## TODO
+
+
+-server is only sending one particular chunk 
+-server keeps sending and sending.. client thinks they dont  have them yet 
  
  - Client loads in and realizes it doesnt have data for nearby chunks - it will ask the server for them [array of chunk Ids]
 - THe server will respond to the request for those chunks' data and will send it to the client 
@@ -16,7 +20,7 @@
 - add physics (gridupdater) and walking around [ray tracing]
 
   
-  
+
 
 ## minor bugs 
 -chunks are not being produced in the Z direction?  They are being produced but not attached or rendered.. 

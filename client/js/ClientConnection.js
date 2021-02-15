@@ -130,12 +130,28 @@ module.exports = class ClientConnection {
 
 
      channel.on('updatedChunk', async (data) => {
-      console.log('updatedChunk', data )
+      console.log('got updatedChunk', data.chunk.chunkId )
  
 
        let chunk = VoxelHelper.getDecompressedChunkData( data.chunk  )
 
-       this.voxelWorld.receiveChunkInfoFromServer(chunk)
+
+
+       let infoIsNewer = this.voxelWorld.chunkInfoIsNewerThanLocalState( data.chunk  )
+
+       if(infoIsNewer){
+           this.voxelWorld.receiveChunkInfoFromServer(chunk)
+
+           console.log('infoIsNewer', data.chunk.chunkId )
+
+       }else{
+
+
+        console.log('infoIsOlder', data.chunk.chunkId )
+
+       }
+
+      
       //pass this data to my chunk manager 
         
      })

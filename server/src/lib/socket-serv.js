@@ -248,12 +248,14 @@ module.exports = class SocketServ {
 
         let updatedCompressedChunkArray = VoxelHelper.getCompressedChunkArray( updatedChunkArray )
 
+        console.log('updatedCompressedChunkArray', Object.keys(updatedCompressedChunkArray) ) 
+
         //console.log( updatedCompressedChunkArray['-1|0|0'] ) 
 
         //may have to send chunk slices.. but for now we do this 
         for (const [key, chunk] of Object.entries(updatedCompressedChunkArray)) {
 
-            console.log( 'emit ',  {chunk:  {key: chunk} } )
+            console.log( 'emit ',  {key:key, chunk:    chunk  } )
             channel.emit('updatedChunk', {chunk:   chunk  })
         }
 

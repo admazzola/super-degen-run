@@ -151,6 +151,20 @@ export default class VoxelWorld {
   }
 
 
+  chunkInfoIsNewerThanLocalState(chunkInfo){
+
+    let chunkId = chunkInfo.chunkId 
+    let deltaCounter = chunkInfo.deltaCounter
+
+    let existingChunkInfo = this.chunkManager.findChunkById(chunkId)
+
+    if(!existingChunkInfo || existingChunkInfo.deltaCounter < deltaCounter){
+      return true 
+    }
+    return false 
+  }
+
+
 
 
 }
