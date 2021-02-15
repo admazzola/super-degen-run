@@ -94,7 +94,7 @@ static decompressVoxelArray(compressedVoxelArray){
 }
 
 
-static findDesyncedChunks(localChunks,  actualChunks){
+static findMissingChunks(localChunks,  actualChunks){
     let result = [] 
 
 
@@ -108,7 +108,27 @@ static findDesyncedChunks(localChunks,  actualChunks){
 
         let actualChunk = actualChunks[ key ]
 
-        if(  chunk.hash != actualChunk.hash){
+        if(  chunk.deltaCounter < actualChunk.deltaCounter - 10){
+            result.push( key )
+            continue 
+        }  
+        
+      }
+
+
+    return result 
+}
+
+static findDesyncedChunks(localChunks,  actualChunks){
+    let result = [] 
+
+
+    for (const [key, chunk] of Object.entries(localChunks)) {
+        
+
+        let actualChunk = actualChunks[ key ]
+
+        if(chunk && chunk.deltaCounter < actualChunk.deltaCounter && chunk.deltaCounter >  actualChunk.deltaCounter - 10){
             result.push( key )
             continue 
         }  
@@ -128,7 +148,7 @@ static chunkArrayToFingerprints(chunkArray){
     
 
     for (const [key, value] of Object.entries(chunkArray)) {
-        console.log(`${key}: ${value}`);
+       // console.log(`${key}: ${value}`);
 
         result[key] = VoxelHelper.chunkToFingerprint( value )
       }
@@ -163,13 +183,18 @@ static async readChunksFromDatabase(chunkKeys, mongoInterface){
     for (let key of chunkKeys) {
 
         console.log('read chunk with key', key.toString()) 
-
-        ///not working !? 
+ 
+     
         let chunk =  await mongoInterface.findOne('chunks', {'chunkId': key.toString()})
 
-         console.log('read chunk from db', chunk.chunkId, Object.keys(chunk) ) 
+        if(chunk){
+            console.log('read chunk from db', chunk.chunkId, Object.keys(chunk) ) 
 
-        chunkArray[key] = chunk 
+            chunkArray[key] = chunk 
+        }else{
+            console.log('WARN: cannot find chunk in mongo', key )
+        }
+        
 
     }
 

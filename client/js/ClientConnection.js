@@ -130,6 +130,11 @@ module.exports = class ClientConnection {
 
 
      channel.on('updatedChunk', async (data) => {
+       if(typeof data.chunk == 'undefined'  ){
+        return
+       }
+
+
       console.log('got updatedChunk', data.chunk.chunkId )
  
 

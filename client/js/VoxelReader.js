@@ -12,7 +12,7 @@ export default class VoxelReader {
       this.clientConnection = clientConnection  
       this.voxelWorld = voxelWorld
 
-      let updater = setInterval(this.update.bind(this),1000)
+      let updater = setInterval(this.update.bind(this),2000)
     }
 
     /*
@@ -30,7 +30,7 @@ export default class VoxelReader {
 
 
         //make sure I know about the chunks that are near me 
-        let nearbyChunkIndices = this.voxelWorld.chunkManager.nearbyChunks( locationVector , 1  ) 
+        let nearbyChunkIndices = this.voxelWorld.chunkManager.nearbyChunks( locationVector , 1 ) 
         console.log('nearbyChunkIndices', nearbyChunkIndices)
 
         let nearbyLocalChunks = this.voxelWorld.chunkManager.getChunksArray(nearbyChunkIndices)

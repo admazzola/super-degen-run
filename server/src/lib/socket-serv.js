@@ -228,19 +228,20 @@ module.exports = class SocketServ {
 
         //console.log('localChunksKeys', localChunksKeys) 
 
+
+        //use a local chunkManager cache !! To avoid so many DB reads 
         let currentChunkArray =  await VoxelHelper.readChunksFromDatabase( localChunksKeys , this.mongoInterface ) 
         
-        //console.log('currentChunkArray', currentChunkArray) 
-
-        let desyncedChunkIdArray = VoxelHelper.findDesyncedChunks(nearbyLocalChunks,currentChunkArray ) 
-
-        console.log('desyncedChunkIdArray', desyncedChunkIdArray) 
+        
+        let missingChunkIdArray = VoxelHelper.findMissingChunks(nearbyLocalChunks,currentChunkArray ) 
+ 
+        console.log('missingChunkIdArray', missingChunkIdArray) 
 
        // console.log('test chunk ', currentChunkArray[ desyncedChunkIdArray[0]])
 
        let updatedChunkArray = {} 
 
-        for(let key of desyncedChunkIdArray){
+        for(let key of missingChunkIdArray){
           updatedChunkArray[key] = currentChunkArray[key]
 
         } 
@@ -255,9 +256,19 @@ module.exports = class SocketServ {
         //may have to send chunk slices.. but for now we do this 
         for (const [key, chunk] of Object.entries(updatedCompressedChunkArray)) {
 
+          if(typeof chunk != 'undefined'){
             console.log( 'emit ',  {key:key, chunk:    chunk  } )
             channel.emit('updatedChunk', {chunk:   chunk  })
+          }
+           
         }
+
+
+
+        //need to send deltas for these chunks -- so we can avoid sending the entire chunk in 10 ticks
+        let desyncedChunkIdArray = VoxelHelper.findDesyncedChunks(nearbyLocalChunks,currentChunkArray ) 
+
+      
 
        
 
