@@ -188,7 +188,13 @@ static async readChunksFromDatabase(chunkKeys, mongoInterface){
         let chunk =  await mongoInterface.findOne('chunks', {'chunkId': key.toString()})
 
         if(chunk){
-            console.log('read chunk from db', chunk.chunkId, Object.keys(chunk) ) 
+            console.log('read chunk from db', key,  chunk.chunkId, Object.keys(chunk), chunk.deltaCounter ) 
+
+            if(!chunk.deltaCounter){
+                chunk.deltaCounter = 0
+            }
+            chunk.id = chunk.chunkId 
+
 
             chunkArray[key] = chunk 
         }else{
@@ -201,6 +207,28 @@ static async readChunksFromDatabase(chunkKeys, mongoInterface){
     return chunkArray
 
 }
+
+static async readChunkDeltaCountersFromDatabase(chunkKeys, mongoInterface){
+    let chunkArray = {}
+
+    for (let key of chunkKeys) {
+ 
+        let chunk =  await mongoInterface.findOne('chunks', {'chunkId': key.toString()})
+
+        if(chunk){ 
+
+            chunkArray[key] =  chunk.deltaCounter
+        }else{
+            console.log('WARN: cannot find chunk in mongo', key )
+        }
+        
+
+    }
+
+    return chunkArray
+
+}
+
 
 
 }

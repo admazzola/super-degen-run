@@ -12,7 +12,8 @@ const WorldHelper = require('../../../shared/lib/WorldHelper')
 const VoxelHelper = require('../../../shared/lib/voxels/VoxelHelper')
 
 const geckos = require('@geckos.io/server').default
-const { iceServers } = require('@geckos.io/server')
+const { iceServers } = require('@geckos.io/server');
+import   VoxelWorld  from '../../../shared/lib/voxels/VoxelWorld' 
 
 var io;
 
@@ -23,6 +24,8 @@ var clientSocketChannels = new Map();
 const GRID_UPDATE_RATE = 500;
 var cachedPlayerData = new Map()
 
+var cachedVoxelWorld; 
+
 
 module.exports = class SocketServ {
 
@@ -32,7 +35,7 @@ module.exports = class SocketServ {
     this.redisInterface=redisInterface
 
     
-
+    cachedVoxelWorld = new VoxelWorld({headless:true})
       
 
     //this.gameState.setClientChangedGridCallback( this.forceClientIntoGridCommsChannel )
@@ -230,8 +233,41 @@ module.exports = class SocketServ {
 
 
         //use a local chunkManager cache !! To avoid so many DB reads 
-        let currentChunkArray =  await VoxelHelper.readChunksFromDatabase( localChunksKeys , this.mongoInterface ) 
+        let currentChunkArrayDeltaCounters = await VoxelHelper.readChunkDeltaCountersFromDatabase( localChunksKeys , this.mongoInterface ) 
+
+        let cachedChunkArrayDeltaCounters = cachedVoxelWorld.getChunkDeltaCountersFromCache( localChunksKeys )
         
+
+
+        let desyncedChunksKeys = []
+       // let syncedChunksKeys = [] 
+
+        for( let chunkId of Object.keys(currentChunkArrayDeltaCounters) ){
+
+          if( cachedChunkArrayDeltaCounters[chunkId] == null || 
+            currentChunkArrayDeltaCounters[chunkId] > cachedChunkArrayDeltaCounters[chunkId] ){
+              desyncedChunksKeys.push( chunkId )
+            }else{
+            //  syncedChunksKeys.push( chunkId )
+            }
+
+        }
+
+        console.log('desynced ' ,desyncedChunksKeys )
+        
+
+        let currentChunksFromDatabase =  await VoxelHelper.readChunksFromDatabase( desyncedChunksKeys , this.mongoInterface ) 
+       
+        cachedVoxelWorld.saveChunksToCache( currentChunksFromDatabase )
+
+
+        let currentChunksFromCache = cachedVoxelWorld.getChunksFromCache( localChunksKeys ) ; 
+       
+        let currentChunkArray = Object.assign({} , currentChunksFromCache) //empty ?
+
+ 
+        console.log('meep currentChunkArray', Object.keys(currentChunksFromCache))
+
         
         let missingChunkIdArray = VoxelHelper.findMissingChunks(nearbyLocalChunks,currentChunkArray ) 
  

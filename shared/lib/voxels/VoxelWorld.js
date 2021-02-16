@@ -151,6 +151,74 @@ export default class VoxelWorld {
   }
 
 
+
+  getChunkDeltaCountersFromCache( chunkKeysArray ){
+
+    let results = {}
+
+    for (let chunkId of chunkKeysArray){
+      let chunk = this.chunkManager.findChunkById(chunkId)
+ 
+      if(chunk && chunk.deltaCounter){
+        results[chunkId] = chunk.deltaCounter 
+      }
+
+    }
+
+    return results
+
+  }
+
+
+  getChunksFromCache( chunkKeysArray ){
+
+    let results = {}
+
+    for (let chunkId of chunkKeysArray){
+      let chunk = this.chunkManager.findChunkById(chunkId)
+     
+     
+      
+      let isValid = (chunk != null && chunk.deltaCounter != null)
+ 
+      if(isValid){
+         
+
+        results[chunkId] = chunk 
+      }
+
+    }
+
+    return results
+
+  }
+
+  saveChunksToCache(chunkArray){
+
+    let results = {}
+
+   
+
+    for (const [key, chunk ] of Object.entries(chunkArray)) {
+      
+      console.log('save chunk ', key, {chunkId: chunk.chunkId})
+
+      
+      if(!chunk.voxels){
+        console.log('WARN: saveChunkToCache has no voxels', key)
+      }
+
+        let outputChunk= this.chunkManager.makeChunkFromData(chunk)
+      results[key] = outputChunk
+      console.log('saved local chunk ',key, outputChunk.id, outputChunk.deltaCounter)
+    }
+
+    return results
+
+  }
+
+
+
   chunkInfoIsNewerThanLocalState(chunkInfo){
 
     let chunkId = chunkInfo.chunkId 
