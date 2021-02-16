@@ -1,10 +1,11 @@
 
-const mongoInterface = require('../src/lib/mongo-interface')
+import MongoInterface from '../src/lib/mongo-interface' 
  
 import  VoxelWorldGenerator from '../../shared/lib/voxels/VoxelWorldGenerator'
 import  ChunkManager from '../../shared/lib/voxels/chunkmanager'
 import  GreedyMesher from '../../shared/lib/voxels/greedymesher'
 
+var mongoInterface = new MongoInterface()
 const VoxelHelper = require('../../shared/lib/voxels/VoxelHelper')
 
 
@@ -22,6 +23,7 @@ async function task()
 
 
     let chunkManager = new ChunkManager({
+        headless:true,
         chunkDistance:1,
         blockSize:1,
         mesher: new GreedyMesher(),

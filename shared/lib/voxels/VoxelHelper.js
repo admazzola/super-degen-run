@@ -243,21 +243,24 @@ static async storeNewChunk(chunkInfo, mongoInterface){
   
    
   
-    let chunkStore = {
-      id: chunkInfo.id,
-      dims: chunkInfo.dims,
-      voxels: chunkInfo.voxels,
-      chunkPosition: chunkInfo.chunkPosition//,
-     // voxelsHash: ChunkManager.getChunkHash( chunkInfo ) 
-    }
-  
   
     if(!existingChunk){
-      console.log('Storing new chunk in mongo ', chunkInfo.id)
-      await mongoInterface.insertOne('chunks', chunkStore )
-    }else{
-      console.log('Chunk already stored in mongo ', chunkInfo.id)
-    }
+
+
+            let chunkStore = {
+                id: chunkInfo.id,
+                dims: chunkInfo.dims,
+                voxels: chunkInfo.voxels,
+                chunkPosition: chunkInfo.chunkPosition//,
+            // voxelsHash: ChunkManager.getChunkHash( chunkInfo ) 
+            }
+        
+            
+            console.log('Storing new chunk in mongo ', chunkInfo.id)
+            await mongoInterface.insertOne('chunks', chunkStore )
+            }else{
+            console.log('Chunk already stored in mongo ', chunkInfo.id)
+            }
     
   
   }

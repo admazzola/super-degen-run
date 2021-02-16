@@ -60,20 +60,20 @@ export default class VoxelWorld {
 
 
 
-    this.chunkManager = new ChunkManager({
-      headless:this.headless,
-      chunkDistance:1,
-      blockSize:1,
-     // mesher: new GreedyMesher(),
-      chunkSize:32,
-      //this will come from cache - from server-  when its ready 
-      
-      container:  {} ,
-      textureManager:  {} ,
-  } );
+        this.chunkManager = new ChunkManager({
+          headless:this.headless,
+          chunkDistance:1,
+          blockSize:1,
+        // mesher: new GreedyMesher(),
+          chunkSize:32,
+          //this will come from cache - from server-  when its ready 
+          
+          container:  {} ,
+          textureManager:  {} ,
+      } );
 
 
-     
+        
 
 
     }else {

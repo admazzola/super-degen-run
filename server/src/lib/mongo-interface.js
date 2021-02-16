@@ -2,7 +2,7 @@
  var mongoClient = require('mongodb').MongoClient;
 var defaulturl = "mongodb://localhost:27017";
 var dbo;
-module.exports =  {
+module.exports = class MongoInterface    {
 
 
 
@@ -33,30 +33,54 @@ module.exports =  {
             });
         });
 
+        console.log(this.dbo)
+        await this.createCollectionUniqueIndexes()
 
-    //  await this.createCollectionIndexes()
-
-    },
+    } 
 
 
-    async createCollectionIndexes()
+    async createCollectionUniqueIndexes()
     {
-        await this.createNonceIndexOnCollection('activePlayers')
-        await this.createNonceIndexOnCollection('units')
-        await this.createNonceIndexOnCollection('items')
 
-    },
+        await this.createUniqueIndexOnCollection('items', 'spawnLockId')
+        await this.createUniqueIndexOnCollection('chunks', 'id')
+       // await this.createUniqueIndexOnCollection('marketOrder', 'invoiceUUID')
+        await this.createUniqueIndexOnCollection('activePlayers', 'publicAddress')
 
-    async createNonceIndexOnCollection(collectionName)
+        await this.createUniqueDualIndexOnCollection('gridphases', 'gridUUID', 'instanceUUID')
+    } 
+ 
+
+
+    async createIndexOnCollection(collectionName, indexColumnName)
     {
-      dbo.collection(collectionName).createIndex( { "nonce": 1 }, { unique: true } )
-    },
+      dbo.collection(collectionName).createIndex( { [`${indexColumnName}`]: 1 }, { unique: false } )
+    } 
 
+    async createUniqueIndexOnCollection(collectionName, indexColumnName)
+    {
+      dbo.collection(collectionName).createIndex( { [`${indexColumnName}`]: 1 }, { unique: true } )
+    }
+
+    async createDualIndexOnCollection(collectionName, indexColumnNameA, indexColumnNameB)
+    {
+      dbo.collection(collectionName).createIndex( { [`${indexColumnNameA}`]: 1,  [`${indexColumnNameB}`]: 1 }, { unique: false } )
+    }
+
+
+    async createUniqueDualIndexOnCollection(collectionName, indexColumnNameA, indexColumnNameB)
+    {
+      dbo.collection(collectionName).createIndex( { [`${indexColumnNameA}`]: 1,  [`${indexColumnNameB}`]: 1 }, { unique: true } )
+    }
+
+
+
+    
 
     async shutdown()
     {
       //mongoClient.disconnect()
-    },
+    }
 
 
     async insertOne(collectionName,obj)
@@ -70,7 +94,7 @@ module.exports =  {
           });
       });
 
-    },
+    }
 
 
     //returns the updated row in a threadsafe manner
@@ -109,7 +133,7 @@ module.exports =  {
 
       });
 
-    },
+    }
 
     async updateOne(collectionName,query,newvalues)
     {
@@ -127,9 +151,8 @@ module.exports =  {
 
       });
 
-    },
-
-    async upsertOne(collectionName,query,newvalues)
+    }
+  async upsertOne(collectionName,query,newvalues)
     {
 
 
@@ -144,16 +167,14 @@ module.exports =  {
       }
 
     /*  return new Promise(function(resolve, reject) {
-
-        dbo.collection(collectionName).updateOne(query,setvalues,{upsert: true},function(err, res) {
+        this.dbo.collection(collectionName).updateOne(query,setvalues,{upsert: true},function(err, res) {
            if (err) reject(err);
            resolve(res);
          });
-
-
       });*/
 
-    },
+    }
+
 
     async deleteOne(collectionName,obj)
     {
@@ -166,7 +187,7 @@ module.exports =  {
       });
 
 
-    },
+    }
 
     async deleteMany(collectionName,query)
     {
@@ -179,7 +200,7 @@ module.exports =  {
       });
 
 
-    },
+    }
 
     async dropCollection(collectionName)
     {
@@ -192,7 +213,103 @@ module.exports =  {
       });
 
 
-    },
+    }
+
+
+
+    //returns the original row instead of inserted id
+   async findOneAndUpdate(collectionName,query,newvalues)
+   {
+     let options= {returnOriginal:true}//default
+     var setvalues = { $set: newvalues }
+
+     return new Promise(function(resolve, reject) {
+
+       this.dbo.collection(collectionName).findOneAndUpdate(query,setvalues,options,function(err, res) {
+          if (err) reject(err);
+          resolve(res);
+        });
+
+
+     }.bind(this));
+
+   }
+
+     //returns the updated row
+   async updateAndFindOne(collectionName,query,newvalues)
+    {
+      let options= {returnOriginal:false} //give us the new record not the original
+      var setvalues = { $set: newvalues }
+
+      return new Promise(function(resolve, reject) {
+
+        this.dbo.collection(collectionName).findOneAndUpdate(query,setvalues,options,function(err, res) {
+           if (err) reject(err);
+           resolve(res);
+         });
+
+
+      }.bind(this));
+
+    }
+
+    //useful to do 'unset' which is useful to clear out for partial filter indexes
+    async updateCustomAndFindOne(collectionName,query, setvalues )
+     {
+       let options= {returnOriginal:false} //give us the new record not the original
+     //  var setvalues = { $set: newvalues }
+
+       return new Promise(function(resolve, reject) {
+
+         this.dbo.collection(collectionName).findOneAndUpdate(query,setvalues,options,function(err, res) {
+            if (err) reject(err);
+            resolve(res);
+          });
+
+
+       }.bind(this));
+
+     }
+
+
+
+   async updateMany(collectionName,query,newvalues)
+   {
+
+     //this is clunky and not thread safe -- will overwrite all fields
+     var setvalues = { $set: newvalues }
+
+     return new Promise(function(resolve, reject) {
+
+       this.dbo.collection(collectionName).updateMany(query,setvalues,function(err, res) {
+          if (err) reject(err);
+          resolve(res);
+        });
+
+
+     }.bind(this));
+
+   }
+
+   async updateOne(collectionName,query,newvalues)
+   {
+
+     //this is clunky and not thread safe -- will overwrite all fields
+     var setvalues = { $set: newvalues }
+
+     return new Promise(function(resolve, reject) {
+
+       this.dbo.collection(collectionName).updateOne(query,setvalues,function(err, res) {
+          if (err) reject(err);
+          resolve(res);
+        });
+
+
+     }.bind(this));
+
+   }
+
+
 
     async findById(collectionName,id)
     {
@@ -201,7 +318,7 @@ module.exports =  {
 
       return this.findOne(collectionName, o_id)
 
-    },
+    }
 
 
     async findOne(collectionName,query)
@@ -218,7 +335,7 @@ module.exports =  {
 
       });
 
-    },
+    }
 
     async findAll(collectionName,query,outputFields)
     {
@@ -234,7 +351,7 @@ module.exports =  {
 
       });
 
-    },
+    }
 
 
     async findAllSorted(collectionName,query,sortBy)
@@ -251,12 +368,12 @@ module.exports =  {
 
       });
 
-    },
+    }
 
      getMongoClient()
      {
        return mongoClient;
-     },
+     }
 
 
 
