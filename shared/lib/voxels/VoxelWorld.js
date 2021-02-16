@@ -61,6 +61,7 @@ export default class VoxelWorld {
 
 
     this.chunkManager = new ChunkManager({
+      headless:this.headless,
       chunkDistance:1,
       blockSize:1,
      // mesher: new GreedyMesher(),
@@ -81,6 +82,7 @@ export default class VoxelWorld {
 
 
       this.chunkManager = new ChunkManager({
+        headless:this.headless,
         chunkDistance:1,
         blockSize:1,
         mesher: new GreedyMesher(),

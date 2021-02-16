@@ -68,6 +68,7 @@ export default class ChunkManager {
         this.chunks = {}
         this.mesher = opts.mesher || new GreedyMesher()
         this.textureManager = opts.textureManager
+        this.headless = opts.headless
 
         this.chunkBounds = WORLDBOUNDS.map(b => Math.floor(b/this.blockSize))
 
@@ -357,10 +358,14 @@ export default class ChunkManager {
 
             const chunk = this.chunks[chunkIndex]
             if (!chunk) return
+
+            if(!this.headless){
             this.container.remove(chunk.surfaceMesh)
             chunk.surfaceMesh.geometry.dispose()
           //  this.CHUNK_CACHE[chunk.id] = chunk.data
             chunk.dispose()
+            }
+            
             delete this.chunks[chunkIndex]
         })
     }
@@ -373,10 +378,15 @@ export default class ChunkManager {
 
             const chunk = this.chunks[chunkIndex]
             if (!chunk) return
-            this.container.remove(chunk.surfaceMesh)
-            chunk.surfaceMesh.geometry.dispose()
+
+            if(!this.headless){
+                this.container.remove(chunk.surfaceMesh)
+                chunk.surfaceMesh.geometry.dispose()
+                chunk.dispose()
+            }
+           
           //  this.CHUNK_CACHE[chunk.id] = chunk.data
-            chunk.dispose()
+            
             delete this.chunks[chunkIndex]
         })
     }
