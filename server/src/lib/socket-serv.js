@@ -35,6 +35,7 @@ module.exports = class SocketServ {
     this.redisInterface=redisInterface
 
     
+    
     cachedVoxelWorld = new VoxelWorld({headless:true})
       
 

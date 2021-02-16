@@ -1,9 +1,10 @@
 
-import MongoInterface from '../src/lib/mongo-interface' 
- 
+
 import  VoxelWorldGenerator from '../../shared/lib/voxels/VoxelWorldGenerator'
 import  ChunkManager from '../../shared/lib/voxels/chunkmanager'
 import  GreedyMesher from '../../shared/lib/voxels/greedymesher'
+import MongoInterface from '../src/lib/mongo-interface' 
+ 
 
 var mongoInterface = new MongoInterface()
 const VoxelHelper = require('../../shared/lib/voxels/VoxelHelper')

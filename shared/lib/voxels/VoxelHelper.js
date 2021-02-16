@@ -3,7 +3,7 @@ var hash = require('object-hash');
 
 var LZUTF8 = require('lzutf8');
 
-import ChunkManager from './chunkmanager'
+//import ChunkManager from './chunkmanager'
 
 module.exports=  class VoxelHelper{
     

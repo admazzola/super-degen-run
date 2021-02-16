@@ -33,7 +33,7 @@ module.exports = class MongoInterface    {
             });
         });
 
-        console.log(this.dbo)
+        console.log(dbo)
         await this.createCollectionUniqueIndexes()
 
     } 
@@ -167,7 +167,7 @@ module.exports = class MongoInterface    {
       }
 
     /*  return new Promise(function(resolve, reject) {
-        this.dbo.collection(collectionName).updateOne(query,setvalues,{upsert: true},function(err, res) {
+        dbo.collection(collectionName).updateOne(query,setvalues,{upsert: true},function(err, res) {
            if (err) reject(err);
            resolve(res);
          });
@@ -225,7 +225,7 @@ module.exports = class MongoInterface    {
 
      return new Promise(function(resolve, reject) {
 
-       this.dbo.collection(collectionName).findOneAndUpdate(query,setvalues,options,function(err, res) {
+       dbo.collection(collectionName).findOneAndUpdate(query,setvalues,options,function(err, res) {
           if (err) reject(err);
           resolve(res);
         });
@@ -243,7 +243,7 @@ module.exports = class MongoInterface    {
 
       return new Promise(function(resolve, reject) {
 
-        this.dbo.collection(collectionName).findOneAndUpdate(query,setvalues,options,function(err, res) {
+        dbo.collection(collectionName).findOneAndUpdate(query,setvalues,options,function(err, res) {
            if (err) reject(err);
            resolve(res);
          });
@@ -261,7 +261,7 @@ module.exports = class MongoInterface    {
 
        return new Promise(function(resolve, reject) {
 
-         this.dbo.collection(collectionName).findOneAndUpdate(query,setvalues,options,function(err, res) {
+         dbo.collection(collectionName).findOneAndUpdate(query,setvalues,options,function(err, res) {
             if (err) reject(err);
             resolve(res);
           });
@@ -281,7 +281,7 @@ module.exports = class MongoInterface    {
 
      return new Promise(function(resolve, reject) {
 
-       this.dbo.collection(collectionName).updateMany(query,setvalues,function(err, res) {
+       dbo.collection(collectionName).updateMany(query,setvalues,function(err, res) {
           if (err) reject(err);
           resolve(res);
         });
@@ -299,7 +299,7 @@ module.exports = class MongoInterface    {
 
      return new Promise(function(resolve, reject) {
 
-       this.dbo.collection(collectionName).updateOne(query,setvalues,function(err, res) {
+       dbo.collection(collectionName).updateOne(query,setvalues,function(err, res) {
           if (err) reject(err);
           resolve(res);
         });

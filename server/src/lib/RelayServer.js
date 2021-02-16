@@ -13,7 +13,11 @@ const bodyParser = require('body-parser')
 var SocketServ = require('./socket-serv')
   
 let redisInterface = require('./redis-interface')
-let mongoInterface = require('./mongo-interface')
+import MongoInterface from './mongo-interface'  
+
+var mongoInterface = new MongoInterface()
+
+
 var socketServer
 
 
@@ -46,7 +50,7 @@ module.exports =  class GameServer {
     await redisInterface.init()
     await mongoInterface.init('polyvoxels_'.concat(serverMode))
 
-     
+      
      socketServer = new SocketServ(   server, mongoInterface, redisInterface)
 
  

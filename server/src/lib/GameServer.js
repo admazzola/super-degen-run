@@ -17,7 +17,11 @@ const ItemHelper = require('../../../shared/lib/ItemHelper')
  var GameState = require('./gamestate')
 
 let redisInterface = require('./redis-interface')
-let mongoInterface = require('./mongo-interface')
+import MongoInterface from './mongo-interface'  
+
+var mongoInterface = new MongoInterface()
+
+
 var socketServer
 
 

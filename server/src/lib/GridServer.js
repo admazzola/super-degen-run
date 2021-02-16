@@ -17,7 +17,12 @@ var GridUpdater = require('./util/gridupdater')
  var GameState = require('./gamestate')
 
 let redisInterface = require('./redis-interface')
-let mongoInterface = require('./mongo-interface')
+
+import MongoInterface from './mongo-interface'  
+
+var mongoInterface = new MongoInterface()
+
+
 var socketServer
 
 const port = serverConfig.gridServer.port
