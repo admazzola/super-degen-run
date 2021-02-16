@@ -3,7 +3,10 @@ var hash = require('object-hash');
 
 var LZUTF8 = require('lzutf8');
 
+import ChunkManager from './chunkmanager'
+
 module.exports=  class VoxelHelper{
+    
     
 
 static getCompressedChunkArray(chunkArray){
@@ -27,7 +30,7 @@ static getDecompressedChunkData(chunk){
     }
 
     return {
-        chunkId: chunk.chunkId,
+        id: chunk.id,
         dims: chunk.dims,
         chunkBits: chunk.chunkBits, 
         chunkPosition: chunk.chunkPosition,
@@ -46,7 +49,7 @@ static getCompressedChunkData(chunk){
     }
 
     return {
-        chunkId: chunk.chunkId,
+        id: chunk.id,
         dims: chunk.dims,
         chunkBits: chunk.chunkBits, 
         chunkPosition: chunk.chunkPosition,
@@ -188,12 +191,12 @@ static async readChunksFromDatabase(chunkKeys, mongoInterface){
         let chunk =  await mongoInterface.findOne('chunks', {'chunkId': key.toString()})
 
         if(chunk){
-            console.log('read chunk from db', key,  chunk.chunkId, Object.keys(chunk), chunk.deltaCounter ) 
+            console.log('read chunk from db', key,  chunk.id, Object.keys(chunk), chunk.deltaCounter ) 
 
             if(!chunk.deltaCounter){
                 chunk.deltaCounter = 0
             }
-            chunk.id = chunk.chunkId 
+             
 
 
             chunkArray[key] = chunk 
@@ -213,7 +216,7 @@ static async readChunkDeltaCountersFromDatabase(chunkKeys, mongoInterface){
 
     for (let key of chunkKeys) {
  
-        let chunk =  await mongoInterface.findOne('chunks', {'chunkId': key.toString()})
+        let chunk =  await mongoInterface.findOne('chunks', {'id': key.toString()})
 
         if(chunk){ 
 
@@ -228,6 +231,41 @@ static async readChunkDeltaCountersFromDatabase(chunkKeys, mongoInterface){
     return chunkArray
 
 }
+
+
+/*
+  This will not overwrite existing chunks 
+*/
+static async storeNewChunk(chunkInfo, mongoInterface){
+  
+
+    let existingChunk = await mongoInterface.findOne('chunks',{id: chunkInfo.id})
+  
+   
+  
+    let chunkStore = {
+      id: chunkInfo.id,
+      dims: chunkInfo.dims,
+      voxels: chunkInfo.voxels,
+      chunkPosition: chunkInfo.chunkPosition//,
+     // voxelsHash: ChunkManager.getChunkHash( chunkInfo ) 
+    }
+  
+  
+    if(!existingChunk){
+      console.log('Storing new chunk in mongo ', chunkInfo.id)
+      await mongoInterface.insertOne('chunks', chunkStore )
+    }else{
+      console.log('Chunk already stored in mongo ', chunkInfo.id)
+    }
+    
+  
+  }
+  
+  static async updateExistingStoredChunk(){
+  
+    
+  }
 
 
 

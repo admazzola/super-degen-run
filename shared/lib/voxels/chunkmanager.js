@@ -172,7 +172,22 @@ export default class ChunkManager {
         return nearby
     }
 
-    chunksWithinBounds( ) {
+    chunksWithinBounds( lowBounds, highBounds ) {
+
+        console.log( lowBounds, highBounds )
+        const result = []
+        for (let cx = (lowBounds[0]); cx <= (highBounds[0]); ++cx) {
+            for (let cy = (lowBounds[1]); cy <= (highBounds[1]); ++cy) {
+                for (let cz = (lowBounds[2]); cz <= (highBounds[2]); ++cz) {
+                    console.log('push ', [cx, cy, cz] )
+                    result.push([cx, cy, cz])
+                }
+            }
+        }
+        return result
+    }
+
+    chunksWithinMapBounds( ) {
         const result = []
         for (let cx = (-1 * WORLDBOUNDS[0]/this.chunkSize); cx < (1 * WORLDBOUNDS[0]/this.chunkSize); ++cx) {
             for (let cy = (-1 * WORLDBOUNDS[1]/this.chunkSize); cy < (1 * WORLDBOUNDS[1]/this.chunkSize); ++cy) {
@@ -201,8 +216,8 @@ export default class ChunkManager {
         this.generateChunks( this.nearbyChunks(pos,distance) )
     }
 
-    generateChunksWithinBounds() {  
-        this.generateChunks( this.chunksWithinBounds() )
+    generateChunksWithinBounds(lowBounds, highBounds) {  
+        this.generateChunks( this.chunksWithinBounds( lowBounds, highBounds ) )
     }
 
     generateChunks(chunkIndexArray) {
@@ -339,6 +354,22 @@ export default class ChunkManager {
         Object.keys(this.chunks).map((chunkIndex) => {
             //skip the nearby chunks
             if (nearbyChunks.indexOf(chunkIndex) > -1) return
+
+            const chunk = this.chunks[chunkIndex]
+            if (!chunk) return
+            this.container.remove(chunk.surfaceMesh)
+            chunk.surfaceMesh.geometry.dispose()
+          //  this.CHUNK_CACHE[chunk.id] = chunk.data
+            chunk.dispose()
+            delete this.chunks[chunkIndex]
+        })
+    }
+
+    removeAllChunks() {
+        
+        Object.keys(this.chunks).map((chunkIndex) => {
+            //skip the nearby chunks
+            
 
             const chunk = this.chunks[chunkIndex]
             if (!chunk) return

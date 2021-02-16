@@ -63,39 +63,7 @@ async init()
 
 }
 
-/*
-  This will not overwrite existing chunks 
-*/
-static async storeNewChunk(chunkInfo, mongoInterface){
-  
 
-  let existingChunk = await mongoInterface.findOne('chunks',{chunkId: chunkInfo.id})
-
- 
-
-  let chunkStore = {
-    chunkId: chunkInfo.id,
-    dims: chunkInfo.dims,
-    voxels: chunkInfo.voxels,
-    chunkPosition: chunkInfo.chunkPosition,
-    voxelsHash: ChunkManager.getChunkHash( chunkInfo ) 
-  }
-
-
-  if(!existingChunk){
-    console.log('Storing new chunk in mongo ', chunkInfo.id)
-    await mongoInterface.insertOne('chunks', chunkStore )
-  }else{
-    console.log('Chunk already stored in mongo ', chunkInfo.id)
-  }
-  
-
-}
-
-static async updateExistingStoredChunk(){
-
-  
-}
 
 /*
   async spawnCelestial( galaxy, celestial )  //each celestial is a grid

@@ -160,7 +160,7 @@ module.exports =  class GreedyMesher {
         let tiletype = Object.values(tiletypes)[blockType]
 
         if(!tiletype){
-            console.log('warn: no tiletype ',blockType)
+       //     console.log('warn: no tiletype ',blockType)
             return 0
         }
 

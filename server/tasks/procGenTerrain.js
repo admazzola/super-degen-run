@@ -5,7 +5,7 @@ import  VoxelWorldGenerator from '../../shared/lib/voxels/VoxelWorldGenerator'
 import  ChunkManager from '../../shared/lib/voxels/chunkmanager'
 import  GreedyMesher from '../../shared/lib/voxels/greedymesher'
 
-var WorldBuilder = require('../../server/src/lib/WorldBuilder')
+const VoxelHelper = require('../../shared/lib/voxels/VoxelHelper')
 
 
 async function task()
@@ -48,18 +48,33 @@ async function task()
     } 
 
 
-    chunkManager.generateChunksWithinBounds(  )
+    const chunkRows = 16 
+    
 
+    for(let i=-chunkRows; i < chunkRows; ++i){
 
-    let allChunksArray = Object.values(chunkManager.chunks)
+        console.log('meep ',i)
 
-    console.log('generated chunks: ', allChunksArray.length)
+         let lowBounds = [i,-chunkRows,-chunkRows]
+         let highBounds = [i,chunkRows,chunkRows]
 
-    for(let chunkInfo of allChunksArray){
-
-        let stored = await WorldBuilder.storeNewChunk(chunkInfo, mongoInterface)
+        chunkManager.generateChunksWithinBounds(lowBounds,highBounds)
+ 
        
+        for(let chunkInfo of  Object.values(chunkManager.chunks) ){
+
+            console.log('chunkInfo', chunkInfo.id)
+            let stored = await VoxelHelper.storeNewChunk(chunkInfo, mongoInterface)
+        
+        }
+        
+        chunkManager.removeAllChunks()
     }
+    
+    
+
+ 
+
 
 
 }

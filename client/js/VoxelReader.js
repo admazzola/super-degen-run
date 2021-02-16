@@ -23,7 +23,10 @@ export default class VoxelReader {
 
         let myPossessedUnit = this.entityManager.getMyPossessedUnit()
         
-        if(!myPossessedUnit) return 
+        if(!myPossessedUnit) {
+          console.log('no possessed unit ')
+          return
+        }
 
        
          let locationVector = new THREE.Vector3( myPossessedUnit.locationVector ) 

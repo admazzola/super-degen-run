@@ -263,10 +263,10 @@ module.exports = class SocketServ {
 
         let currentChunksFromCache = cachedVoxelWorld.getChunksFromCache( localChunksKeys ) ; 
        
-        let currentChunkArray = Object.assign({} , currentChunksFromCache) //empty ?
+        let currentChunkArray = Object.assign({} , currentChunksFromCache)  
 
  
-        console.log('meep currentChunkArray', Object.keys(currentChunksFromCache))
+        console.log('meep currentChunkArray', Object.keys(currentChunkArray))
 
         
         let missingChunkIdArray = VoxelHelper.findMissingChunks(nearbyLocalChunks,currentChunkArray ) 
